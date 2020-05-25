@@ -36,3 +36,13 @@
     transform: rotate(360deg);
   }
 }
+
+.inputIcon {
+  background-color: white;
+  border-right: 0px;
+}
+
+.loginSlider {
+  border-left: 2px solid gainsboro;
+  line-height: 80vh;
+}
