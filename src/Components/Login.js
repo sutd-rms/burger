@@ -9,10 +9,12 @@ class Login extends React.Component {
       email: '',
       password: '',
       isRemember: false,
+      passwordShown: false,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.togglePasswordVisiblity = this.togglePasswordVisiblity.bind(this);
   }
   
   handleInputChange(event) {
@@ -30,27 +32,28 @@ class Login extends React.Component {
     event.preventDefault();
   }
 
+  togglePasswordVisiblity(event) {
+    this.setState({
+      passwordShown: this.state.passwordShown ? false : true
+    });
+  };
+
   render() {
     
     return (
       <React.Fragment>
-        <Container>
+        <Container className="homePage">
           <Row className="vh-100">
-            <Col className="px-5 my-auto">
+            <Col md={4} className="pr-5 my-auto loginForm">
               <Figure>
                 <Figure.Image
-                  width={171}
-                  height={180}
                   alt="171x180"
-                  src="holder.js/171x180"
+                  src= "/rms_logo.jpg"
                 />
-                <Figure.Caption>
-                  Nulla vitae elit libero, a pharetra augue mollis interdum.
-                </Figure.Caption>
               </Figure>
-              <Form onSubmit={this.handleSubmit}>
+              <Form className="my-3" onSubmit={this.handleSubmit}>
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label>Email address</Form.Label>
+                  <Form.Label>EMAIL</Form.Label>
                   <InputGroup>
                     <InputGroup.Prepend>
                       <InputGroup.Text className="inputIcon">
@@ -71,7 +74,7 @@ class Login extends React.Component {
                   </InputGroup>
                 </Form.Group>
                 <Form.Group controlId="exampleForm.ControlInput1">
-                  <Form.Label>Password</Form.Label>
+                  <Form.Label>PASSWORD</Form.Label>
                   <InputGroup>
                     <InputGroup.Prepend>
                       <InputGroup.Text className="inputIcon">
@@ -82,14 +85,14 @@ class Login extends React.Component {
                     </InputGroup.Prepend>
                     <Form.Control
                       name="password"
-                      type="password"
+                      type={this.state.passwordShown ? "text" : "password"}
                       placeholder="Enter Password"
                       aria-describedby="inputGroupPrepend"
                       onChange={this.handleInputChange}
                       required
                     />
                     <InputGroup.Append>
-                      <InputGroup.Text>
+                      <InputGroup.Text onClick={this.togglePasswordVisiblity}>
                         <svg className="bi bi-eye-fill" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                           <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
                           <path fill-rule="evenodd" d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
@@ -107,44 +110,25 @@ class Login extends React.Component {
                 </Form.Group>
                 <Button variant="dark" type="submit">SIGN IN</Button>
               </Form>
-
+              <p class="mt-3"><a href="#" class="text-dark">Forgot Password?</a></p>
             </Col>
-            <Col className="px-5 my-auto loginSlider">
-              <Carousel>
-                <Carousel.Item>
+            <Col md={8} className="pl-5 my-auto homeRightSection">
+              <h1>Welcome Back :)</h1>
+              <h2>Let's do more with our data!</h2>
+              <Carousel className="mt-5">
+                <Carousel.Item className="homeCarousel">
                   <img
                     className="d-block w-100"
-                    src="holder.js/800x400?text=First slide&bg=373940"
+                    src="carousel1.png"
                     alt="First slide"
                   />
-                  <Carousel.Caption>
-                    <h3>First slide label</h3>
-                    <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                  </Carousel.Caption>
                 </Carousel.Item>
-                <Carousel.Item>
+                <Carousel.Item className="homeCarousel">
                   <img
                     className="d-block w-100"
-                    src="holder.js/800x400?text=Second slide&bg=282c34"
+                    src="carousel2.jpg"
                     alt="Third slide"
                   />
-
-                  <Carousel.Caption>
-                    <h3>Second slide label</h3>
-                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                  </Carousel.Caption>
-                </Carousel.Item>
-                <Carousel.Item>
-                  <img
-                    className="d-block w-100"
-                    src="holder.js/800x400?text=Third slide&bg=20232a"
-                    alt="Third slide"
-                  />
-
-                  <Carousel.Caption>
-                    <h3>Third slide label</h3>
-                    <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-                  </Carousel.Caption>
                 </Carousel.Item>
               </Carousel>
             </Col>

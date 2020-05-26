@@ -42,7 +42,14 @@
   border-right: 0px;
 }
 
-.loginSlider {
+.homePage{
+  font-size: 100%
+}
+
+.homeRightSection {
   border-left: 2px solid gainsboro;
-  line-height: 80vh;
+}
+
+.homeCarousel {
+  max-height: 70vh;
 }
