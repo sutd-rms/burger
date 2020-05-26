@@ -44,7 +44,7 @@ class Login extends React.Component {
       <React.Fragment>
         <Container className="homePage">
           <Row className="vh-100">
-            <Col md={4} className="pr-5 my-auto loginForm">
+            <Col md={5} className="pr-5 my-auto loginForm">
               <Figure>
                 <Figure.Image
                   alt="171x180"
@@ -112,7 +112,7 @@ class Login extends React.Component {
               </Form>
               <p class="mt-3"><a href="#" class="text-dark">Forgot Password?</a></p>
             </Col>
-            <Col md={8} className="pl-5 my-auto homeRightSection">
+            <Col md={7} className="pl-5 my-auto homeRightSection">
               <h1>Welcome Back :)</h1>
               <h2>Let's do more with our data!</h2>
               <Carousel className="mt-5">
