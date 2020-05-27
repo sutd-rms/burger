@@ -28,6 +28,10 @@
   color: #61dafb;
 }
 
+body {
+  font-family: Helvetica, Arial, sans-serif;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -43,7 +47,7 @@
 }
 
 .homePage{
-  font-size: 100%
+  font-size: 100%;
 }
 
 .homeRightSection {
