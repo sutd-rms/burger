@@ -8,6 +8,12 @@ import {
   useParams
 } from "react-router-dom";
 import DashboardSideBar from "./DashboardSideBar"
+import styled from "styled-components";
+
+const DashboardContainer = styled.div`
+  margin-left: 200px;    /* Set the width of the sidebar */
+  padding: 10px;
+`;
 
 
 function Dashboard() {
@@ -16,19 +22,18 @@ function Dashboard() {
   return (
     <div>
       <DashboardSideBar></DashboardSideBar>
-      <Switch>
-        <Route path={`${match.path}/users`}>
-          <Users />
-        </Route>
-        <Route path={`${match.path}/models`}>
-          <Models />
-        </Route>
-        <Route path={`${match.path}/projects`}>
-          <Projects />
-        </Route>
-        <Route path={match.path}>
-        </Route>
-      </Switch>
+      <DashboardContainer>
+        <Switch>
+          <Route path={`${match.path}/users`} component={Users}>
+          </Route>
+          <Route path={`${match.path}/models`} component={Models}>
+          </Route>
+          <Route path={`${match.path}/projects`} component={Projects}>
+          </Route>
+          <Route path={match.path}>
+          </Route>
+        </Switch>
+      </DashboardContainer>
     </div>
   );
 }
