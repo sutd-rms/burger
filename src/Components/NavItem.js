@@ -8,17 +8,18 @@ const StyledNavItem = styled.div`
   text-align: center; /* Aligns <a> inside of NavIcon div */
   margin-bottom: 0;   /* Puts space between NavItems */
   a {
-    font-size: 2.7em;
+    font-size: 1.5em;
     color: ${(props) => props.active ? "white" : "#9FFFCB"};
     :hover {
       opacity: 0.7;
       text-decoration: none; /* Gets rid of underlining of icons */
     }  
+
+  div {
+    width: 200px;
   }
 `;
 
-const NavIcon = styled.div`
-`;
 
 export default class NavItem extends React.Component {
 
@@ -29,7 +30,10 @@ export default class NavItem extends React.Component {
     return (
       <StyledNavItem>
         <Link to={this.props.path} className={this.props.css} onClick={this.handleClick}>
-          <NavIcon>test</NavIcon>
+          <div>
+            {this.props.icon}
+            {this.props.name}
+          </div>
         </Link>
       </StyledNavItem>
     );
