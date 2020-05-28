@@ -26,7 +26,7 @@ function App() {
         <Route path="/register">
           <div>register</div>
         </Route>
-        <Route path="/dashboard">
+        <Route path="/Dashboard">
           <Dashboard />
         </Route>
         <Route path="/">

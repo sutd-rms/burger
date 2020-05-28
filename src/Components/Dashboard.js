@@ -11,7 +11,7 @@ import DashboardSideBar from "./DashboardSideBar"
 import styled from "styled-components";
 
 const DashboardContainer = styled.div`
-  margin-left: 200px;    /* Set the width of the sidebar */
+  margin-left: 250px;    /* Set the width of the sidebar */
   padding: 10px;
 `;
 
