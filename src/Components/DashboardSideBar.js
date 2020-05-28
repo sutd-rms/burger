@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import NavItem from "./NavItem"
 import styled from "styled-components";
-import Image from 'react-bootstrap/Image'
+import { Figure, Image } from 'react-bootstrap'
 
 const StyledSideNav = styled.div`
   position: fixed;     /* Fixed Sidebar (stay in place on scroll and position relative to viewport) */
@@ -11,7 +11,31 @@ const StyledSideNav = styled.div`
   z-index: 1;      /* Stay on top of everything */
   background-color: #222; /* Black */
   overflow-x: hidden;     /* Disable horizontal scroll */
-  padding-top: 10px;
+  color: white;
+
+  .navImage {
+    background-color: white;
+    padding: 10px;
+    margin-bottom: 0px;
+  }
+
+  .currentUser {
+    height: 100px;
+    background-color: blue;
+  }
+
+  .currentUserImage {
+    width: 40%;
+    height: auto;
+    padding-left: 10px;
+  }
+
+  .currentUserText {
+    float: right;
+    height: 100px;
+    width: 55%;
+    padding-right: 10px;
+  }
 `;
 
 export default class Sidebar extends React.Component {
@@ -70,7 +94,20 @@ export default class Sidebar extends React.Component {
 
     return (
       <StyledSideNav>
-        <Image src="logoNav.jpg" fluid />
+        <div>
+          <Figure className="navImage">
+            <Figure.Image
+              alt="Nav Logo"
+              src= "/logoNav.jpg"
+            />
+          </Figure>
+        </div>
+        <div className="currentUser">
+          <div className="">
+            <Image className="currentUserImage" src="hamburglar.jpg" roundedCircle />
+            <span className="currentUserText">Hello, Meng Siong!</span>
+          </div>
+        </div>
         {
           /* items = just array AND map() loops thru that array AND item is param of that loop */
           items.map((item) => {
