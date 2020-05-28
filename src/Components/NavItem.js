@@ -23,12 +23,18 @@ const StyledNavItem = styled.div`
 
 export default class NavItem extends React.Component {
 
+  handleClick = () => {
+    console.log("here")
+    const { path, onItemClick } = this.props;
+    onItemClick(path);
+  }
+
   render() {
 
     const { active } = this.props;
 
     return (
-      <StyledNavItem>
+      <StyledNavItem active={active}>
         <Link to={this.props.path} className={this.props.css} onClick={this.handleClick}>
           <div>
             {this.props.icon}
