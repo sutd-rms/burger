@@ -104,7 +104,6 @@ class Sidebar extends React.Component {
           <Col md={8} className="my-auto currentUserText">
             <div className="">Hello, Meng Siong!</div>
           </Col>
-          <div></div>
         </Row>
         {/* items = just array AND map() loops thru that array AND item is param of that loop */
         items.map(item => {
