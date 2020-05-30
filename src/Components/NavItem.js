@@ -26,7 +26,7 @@ const StyledNavItem = styled.div`
   }
 
   svg {
-    height: 1.5em;
+    font-size: 1.5em;
     margin-right: 10px;
     padding-bottom: 5px;
   }
