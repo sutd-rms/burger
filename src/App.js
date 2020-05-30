@@ -1,14 +1,13 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
-  Link,
   useRouteMatch,
   useParams
 } from "react-router-dom";
+import Login from './Components/Login'
 
 function App() {
   return (
@@ -17,7 +16,7 @@ function App() {
           renders the first one that matches the current URL. */}
       <Switch>
         <Route path="/login">
-          <div>login</div>
+          <Login/>
         </Route>
         <Route path="/logout">
           <div>logout</div>
