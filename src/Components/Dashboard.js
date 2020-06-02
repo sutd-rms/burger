@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,11 +6,11 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from 'react-router-dom';
-import DashboardSideBar from './DashboardSideBar';
-import FloatingAddButton from './ProjectPage/FloatingAddButton';
-import styled from 'styled-components';
-import AllProjectPage from './ProjectPage/AllProjectPage';
+} from "react-router-dom";
+import DashboardSideBar from "./DashboardSideBar";
+import FloatingAddButton from "./ProjectPage/FloatingAddButton";
+import styled from "styled-components";
+import AllProjectPage from "./ProjectPage/AllProjectPage";
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
@@ -52,7 +52,7 @@ function Dashboards() {
 function Users() {
   let match = useRouteMatch();
   let onCreate = () => {
-    console.log('Creating new user...');
+    console.log("Creating new user...");
   };
 
   return (
@@ -80,7 +80,7 @@ function Models() {
   let match = useRouteMatch();
 
   let onCreate = () => {
-    console.log('Creating new model...');
+    console.log("Creating new model...");
   };
 
   return (
@@ -107,7 +107,7 @@ function Projects() {
   let match = useRouteMatch();
 
   let onCreate = () => {
-    console.log('Creating new project...');
+    console.log("Creating new project...");
   };
 
   return (
@@ -119,7 +119,6 @@ function Projects() {
         </Route>
         <Route path={match.path}>
           <AllProjectPage />
-          {/* <h3>Please select a project.</h3> */}
         </Route>
       </Switch>
     </div>
