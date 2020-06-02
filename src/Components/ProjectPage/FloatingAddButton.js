@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import Fab from '@material-ui/core/Fab';
 import AddIcon from '@material-ui/icons/Add';
-import { Button } from '@material-ui/core';
 
 export default class FloatingAddButton extends Component {
   render() {

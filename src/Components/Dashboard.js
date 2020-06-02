@@ -8,8 +8,9 @@ import {
   useParams
 } from 'react-router-dom';
 import DashboardSideBar from './DashboardSideBar';
-import FloatingAddButton from './FloatingAddButton';
+import FloatingAddButton from './ProjectPage/FloatingAddButton';
 import styled from 'styled-components';
+import AllProjectPage from './ProjectPage/AllProjectPage';
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
@@ -117,7 +118,8 @@ function Projects() {
           <Project />
         </Route>
         <Route path={match.path}>
-          <h3>Please select a project.</h3>
+          <AllProjectPage />
+          {/* <h3>Please select a project.</h3> */}
         </Route>
       </Switch>
     </div>
