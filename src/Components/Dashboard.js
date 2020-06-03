@@ -11,6 +11,7 @@ import DashboardSideBar from "./DashboardSideBar";
 import FloatingAddButton from "./ProjectPage/FloatingAddButton";
 import styled from "styled-components";
 import AllProjectPage from "./ProjectPage/AllProjectPage";
+import AllModelsPage from "./ModelsPage/AllModelsPage";
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
@@ -91,7 +92,7 @@ function Models() {
           <Model />
         </Route>
         <Route path={match.path}>
-          <h3>Please select a model.</h3>
+          <AllModelsPage />
         </Route>
       </Switch>
     </div>
