@@ -5,7 +5,7 @@ import McLogo from "../../static/images/McDonaldLogo.png";
 import { Typography } from "@material-ui/core";
 import ModelIcon from "../../static/images/model_icon.png";
 
-export default class FloatingAddButton extends Component {
+export default class ProjectCardContent extends Component {
   constructor(props) {
     super(props);
     this.state = {

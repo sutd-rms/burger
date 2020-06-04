@@ -39,14 +39,14 @@ export default function ProjectCard(props) {
     setDisplay(false);
   };
 
-  const handelClick = () => {
+  const handleClick = () => {
     window.location.href = `${match.path}/${props.projectId}`;
   };
 
   return (
     <div onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
       <Card className={classes.root}>
-        <CardActionArea onClick={handelClick}>
+        <CardActionArea onClick={handleClick}>
           <ProjectCardContent
             display={display}
             frontstyle={classes.media}

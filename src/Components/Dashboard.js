@@ -8,7 +8,7 @@ import {
   useParams
 } from "react-router-dom";
 import DashboardSideBar from "./DashboardSideBar";
-import FloatingAddButton from "./ProjectPage/FloatingAddButton";
+import FloatingAddButton from "./FloatingAddButton";
 import styled from "styled-components";
 import AllProjectPage from "./ProjectPage/AllProjectPage";
 import AllModelsPage from "./ModelsPage/AllModelsPage";
@@ -31,8 +31,14 @@ function Dashboard() {
             component={Dashboards}
           ></Route>
           <Route path={`${match.path}/users`} component={Users}></Route>
-          <Route path={`${match.path}/models`} component={Models}></Route>
-          <Route path={`${match.path}/projects`} component={Projects}></Route>
+          <Route
+            path={`${match.path}/models`}
+            component={AllModelsPage}
+          ></Route>
+          <Route
+            path={`${match.path}/projects`}
+            component={AllProjectPage}
+          ></Route>
           <Route path={match.path}></Route>
         </Switch>
       </DashboardContainer>
@@ -77,58 +83,26 @@ function User() {
   return <h3>Requested user ID: {userId}</h3>;
 }
 
-function Models() {
-  let match = useRouteMatch();
+// function Models() {
+//   let match = useRouteMatch();
 
-  let onCreate = () => {
-    console.log("Creating new model...");
-  };
+//   let onCreate = () => {
+//     console.log("Creating new model...");
+//   };
 
-  return (
-    <div>
-      <FloatingAddButton onClick={onCreate} />
-      <Switch>
-        <Route path={`${match.path}/:modelId`}>
-          <Model />
-        </Route>
-        <Route path={match.path}>
-          <AllModelsPage />
-        </Route>
-      </Switch>
-    </div>
-  );
-}
-
-function Model() {
-  let { modelId } = useParams();
-  return <h3>Requested model ID: {modelId}</h3>;
-}
-
-function Projects() {
-  let match = useRouteMatch();
-
-  let onCreate = () => {
-    console.log("Creating new project...");
-  };
-
-  return (
-    <div>
-      <FloatingAddButton onClick={onCreate} />
-      <Switch>
-        <Route path={`${match.path}/:projectId`}>
-          <Project />
-        </Route>
-        <Route path={match.path}>
-          <AllProjectPage />
-        </Route>
-      </Switch>
-    </div>
-  );
-}
-
-function Project() {
-  let { projectId } = useParams();
-  return <h3>Requested project ID: {projectId}</h3>;
-}
+//   return (
+//     <div>
+//       <FloatingAddButton onClick={onCreate} />
+//       <Switch>
+//         <Route path={`${match.path}/:modelId`}>
+//           <Model />
+//         </Route>
+//         <Route path={match.path}>
+//           <AllModelsPage />
+//         </Route>
+//       </Switch>
+//     </div>
+//   );
+// }
 
 export default Dashboard;

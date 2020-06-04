@@ -1,16 +1,16 @@
-import React, { Component } from 'react';
-import Fab from '@material-ui/core/Fab';
-import AddIcon from '@material-ui/icons/Add';
+import React, { Component } from "react";
+import Fab from "@material-ui/core/Fab";
+import AddIcon from "@material-ui/icons/Add";
 
 export default class FloatingAddButton extends Component {
   render() {
     const style = {
       margin: 0,
-      top: 'auto',
+      top: "auto",
       right: 20,
       bottom: 20,
-      left: 'auto',
-      position: 'fixed'
+      left: "auto",
+      position: "fixed"
     };
 
     return (
