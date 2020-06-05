@@ -50,7 +50,7 @@ class Sidebar extends React.Component {
       items: [
         {
           path:
-            '/Dashboard' /* path is used as id to check which NavItem is active basically */,
+            '/Dashboard/dashboards' /* path is used as id to check which NavItem is active basically */,
           name: 'Dashboard',
           key: 1 /* Key is required, else console throws error. Does this please you Mr. Browser?! */,
           icon: <HomeIcon />
