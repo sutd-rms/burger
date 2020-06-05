@@ -9,6 +9,9 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import Box from "@material-ui/core/Box";
 
 const styles = theme => ({
   root: {
@@ -57,7 +60,14 @@ const DialogActions = withStyles(theme => ({
 export default function ProjectCreationForm(props) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [company, setCompany] = useState(null);
+  const [company, setCompany] = useState("");
+  const [companyList, setCompanyList] = useState([
+    "RMS",
+    "McDonald Australia",
+    "McDonald SG"
+  ]);
+  const [modelList, setModelList] = useState(["MCMC", "Brute Force"]);
+  const [defaultModel, setDefaultModel] = useState("");
 
   const onFormSubmission = e => {
     e.preventDefault();
@@ -68,7 +78,9 @@ export default function ProjectCreationForm(props) {
       ", description: ",
       description,
       ", company: ",
-      company
+      company,
+      ", model: ",
+      defaultModel
     );
     props.handleClose();
   };
@@ -81,9 +93,18 @@ export default function ProjectCreationForm(props) {
     setDescription(e.target.value);
   };
 
+  const handleCompanyChange = e => {
+    setCompany(e.target.value);
+  };
+
+  const handleModelChange = e => {
+    setDefaultModel(e.target.value);
+  };
+
   return (
     <div>
       <Dialog
+        fullWidth={true}
         onClose={props.handleClose}
         aria-labelledby="customized-dialog-title"
         open={props.open}
@@ -93,26 +114,24 @@ export default function ProjectCreationForm(props) {
         </DialogTitle>
         <DialogContent dividers>
           <form noValidate onSubmit={onFormSubmission}>
-            <Typography gutterBottom>
-              Praesent commodo cursus magna, vel scelerisque nisl consectetur
-              et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor
-              auctor.
+            <Typography variant="subtitle2" gutterBottom>
+              Project Name
             </Typography>
             <TextField
               variant="outlined"
-              margin="normal"
               required
               fullWidth
               id="projectName"
-              label="Project Name"
               name="Project Name"
               value={name}
               onChange={handleNameChange}
               autoFocus
             />
+            <Typography variant="subtitle2" gutterBottom>
+              Project Description
+            </Typography>
             <TextField
               variant="outlined"
-              margin="normal"
               required
               multiline
               rows={4}
@@ -120,12 +139,47 @@ export default function ProjectCreationForm(props) {
               value={description}
               onChange={handleDescriptionChange}
               name="description"
-              label="Project Description"
               id="description"
             />
-            <Button type="submit" fullWidth variant="contained" color="primary">
-              Create
-            </Button>
+            <Typography variant="subtitle2" gutterBottom>
+              Client Company
+            </Typography>
+            <Select
+              labelId="demo-simple-select-filled-label"
+              id="demo-simple-select-filled"
+              fullWidth
+              value={company}
+              onChange={handleCompanyChange}
+            >
+              {companyList.map(value => (
+                <MenuItem value={value}>{value}</MenuItem>
+              ))}
+            </Select>
+            <Typography variant="subtitle2" gutterBottom>
+              Default Model for this Project
+            </Typography>
+            <Select
+              labelId="model"
+              id="model"
+              fullWidth
+              value={defaultModel}
+              onChange={handleModelChange}
+            >
+              {modelList.map(value => (
+                <MenuItem value={value}>{value}</MenuItem>
+              ))}
+            </Select>
+            <Box m={2}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                mt={1}
+              >
+                Create
+              </Button>
+            </Box>
           </form>
         </DialogContent>
       </Dialog>
