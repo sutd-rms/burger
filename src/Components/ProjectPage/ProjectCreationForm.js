@@ -60,8 +60,8 @@ const DialogActions = withStyles(theme => ({
 export default function ProjectCreationForm(props) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [company, setCompany] = useState("");
-  const [companyList, setCompanyList] = useState([
+  const [organization, setOrganization] = useState("");
+  const [organizationList, setOrganizationList] = useState([
     "RMS",
     "McDonald Australia",
     "McDonald SG"
@@ -77,8 +77,8 @@ export default function ProjectCreationForm(props) {
       name,
       ", description: ",
       description,
-      ", company: ",
-      company,
+      ", organization: ",
+      organization,
       ", model: ",
       defaultModel
     );
@@ -93,8 +93,8 @@ export default function ProjectCreationForm(props) {
     setDescription(e.target.value);
   };
 
-  const handleCompanyChange = e => {
-    setCompany(e.target.value);
+  const handleOrganizationChange = e => {
+    setOrganization(e.target.value);
   };
 
   const handleModelChange = e => {
@@ -142,17 +142,19 @@ export default function ProjectCreationForm(props) {
               id="description"
             />
             <Typography variant="subtitle2" gutterBottom>
-              Client Company
+              Client Organization
             </Typography>
             <Select
               labelId="demo-simple-select-filled-label"
               id="demo-simple-select-filled"
               fullWidth
-              value={company}
-              onChange={handleCompanyChange}
+              value={organization}
+              onChange={handleOrganizationChange}
             >
-              {companyList.map(value => (
-                <MenuItem value={value}>{value}</MenuItem>
+              {organizationList.map(value => (
+                <MenuItem value={value} id={value}>
+                  {value}
+                </MenuItem>
               ))}
             </Select>
             <Typography variant="subtitle2" gutterBottom>
@@ -166,7 +168,9 @@ export default function ProjectCreationForm(props) {
               onChange={handleModelChange}
             >
               {modelList.map(value => (
-                <MenuItem value={value}>{value}</MenuItem>
+                <MenuItem value={value} id={value}>
+                  {value}
+                </MenuItem>
               ))}
             </Select>
             <Box m={2}>
