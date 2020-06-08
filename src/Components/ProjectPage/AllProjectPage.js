@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import ProjectCard from "./ProjectCard";
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import ProjectCard from './ProjectCard';
+import DataUploadForm from './DataUploadForm';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,9 +10,9 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from "react-router-dom";
-import FloatingAddButton from "../FloatingAddButton";
-import ProjectCreationForm from "./ProjectCreationForm";
+} from 'react-router-dom';
+import FloatingAddButton from '../FloatingAddButton';
+import ProjectCreationForm from './ProjectCreationForm';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -54,6 +55,10 @@ export default function AllProjectPage() {
       />
 
       <Switch>
+        {/* To be refactored afterwards */}
+        <Route path={`${match.path}/data`}>
+          <DataUploadForm />
+        </Route>
         <Route path={`${match.path}/:projectId`}>
           <Project />
         </Route>
