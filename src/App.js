@@ -6,9 +6,9 @@ import {
   Route,
   useRouteMatch,
   useParams
-} from "react-router-dom";
+} from 'react-router-dom';
 import Dashboard from './Components/Dashboard.js';
-import Login from './Components/Login'
+import Login from './Components/Login';
 
 function App() {
   return (
@@ -17,7 +17,7 @@ function App() {
           renders the first one that matches the current URL. */}
       <Switch>
         <Route path="/login">
-          <Login/>
+          <Login />
         </Route>
         <Route path="/logout">
           <div>logout</div>
@@ -29,10 +29,10 @@ function App() {
           <Dashboard />
         </Route>
         <Route path="/">
-          <div>Home</div>
+          <Login />
         </Route>
       </Switch>
-  </Router>
+    </Router>
   );
 }
 
