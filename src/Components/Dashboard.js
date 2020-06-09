@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,16 +6,17 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from "react-router-dom";
-import DashboardSideBar from "./DashboardSideBar";
-import FloatingAddButton from "./FloatingAddButton";
-import styled from "styled-components";
-import AllProjectPage from "./ProjectPage/AllProjectPage";
-import AllModelsPage from "./ModelsPage/AllModelsPage";
+} from 'react-router-dom';
+import DashboardSideBar from './DashboardSideBar';
+import FloatingAddButton from './FloatingAddButton';
+import styled from 'styled-components';
+import AllProjectPage from './ProjectPage/AllProjectPage';
+import AllModelsPage from './ModelsPage/AllModelsPage';
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
-  padding: 10px;
+  padding: 50px;
+  padding-top: 40px;
 `;
 
 function Dashboard() {
@@ -51,7 +52,7 @@ function Dashboards() {
 
   return (
     <div>
-      <h3>Dashboards page</h3>
+      <p>Dashboards page</p>
     </div>
   );
 }
@@ -59,7 +60,7 @@ function Dashboards() {
 function Users() {
   let match = useRouteMatch();
   let onCreate = () => {
-    console.log("Creating new user...");
+    console.log('Creating new user...');
   };
 
   return (
