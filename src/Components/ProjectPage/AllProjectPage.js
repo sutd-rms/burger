@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ProjectCard from './ProjectCard';
+import DataUploadForm from './DataUploadForm';
 import DashboardTopNav from './../DashboardTopNav';
 import {
   BrowserRouter as Router,
@@ -49,6 +50,10 @@ export default function AllProjectPage() {
   return (
     <div>
       <Switch>
+        {/* To be refactored afterwards */}
+        <Route path={`${match.path}/data`}>
+          <DataUploadForm />
+        </Route>
         <Route path={`${match.path}/:projectId`}>
           <Project />
         </Route>
