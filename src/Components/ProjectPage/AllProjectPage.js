@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ProjectCard from './ProjectCard';
 import DataUploadForm from './DataUploadForm';
+import DashboardTopNav from './../DashboardTopNav';
 import {
   BrowserRouter as Router,
   Switch,
@@ -48,12 +49,6 @@ export default function AllProjectPage() {
 
   return (
     <div>
-      <FloatingAddButton onClick={handleOpen} />
-      <ProjectCreationForm
-        open={displayCreationForm}
-        handleClose={handleClose}
-      />
-
       <Switch>
         {/* To be refactored afterwards */}
         <Route path={`${match.path}/data`}>
@@ -63,6 +58,12 @@ export default function AllProjectPage() {
           <Project />
         </Route>
         <Route path={match.path}>
+          <DashboardTopNav title="projects" />
+          <FloatingAddButton onClick={handleOpen} />
+          <ProjectCreationForm
+            open={displayCreationForm}
+            handleClose={handleClose}
+          />
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <Grid container justify="flex-start" spacing={7}>
