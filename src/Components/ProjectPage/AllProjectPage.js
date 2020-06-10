@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import ProjectCard from "./ProjectCard";
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import ProjectCard from './ProjectCard';
+import DashboardTopNav from './../DashboardTopNav';
 import {
   BrowserRouter as Router,
   Switch,
@@ -9,9 +10,9 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from "react-router-dom";
-import FloatingAddButton from "../FloatingAddButton";
-import ProjectCreationForm from "./ProjectCreationForm";
+} from 'react-router-dom';
+import FloatingAddButton from '../FloatingAddButton';
+import ProjectCreationForm from './ProjectCreationForm';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,17 +48,17 @@ export default function AllProjectPage() {
 
   return (
     <div>
-      <FloatingAddButton onClick={handleOpen} />
-      <ProjectCreationForm
-        open={displayCreationForm}
-        handleClose={handleClose}
-      />
-
       <Switch>
         <Route path={`${match.path}/:projectId`}>
           <Project />
         </Route>
         <Route path={match.path}>
+          <DashboardTopNav title="projects" />
+          <FloatingAddButton onClick={handleOpen} />
+          <ProjectCreationForm
+            open={displayCreationForm}
+            handleClose={handleClose}
+          />
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <Grid container justify="flex-start" spacing={7}>
