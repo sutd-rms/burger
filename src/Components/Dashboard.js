@@ -15,7 +15,8 @@ import AllModelsPage from "./ModelsPage/AllModelsPage";
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
-  padding: 10px;
+  padding: 50px;
+  padding-top: 40px;
 `;
 
 function Dashboard() {
@@ -51,7 +52,7 @@ function Dashboards() {
 
   return (
     <div>
-      <h3>Dashboards page</h3>
+      <p>Dashboards page</p>
     </div>
   );
 }

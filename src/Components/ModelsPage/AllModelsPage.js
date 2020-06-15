@@ -12,6 +12,7 @@ import {
 import ModelCard from "./ModelCard";
 import FloatingAddButton from "../FloatingAddButton";
 import ModelCreationForm from "./ModelCreationForm";
+import DashboardTopNav from "./../DashboardTopNav";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -47,14 +48,17 @@ export default function AllModelsPage() {
 
   return (
     <div>
-      <FloatingAddButton onClick={handleOpen} />
-      <ModelCreationForm open={displayCreationForm} handleClose={handleClose} />
-
       <Switch>
         <Route path={`${match.path}/:modelId`}>
           <Model />
         </Route>
         <Route path={match.path}>
+          <DashboardTopNav title="models" />
+          <FloatingAddButton onClick={handleOpen} />
+          <ModelCreationForm
+            open={displayCreationForm}
+            handleClose={handleClose}
+          />
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <Grid container justify="flex-start" spacing={7}>

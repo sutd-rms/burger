@@ -3,11 +3,11 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import styled from "styled-components";
 
 const StyledNavItem = styled.div`
-  height: 50px;
-  line-height: 50px;
+  height: 70px;
+  line-height: 70px;
   text-align: center;
   margin-bottom: 0; /* Puts space between NavItems */
-  padding-left: 20px;
+  padding-left: 40px;
   background-color: ${props => (props.active ? "#343A40" : "#222")};
 
   :hover {
@@ -15,14 +15,14 @@ const StyledNavItem = styled.div`
   }
 
   a {
-    font-size: 1em;
+    font-size: 1.5em;
     color: white;
     text-decoration: none; /* Gets rid of underlining of icons */
   }
 
   div {
     text-align: left;
-    line-height: 50px;
+    line-height: 70px;
   }
 
   svg {

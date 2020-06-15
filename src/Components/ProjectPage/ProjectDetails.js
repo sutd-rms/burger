@@ -102,7 +102,7 @@ export default class ProjectDetails extends React.Component {
       <React.Fragment>
         <CssBaseline />
         <Container maxWidth="lg">
-          <Header title={this.state.id} />
+          {/* <Header title={this.state.id} /> */}
           <main>
             <MainMarkDown
               name={this.state.projectName}
@@ -161,11 +161,11 @@ export default class ProjectDetails extends React.Component {
           </main>
         </Container>
         <br />
-        <Footer
+        {/* <Footer
           company={this.state.company}
           date={this.state.createdDate}
           link={this.state.companyLink}
-        />
+        /> */}
       </React.Fragment>
     );
   }

@@ -18,7 +18,7 @@ import { Typography } from "@material-ui/core";
 const StyledSideNav = styled.div`
   position: fixed; /* Fixed Sidebar (stay in place on scroll and position relative to viewport) */
   height: 100%;
-  width: 230px; /* Set the width of the sidebar */
+  width: 250px; /* Set the width of the sidebar */
   z-index: 1; /* Stay on top of everything */
   background-color: #222; /* Black */
   overflow-x: hidden; /* Disable horizontal scroll */
@@ -31,13 +31,13 @@ const StyledSideNav = styled.div`
   }
 
   .currentUser {
-    height: 50px;
+    height: 100px;
     background-color: #184085;
     font-size: 1.3em;
   }
 
   .currentUserImage {
-    width: 70%;
+    width: 100%;
     height: auto;
     margin-left: 20px;
   }

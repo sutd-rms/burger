@@ -8,7 +8,7 @@ const StyledContainer = styled.div`
   position: absolute;
   bottom: 3px;
   width: 100%;
-  height: 35px;
+  height: 70px;
   padding-left: 40px;
 
   :hover {
@@ -16,14 +16,14 @@ const StyledContainer = styled.div`
   }
 
   a {
-    font-size: 1em;
+    font-size: 1.5em;
     color: white;
     text-decoration: none; /* Gets rid of underlining of icons */
   }
 
   div {
     text-align: left;
-    line-height: 35px;
+    line-height: 70px;
   }
 
   svg {
