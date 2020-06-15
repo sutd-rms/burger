@@ -12,6 +12,7 @@ import {
 } from "react-router-dom";
 import FloatingAddButton from "../FloatingAddButton";
 import ProjectCreationForm from "./ProjectCreationForm";
+import ProjectDetails from "./ProjectDetails";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -25,11 +26,6 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(5)
   }
 }));
-
-function Project() {
-  let { projectId } = useParams();
-  return <h3>Requested project ID: {projectId}</h3>;
-}
 
 export default function AllProjectPage() {
   const [projectIdList, setProjectIdList] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
@@ -47,17 +43,16 @@ export default function AllProjectPage() {
 
   return (
     <div>
-      <FloatingAddButton onClick={handleOpen} />
-      <ProjectCreationForm
-        open={displayCreationForm}
-        handleClose={handleClose}
-      />
-
       <Switch>
         <Route path={`${match.path}/:projectId`}>
-          <Project />
+          <ProjectDetails />
         </Route>
         <Route path={match.path}>
+          <FloatingAddButton onClick={handleOpen} />
+          <ProjectCreationForm
+            open={displayCreationForm}
+            handleClose={handleClose}
+          />
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <Grid container justify="flex-start" spacing={7}>
