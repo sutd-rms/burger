@@ -76,7 +76,7 @@ class DataUploadForm extends React.Component {
           onDrop={this.onDrop}
           disabled={this.state.disableUpload}
           multiple={false}
-          accept="text/csv"
+          accept=".csv"
         >
           {({ getRootProps, getInputProps }) => (
             <section className="container" className={classes.dropContainer}>
