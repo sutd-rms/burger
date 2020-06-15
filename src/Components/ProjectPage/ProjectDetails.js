@@ -1,24 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Header from "./MarkdownComponents/Header";
 import MainMarkDown from "./MarkdownComponents/MainMarkDown";
 import FeaturedMarkDown from "./MarkdownComponents/FeaturedMarkDown";
-import MarkDown from "./MarkdownComponents/MarkDown";
 import Footer from "./MarkdownComponents/Footer";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
-import Divider from "@material-ui/core/Divider";
-
-const mainFeaturedPost = {
-  title: "Title of a longer featured blog post",
-  description:
-    "Multiple lines of text that form the lede, informing new readers quickly and efficiently about what's most interesting in this post's contents.",
-  image: "https://source.unsplash.com/random",
-  imgText: "main image description",
-  linkText: "Continue reading…"
-};
 
 const modelsList = [
   {

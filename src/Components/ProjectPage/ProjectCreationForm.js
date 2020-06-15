@@ -12,6 +12,8 @@ import TextField from "@material-ui/core/TextField";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import Box from "@material-ui/core/Box";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const styles = theme => ({
   root: {
@@ -50,12 +52,9 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent);
 
-const DialogActions = withStyles(theme => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1)
-  }
-}))(MuiDialogActions);
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function ProjectCreationForm(props) {
   const [name, setName] = useState("");
@@ -68,6 +67,7 @@ export default function ProjectCreationForm(props) {
   ]);
   const [modelList, setModelList] = useState(["MCMC", "Brute Force"]);
   const [defaultModel, setDefaultModel] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const onFormSubmission = e => {
     e.preventDefault();
@@ -83,6 +83,7 @@ export default function ProjectCreationForm(props) {
       defaultModel
     );
     props.handleClose();
+    setSuccess(true);
   };
 
   const handleNameChange = e => {
@@ -99,6 +100,10 @@ export default function ProjectCreationForm(props) {
 
   const handleModelChange = e => {
     setDefaultModel(e.target.value);
+  };
+
+  const handleCloseSnackbar = e => {
+    setSuccess(false);
   };
 
   return (
@@ -187,6 +192,15 @@ export default function ProjectCreationForm(props) {
           </form>
         </DialogContent>
       </Dialog>
+      <Snackbar
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          New project created!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
