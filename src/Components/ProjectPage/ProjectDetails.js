@@ -2,30 +2,14 @@ import React, { useState } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
-} from "react-router-dom";
-import FloatingAddButton from "../FloatingAddButton";
 import Header from "./MarkdownComponents/Header";
 import MainMarkDown from "./MarkdownComponents/MainMarkDown";
 import FeaturedMarkDown from "./MarkdownComponents/FeaturedMarkDown";
 import MarkDown from "./MarkdownComponents/MarkDown";
 import Footer from "./MarkdownComponents/Footer";
-import txt from "../../static/sample_text.txt";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
-
-import GitHubIcon from "@material-ui/icons/GitHub";
-import FacebookIcon from "@material-ui/icons/Facebook";
-import TwitterIcon from "@material-ui/icons/Twitter";
-
-const posts = [txt];
 
 const mainFeaturedPost = {
   title: "Title of a longer featured blog post",
@@ -100,89 +84,100 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-export default function ProjectDetails(props) {
-  let { projectId } = useParams();
-  let [datasetList, setDatasetList] = useState(datasetsList);
-  let [modelList, setModelList] = useState(modelsList);
-  let [projectName, setProjectName] = useState("Default Project Name");
-  let [projectDescription, setProjectDescription] = useState(
-    "Defualt Project Description"
-  );
-  let [createdDate, setCreatedDate] = useState("06/14/2020");
-  let [company, setCompany] = useState("McDonald Australia");
-  let [companyLink, setCompanyLink] = useState("www.google.com");
-  let [img, setImg] = useState("https://source.unsplash.com/random");
-  const classes = useStyles();
+export default class ProjectDetails extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      id: "",
+      datasetList: datasetsList,
+      modelList: modelsList,
+      projectName: "Default Project Name",
+      projectDescription: "Defualt Project Description",
+      createdDate: "06/14/2020",
+      company: "McDonald Australia",
+      companyLink: "www.google.com",
+      img: "https://source.unsplash.com/random"
+    };
+  }
 
-  return (
-    <React.Fragment>
-      <CssBaseline />
-      <Container maxWidth="lg">
-        <Header title={projectId} />
-        <main>
-          <MainMarkDown
-            name={projectName}
-            description={projectDescription}
-            date={createdDate}
-            img={img}
-          />
-          <Grid container spacing={4} direction="row">
-            <Grid item xs={6}>
-              <Typography
-                component="h2"
-                variant="h5"
-                color="inherit"
-                align="left"
-                noWrap
-              >
-                Models in Use
-              </Typography>
-              {/* <Divider variant="middle" /> */}
-              <br />
-              <Grid container spacing={4} direction="column">
-                {modelList.map(model => (
-                  <FeaturedMarkDown
-                    key={model.id}
-                    description={model.description}
-                    name={model.name}
-                    date={model.date}
-                    img={model.image}
-                  />
-                ))}
+  componentDidMount() {
+    const id = this.props.match.params.projectId;
+    // FETCH & SET STATE
+    this.setState({
+      id: id
+    });
+  }
+
+  render() {
+    return (
+      <React.Fragment>
+        <CssBaseline />
+        <Container maxWidth="lg">
+          <Header title={this.state.id} />
+          <main>
+            <MainMarkDown
+              name={this.state.projectName}
+              description={this.state.projectDescription}
+              date={this.state.createdDate}
+              img={this.state.img}
+            />
+            <Grid container spacing={4} direction="row">
+              <Grid item xs={6}>
+                <Typography
+                  component="h2"
+                  variant="h5"
+                  color="inherit"
+                  align="left"
+                  noWrap
+                >
+                  Models in Use
+                </Typography>
+                <br />
+                <Grid container spacing={4} direction="column">
+                  {this.state.modelList.map(model => (
+                    <FeaturedMarkDown
+                      key={model.id}
+                      description={model.description}
+                      name={model.name}
+                      date={model.date}
+                      img={model.image}
+                    />
+                  ))}
+                </Grid>
+              </Grid>
+              <Grid item xs={6}>
+                <Typography
+                  component="h2"
+                  variant="h5"
+                  color="inherit"
+                  align="left"
+                  noWrap
+                >
+                  Datasets Available
+                </Typography>
+                <br />
+                <Grid container spacing={4} direction="column">
+                  {this.state.datasetList.map(dataset => (
+                    <FeaturedMarkDown
+                      key={dataset.id}
+                      description={dataset.description}
+                      name={dataset.name}
+                      date={dataset.date}
+                      img={dataset.image}
+                    />
+                  ))}
+                </Grid>
               </Grid>
             </Grid>
-            {/* <Divider variant="middle" orientation="vertical"/> */}
-
-            {/* <br /> */}
-            <Grid item xs={6}>
-              <Typography
-                component="h2"
-                variant="h5"
-                color="inherit"
-                align="left"
-                noWrap
-              >
-                Datasets Available
-              </Typography>
-              {/* <Divider variant="middle" /> */}
-              <br />
-              <Grid container spacing={4} direction="column">
-                {datasetList.map(dataset => (
-                  <FeaturedMarkDown
-                    key={dataset.id}
-                    description={dataset.description}
-                    name={dataset.name}
-                    date={dataset.date}
-                    img={dataset.image}
-                  />
-                ))}
-              </Grid>
-            </Grid>
-          </Grid>
-        </main>
-      </Container>
-      <br />
-      <Footer company={company} date={createdDate} link={companyLink} />
-    </React.Fragment>
-  );
+          </main>
+        </Container>
+        <br />
+        <Footer
+          company={this.state.company}
+          date={this.state.createdDate}
+          link={this.state.companyLink}
+        />
+      </React.Fragment>
+    );
+  }
 }

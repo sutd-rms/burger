@@ -30,7 +30,6 @@ const useStyles = makeStyles(theme => ({
 export default function AllProjectPage() {
   const [projectIdList, setProjectIdList] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
   const [displayCreationForm, setDisplayCreationForm] = useState(false);
-  const classes = useStyles();
   let match = useRouteMatch();
 
   const handleOpen = () => {
@@ -44,9 +43,7 @@ export default function AllProjectPage() {
   return (
     <div>
       <Switch>
-        <Route path={`${match.path}/:projectId`}>
-          <ProjectDetails />
-        </Route>
+        <Route path={`${match.path}/:projectId`} component={ProjectDetails} />
         <Route path={match.path}>
           <FloatingAddButton onClick={handleOpen} />
           <ProjectCreationForm
