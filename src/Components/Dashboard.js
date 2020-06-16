@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   BrowserRouter as Router,
   Switch,
@@ -6,12 +6,12 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from 'react-router-dom';
-import DashboardSideBar from './DashboardSideBar';
-import FloatingAddButton from './FloatingAddButton';
-import styled from 'styled-components';
-import AllProjectPage from './ProjectPage/AllProjectPage';
-import AllModelsPage from './ModelsPage/AllModelsPage';
+} from "react-router-dom";
+import DashboardSideBar from "./DashboardSideBar";
+import FloatingAddButton from "./FloatingAddButton";
+import styled from "styled-components";
+import AllProjectPage from "./ProjectPage/AllProjectPage";
+import AllModelsPage from "./ModelsPage/AllModelsPage";
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
@@ -60,12 +60,11 @@ function Dashboards() {
 function Users() {
   let match = useRouteMatch();
   let onCreate = () => {
-    console.log('Creating new user...');
+    console.log("Creating new user...");
   };
 
   return (
     <div>
-      <FloatingAddButton onClick={onCreate} />
       <Switch>
         <Route path={`${match.path}/:userId`}>
           <User />
@@ -83,27 +82,5 @@ function User() {
 
   return <h3>Requested user ID: {userId}</h3>;
 }
-
-// function Models() {
-//   let match = useRouteMatch();
-
-//   let onCreate = () => {
-//     console.log("Creating new model...");
-//   };
-
-//   return (
-//     <div>
-//       <FloatingAddButton onClick={onCreate} />
-//       <Switch>
-//         <Route path={`${match.path}/:modelId`}>
-//           <Model />
-//         </Route>
-//         <Route path={match.path}>
-//           <AllModelsPage />
-//         </Route>
-//       </Switch>
-//     </div>
-//   );
-// }
 
 export default Dashboard;

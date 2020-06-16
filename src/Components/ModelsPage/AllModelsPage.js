@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
 import {
   BrowserRouter as Router,
   Switch,
@@ -8,11 +8,11 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from 'react-router-dom';
-import ModelCard from './ModelCard';
-import FloatingAddButton from '../FloatingAddButton';
-import ModelCreationForm from './ModelCreationForm';
-import DashboardTopNav from './../DashboardTopNav';
+} from "react-router-dom";
+import ModelCard from "./ModelCard";
+import FloatingAddButton from "../FloatingAddButton";
+import ModelCreationForm from "./ModelCreationForm";
+import DashboardTopNav from "./../DashboardTopNav";
 
 const useStyles = makeStyles(theme => ({
   root: {

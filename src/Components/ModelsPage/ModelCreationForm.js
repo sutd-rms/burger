@@ -9,6 +9,8 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const styles = theme => ({
   root: {
@@ -22,6 +24,10 @@ const styles = theme => ({
     color: theme.palette.grey[500]
   }
 });
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
@@ -58,6 +64,7 @@ export default function ModelCreationForm(props) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [company, setCompany] = useState(null);
+  const [success, setSuccess] = useState(false);
 
   const onFormSubmission = e => {
     e.preventDefault();
@@ -71,6 +78,7 @@ export default function ModelCreationForm(props) {
       company
     );
     props.handleClose();
+    setSuccess(true);
   };
 
   const handleNameChange = e => {
@@ -79,6 +87,10 @@ export default function ModelCreationForm(props) {
 
   const handleDescriptionChange = e => {
     setDescription(e.target.value);
+  };
+
+  const handleCloseSnackbar = e => {
+    setSuccess(false);
   };
 
   return (
@@ -129,6 +141,15 @@ export default function ModelCreationForm(props) {
           </form>
         </DialogContent>
       </Dialog>
+      <Snackbar
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          New model created!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

@@ -1,15 +1,15 @@
-import React from 'react';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import { withStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
   root: {
     marginBottom: 30,
-    fontSize: '1.8em',
-    textTransform: 'uppercase'
+    fontSize: "1.8em",
+    textTransform: "uppercase"
   },
 
   underlined: {
-    borderBottom: '4px solid #F6B318',
+    borderBottom: "4px solid #F6B318",
     paddingBottom: 6,
     paddingRight: 10
   }

@@ -9,6 +9,11 @@ import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
 import Typography from "@material-ui/core/Typography";
 import TextField from "@material-ui/core/TextField";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
+import Box from "@material-ui/core/Box";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 
 const styles = theme => ({
   root: {
@@ -47,17 +52,22 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent);
 
-const DialogActions = withStyles(theme => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1)
-  }
-}))(MuiDialogActions);
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function ProjectCreationForm(props) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [company, setCompany] = useState(null);
+  const [organization, setOrganization] = useState("");
+  const [organizationList, setOrganizationList] = useState([
+    "RMS",
+    "McDonald Australia",
+    "McDonald SG"
+  ]);
+  const [modelList, setModelList] = useState(["MCMC", "Brute Force"]);
+  const [defaultModel, setDefaultModel] = useState("");
+  const [success, setSuccess] = useState(false);
 
   const onFormSubmission = e => {
     e.preventDefault();
@@ -67,10 +77,13 @@ export default function ProjectCreationForm(props) {
       name,
       ", description: ",
       description,
-      ", company: ",
-      company
+      ", organization: ",
+      organization,
+      ", model: ",
+      defaultModel
     );
     props.handleClose();
+    setSuccess(true);
   };
 
   const handleNameChange = e => {
@@ -81,9 +94,22 @@ export default function ProjectCreationForm(props) {
     setDescription(e.target.value);
   };
 
+  const handleOrganizationChange = e => {
+    setOrganization(e.target.value);
+  };
+
+  const handleModelChange = e => {
+    setDefaultModel(e.target.value);
+  };
+
+  const handleCloseSnackbar = e => {
+    setSuccess(false);
+  };
+
   return (
     <div>
       <Dialog
+        fullWidth={true}
         onClose={props.handleClose}
         aria-labelledby="customized-dialog-title"
         open={props.open}
@@ -93,26 +119,24 @@ export default function ProjectCreationForm(props) {
         </DialogTitle>
         <DialogContent dividers>
           <form noValidate onSubmit={onFormSubmission}>
-            <Typography gutterBottom>
-              Praesent commodo cursus magna, vel scelerisque nisl consectetur
-              et. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor
-              auctor.
+            <Typography variant="subtitle2" gutterBottom>
+              Project Name
             </Typography>
             <TextField
               variant="outlined"
-              margin="normal"
               required
               fullWidth
               id="projectName"
-              label="Project Name"
               name="Project Name"
               value={name}
               onChange={handleNameChange}
               autoFocus
             />
+            <Typography variant="subtitle2" gutterBottom>
+              Project Description
+            </Typography>
             <TextField
               variant="outlined"
-              margin="normal"
               required
               multiline
               rows={4}
@@ -120,15 +144,63 @@ export default function ProjectCreationForm(props) {
               value={description}
               onChange={handleDescriptionChange}
               name="description"
-              label="Project Description"
               id="description"
             />
-            <Button type="submit" fullWidth variant="contained" color="primary">
-              Create
-            </Button>
+            <Typography variant="subtitle2" gutterBottom>
+              Client Organization
+            </Typography>
+            <Select
+              labelId="demo-simple-select-filled-label"
+              id="demo-simple-select-filled"
+              fullWidth
+              value={organization}
+              onChange={handleOrganizationChange}
+            >
+              {organizationList.map(value => (
+                <MenuItem value={value} id={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </Select>
+            <Typography variant="subtitle2" gutterBottom>
+              Default Model for this Project
+            </Typography>
+            <Select
+              labelId="model"
+              id="model"
+              fullWidth
+              value={defaultModel}
+              onChange={handleModelChange}
+            >
+              {modelList.map(value => (
+                <MenuItem value={value} id={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </Select>
+            <Box m={2}>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                mt={1}
+              >
+                Create
+              </Button>
+            </Box>
           </form>
         </DialogContent>
       </Dialog>
+      <Snackbar
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          New project created!
+        </Alert>
+      </Snackbar>
     </div>
   );
 }

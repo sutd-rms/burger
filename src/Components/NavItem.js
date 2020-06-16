@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import styled from "styled-components";
 
@@ -6,13 +6,13 @@ const StyledNavItem = styled.div`
   height: 70px;
   line-height: 70px;
   text-align: center;
-  margin-bottom: 0;   /* Puts space between NavItems */
-  padding-left: 40px; 
-  background-color: ${(props) => props.active ? "#343A40" : "#222"};
+  margin-bottom: 0; /* Puts space between NavItems */
+  padding-left: 40px;
+  background-color: ${props => (props.active ? "#343A40" : "#222")};
 
   :hover {
-    background-color: #343A40;
-  } 
+    background-color: #343a40;
+  }
 
   a {
     font-size: 1.5em;
@@ -32,21 +32,18 @@ const StyledNavItem = styled.div`
   }
 `;
 
-
 export default class NavItem extends React.Component {
-
   handleClick = () => {
     const { path, onItemClick } = this.props;
     onItemClick(path);
-  }
+  };
 
   render() {
-
     const { active } = this.props;
 
     return (
       <StyledNavItem active={active}>
-        <Link to={this.props.path}onClick={this.handleClick}>
+        <Link to={this.props.path} onClick={this.handleClick}>
           <div>
             {this.props.icon}
             {this.props.name}
@@ -56,4 +53,3 @@ export default class NavItem extends React.Component {
     );
   }
 }
-
