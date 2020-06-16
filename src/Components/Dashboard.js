@@ -12,6 +12,7 @@ import FloatingAddButton from './FloatingAddButton';
 import styled from 'styled-components';
 import AllProjectPage from './ProjectPage/AllProjectPage';
 import AllModelsPage from './ModelsPage/AllModelsPage';
+import AllUsersPage from './UsersPage/AllUsersPage';
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
@@ -31,7 +32,7 @@ function Dashboard() {
             path={`${match.path}/dashboards`}
             component={Dashboards}
           ></Route>
-          <Route path={`${match.path}/users`} component={Users}></Route>
+          <Route path={`${match.path}/users`} component={AllUsersPage}></Route>
           <Route
             path={`${match.path}/models`}
             component={AllModelsPage}
@@ -55,32 +56,6 @@ function Dashboards() {
       <p>Dashboards page</p>
     </div>
   );
-}
-
-function Users() {
-  let match = useRouteMatch();
-  let onCreate = () => {
-    console.log('Creating new user...');
-  };
-
-  return (
-    <div>
-      <Switch>
-        <Route path={`${match.path}/:userId`}>
-          <User />
-        </Route>
-        <Route path={match.path}>
-          <h3>Please select a user.</h3>
-        </Route>
-      </Switch>
-    </div>
-  );
-}
-
-function User() {
-  let { userId } = useParams();
-
-  return <h3>Requested user ID: {userId}</h3>;
 }
 
 export default Dashboard;
