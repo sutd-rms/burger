@@ -1,18 +1,18 @@
-import React from 'react';
-import { Button, Box } from '@material-ui/core';
-import Dropzone from 'react-dropzone';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import AttachmentIcon from '@material-ui/icons/Attachment';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import { withStyles } from '@material-ui/core/styles';
+import React from "react";
+import { Button, Box } from "@material-ui/core";
+import Dropzone from "react-dropzone";
+import CheckCircleOutlineIcon from "@material-ui/icons/CheckCircleOutline";
+import AttachmentIcon from "@material-ui/icons/Attachment";
+import CloudUploadIcon from "@material-ui/icons/CloudUpload";
+import { withStyles } from "@material-ui/core/styles";
 
 const styles = theme => ({
   root: {
-    textAlign: 'center'
+    textAlign: "center"
   },
 
   uploadIcon: {
-    fontSize: '3em',
+    fontSize: "3em",
     marginBottom: 10
   },
 
@@ -21,16 +21,16 @@ const styles = theme => ({
     padding: 100,
     border: 3,
     borderRadius: 10,
-    borderColor: '#EEEEEE',
-    borderStyle: 'dashed',
-    color: 'grey',
-    margin: 'auto',
+    borderColor: "#EEEEEE",
+    borderStyle: "dashed",
+    color: "grey",
+    margin: "auto",
     marginBottom: 50,
-    backgroundColor: '#FAFAFA'
+    backgroundColor: "#FAFAFA"
   },
 
   uploaded: {
-    color: '#3176D2'
+    color: "#3176D2"
   }
 });
 
@@ -66,7 +66,7 @@ class DataUploadForm extends React.Component {
         <Box component="span" ml={1} mr={2}>
           {file.name} - {file.size} bytes
         </Box>
-        <CheckCircleOutlineIcon style={{ fill: 'green' }} />
+        <CheckCircleOutlineIcon style={{ fill: "green" }} />
       </span>
     ));
 
@@ -76,11 +76,11 @@ class DataUploadForm extends React.Component {
           onDrop={this.onDrop}
           disabled={this.state.disableUpload}
           multiple={false}
-          accept="text/csv"
+          accept=".csv"
         >
           {({ getRootProps, getInputProps }) => (
             <section className="container" className={classes.dropContainer}>
-              <div {...getRootProps({ className: 'dropzone' })}>
+              <div {...getRootProps({ className: "dropzone" })}>
                 <input {...getInputProps()} />
                 <CloudUploadIcon
                   className={`${classes.uploadIcon} ${
@@ -90,7 +90,7 @@ class DataUploadForm extends React.Component {
                 <p>
                   {this.state.files.length == 0
                     ? "Drag 'n' Drop your CSV file here, or click to select file"
-                    : 'Click to Change File'}
+                    : "Click to Change File"}
                 </p>
                 {files}
               </div>

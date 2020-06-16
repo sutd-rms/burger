@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
-import ProjectCard from './ProjectCard';
-import DataUploadForm from './DataUploadForm';
-import DashboardTopNav from './../DashboardTopNav';
+import React, { useState } from "react";
+import { makeStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import ProjectCard from "./ProjectCard";
+import DataUploadForm from "./DataUploadForm";
+import DashboardTopNav from "./../DashboardTopNav";
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,9 +11,10 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from 'react-router-dom';
-import FloatingAddButton from '../FloatingAddButton';
-import ProjectCreationForm from './ProjectCreationForm';
+} from "react-router-dom";
+import FloatingAddButton from "../FloatingAddButton";
+import ProjectCreationForm from "./ProjectCreationForm";
+import ProjectDetails from "./ProjectDetails";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -28,15 +29,9 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-function Project() {
-  let { projectId } = useParams();
-  return <h3>Requested project ID: {projectId}</h3>;
-}
-
 export default function AllProjectPage() {
   const [projectIdList, setProjectIdList] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
   const [displayCreationForm, setDisplayCreationForm] = useState(false);
-  const classes = useStyles();
   let match = useRouteMatch();
 
   const handleOpen = () => {
@@ -54,9 +49,7 @@ export default function AllProjectPage() {
         <Route path={`${match.path}/data`}>
           <DataUploadForm />
         </Route>
-        <Route path={`${match.path}/:projectId`}>
-          <Project />
-        </Route>
+        <Route path={`${match.path}/:projectId`} component={ProjectDetails} />
         <Route path={match.path}>
           <DashboardTopNav title="projects" />
           <FloatingAddButton onClick={handleOpen} />

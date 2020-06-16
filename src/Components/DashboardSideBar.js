@@ -1,18 +1,19 @@
-import React from 'react';
+import React from "react";
 import {
   BrowserRouter as Router,
   Route,
   Link,
   withRouter
-} from 'react-router-dom';
-import NavItem from './NavItem';
-import LogoutContainer from './LogoutContainer';
-import styled from 'styled-components';
-import { Figure, Image, Col, Row } from 'react-bootstrap';
-import HomeIcon from '@material-ui/icons/Home';
-import FolderIcon from '@material-ui/icons/Folder';
-import AccountTreeIcon from '@material-ui/icons/AccountTree';
-import PersonIcon from '@material-ui/icons/Person';
+} from "react-router-dom";
+import NavItem from "./NavItem";
+import LogoutContainer from "./LogoutContainer";
+import styled from "styled-components";
+import { Figure, Image, Col, Row } from "react-bootstrap";
+import HomeIcon from "@material-ui/icons/Home";
+import FolderIcon from "@material-ui/icons/Folder";
+import AccountTreeIcon from "@material-ui/icons/AccountTree";
+import PersonIcon from "@material-ui/icons/Person";
+import { Typography } from "@material-ui/core";
 
 const StyledSideNav = styled.div`
   position: fixed; /* Fixed Sidebar (stay in place on scroll and position relative to viewport) */
@@ -46,30 +47,31 @@ class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      username: "Meng Siong",
       activePath: props.location.pathname,
       items: [
         {
           path:
-            '/Dashboard/dashboards' /* path is used as id to check which NavItem is active basically */,
-          name: 'Dashboard',
+            "/Dashboard/dashboards" /* path is used as id to check which NavItem is active basically */,
+          name: "Dashboard",
           key: 1 /* Key is required, else console throws error. Does this please you Mr. Browser?! */,
           icon: <HomeIcon />
         },
         {
-          path: '/Dashboard/projects',
-          name: 'Projects',
+          path: "/Dashboard/projects",
+          name: "Projects",
           key: 2,
           icon: <FolderIcon />
         },
         {
-          path: '/Dashboard/models',
-          name: 'Models',
+          path: "/Dashboard/models",
+          name: "Models",
           key: 3,
           icon: <AccountTreeIcon />
         },
         {
-          path: '/Dashboard/users',
-          name: 'Users',
+          path: "/Dashboard/users",
+          name: "Users",
           key: 4,
           icon: <PersonIcon />
         }
@@ -102,7 +104,9 @@ class Sidebar extends React.Component {
             />
           </Col>
           <Col md={8} className="my-auto currentUserText">
-            <div className="">Hello, Meng Siong!</div>
+            <Typography variant="subtitle2">
+              Hello, {this.state.username}!
+            </Typography>
           </Col>
         </Row>
         {/* items = just array AND map() loops thru that array AND item is param of that loop */
@@ -119,7 +123,7 @@ class Sidebar extends React.Component {
             />
           );
         })}
-        <LogoutContainer></LogoutContainer>
+        <LogoutContainer />
       </StyledSideNav>
     );
   }

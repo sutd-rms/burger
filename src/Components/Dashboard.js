@@ -65,7 +65,6 @@ function Users() {
 
   return (
     <div>
-      <FloatingAddButton onClick={onCreate} />
       <Switch>
         <Route path={`${match.path}/:userId`}>
           <User />
@@ -83,27 +82,5 @@ function User() {
 
   return <h3>Requested user ID: {userId}</h3>;
 }
-
-// function Models() {
-//   let match = useRouteMatch();
-
-//   let onCreate = () => {
-//     console.log("Creating new model...");
-//   };
-
-//   return (
-//     <div>
-//       <FloatingAddButton onClick={onCreate} />
-//       <Switch>
-//         <Route path={`${match.path}/:modelId`}>
-//           <Model />
-//         </Route>
-//         <Route path={match.path}>
-//           <AllModelsPage />
-//         </Route>
-//       </Switch>
-//     </div>
-//   );
-// }
 
 export default Dashboard;
