@@ -56,8 +56,8 @@ class DataUploadForm extends React.Component {
       });
     };
     this.state = {
-      files: []
-      // success: false
+      files: [],
+      success: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -72,12 +72,15 @@ class DataUploadForm extends React.Component {
     this.setState({
       success: true
     });
-    this.props.handleCloseDataUploadForm();
+    // WAIT AND REFRESH PAGE HERE
+    setTimeout(function() {
+      window.location.reload(false);
+    }, 2000);
   }
 
-  // handleCloseSnackbar(event) {
-  //   this.setState({ success: false });
-  // }
+  handleCloseSnackbar(event) {
+    this.setState({ success: false });
+  }
 
   render() {
     const { classes } = this.props;
@@ -143,6 +146,13 @@ class DataUploadForm extends React.Component {
             </Button>
           </Box>
         </div>
+        <Snackbar
+          open={this.state.success}
+          autoHideDuration={800}
+          // onClose={this.handleCloseSnackbar}
+        >
+          <Alert severity="success">New dataset uploaded successfully!</Alert>
+        </Snackbar>
       </Dialog>
     );
   }

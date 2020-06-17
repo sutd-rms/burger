@@ -45,10 +45,6 @@ export default function AllProjectPage() {
   return (
     <div>
       <Switch>
-        {/* To be refactored afterwards */}
-        {/* <Route path={`${match.path}/data`}>
-          <DataUploadForm />
-        </Route> */}
         <Route path={`${match.path}/:projectId`} component={ProjectDetails} />
         <Route path={match.path}>
           <DashboardTopNav title="projects" />

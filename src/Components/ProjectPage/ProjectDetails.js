@@ -97,6 +97,14 @@ export default class ProjectDetails extends React.Component {
     });
   }
 
+  handleTrain(e) {
+    console.log('train model', e);
+  }
+
+  handleView(e) {
+    console.log('view');
+  }
+
   render() {
     return (
       <React.Fragment>
@@ -130,6 +138,9 @@ export default class ProjectDetails extends React.Component {
                       name={model.name}
                       date={model.date}
                       img={model.image}
+                      buttonContent="Train Model"
+                      id={model.id}
+                      isModel={true}
                     />
                   ))}
                 </Grid>
@@ -153,6 +164,9 @@ export default class ProjectDetails extends React.Component {
                       name={dataset.name}
                       date={dataset.date}
                       img={dataset.image}
+                      id={dataset.id}
+                      buttonContent="View"
+                      onButtonClick={this.handleView}
                     />
                   ))}
                 </Grid>

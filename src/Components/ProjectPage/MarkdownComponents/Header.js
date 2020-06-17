@@ -61,7 +61,7 @@ export default function Header(props) {
           noWrap
           className={classes.toolbarTitle}
         >
-          Project Overciew: {title}
+          Project Overciew:
         </Typography>
         <IconButton>
           <SearchIcon />
@@ -95,13 +95,6 @@ export default function Header(props) {
         handleCloseDataUploadForm={handleCloseDataUploadForm}
         displayDataUploadForm={displayDataUploadForm}
       />
-      {/* <Snackbar
-        open={success}
-        autoHideDuration={800}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert severity="success">New dataset uploaded successfully!</Alert>
-      </Snackbar> */}
     </React.Fragment>
   );
 }
