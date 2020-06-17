@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import ProjectCard from "./ProjectCard";
-import DataUploadForm from "./DataUploadForm";
-import DashboardTopNav from "./../DashboardTopNav";
+import React, { useState } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import Grid from '@material-ui/core/Grid';
+import ProjectCard from './ProjectCard';
+import DataUploadForm from './DataUploadForm';
+import DashboardTopNav from './../DashboardTopNav';
 import {
   BrowserRouter as Router,
   Switch,
@@ -11,10 +11,10 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from "react-router-dom";
-import FloatingAddButton from "../FloatingAddButton";
-import ProjectCreationForm from "./ProjectCreationForm";
-import ProjectDetails from "./ProjectDetails";
+} from 'react-router-dom';
+import FloatingAddButton from '../FloatingAddButton';
+import ProjectCreationForm from './ProjectCreationForm';
+import ProjectDetails from './ProjectDetails';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -46,9 +46,9 @@ export default function AllProjectPage() {
     <div>
       <Switch>
         {/* To be refactored afterwards */}
-        <Route path={`${match.path}/data`}>
+        {/* <Route path={`${match.path}/data`}>
           <DataUploadForm />
-        </Route>
+        </Route> */}
         <Route path={`${match.path}/:projectId`} component={ProjectDetails} />
         <Route path={match.path}>
           <DashboardTopNav title="projects" />
