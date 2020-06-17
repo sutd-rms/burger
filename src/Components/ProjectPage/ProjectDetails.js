@@ -8,6 +8,15 @@ import FeaturedMarkDown from './MarkdownComponents/FeaturedMarkDown';
 import Footer from './MarkdownComponents/Footer';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Container from '@material-ui/core/Container';
+import PriceSearchTable from './PriceSearchTable';
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+  useParams
+} from 'react-router-dom';
 
 const modelsList = [
   {
@@ -107,80 +116,92 @@ export default class ProjectDetails extends React.Component {
 
   render() {
     return (
-      <React.Fragment>
-        <CssBaseline />
-        <Container maxWidth="lg">
-          <Header title={this.state.projectName} />
-          <main>
-            <MainMarkDown
-              name={this.state.projectName}
-              description={this.state.projectDescription}
-              date={this.state.createdDate}
-              img={this.state.img}
+      <div>
+        <Switch>
+          <Route path={`${this.props.match.path}/priceSearch`}>
+            <PriceSearchTable
+              projectId={this.state.projectId}
+              title={this.state.projectName}
             />
-            <Grid container spacing={4} direction="row">
-              <Grid item xs={6}>
-                <Typography
-                  component="h2"
-                  variant="h5"
-                  color="inherit"
-                  align="left"
-                  noWrap
-                >
-                  Models in Use
-                </Typography>
-                <br />
-                <Grid container spacing={4} direction="column">
-                  {this.state.modelList.map(model => (
-                    <FeaturedMarkDown
-                      key={model.id}
-                      description={model.description}
-                      name={model.name}
-                      date={model.date}
-                      img={model.image}
-                      buttonContent="Train Model"
-                      id={model.id}
-                      isModel={true}
-                    />
-                  ))}
-                </Grid>
-              </Grid>
-              <Grid item xs={6}>
-                <Typography
-                  component="h2"
-                  variant="h5"
-                  color="inherit"
-                  align="left"
-                  noWrap
-                >
-                  Datasets Available
-                </Typography>
-                <br />
-                <Grid container spacing={4} direction="column">
-                  {this.state.datasetList.map(dataset => (
-                    <FeaturedMarkDown
-                      key={dataset.id}
-                      description={dataset.description}
-                      name={dataset.name}
-                      date={dataset.date}
-                      img={dataset.image}
-                      id={dataset.id}
-                      buttonContent="View"
-                      onButtonClick={this.handleView}
-                    />
-                  ))}
-                </Grid>
-              </Grid>
-            </Grid>
-          </main>
-        </Container>
-        <br />
-        {/* <Footer
+          </Route>
+          <Route path={`${this.props.match.path}`}>
+            <React.Fragment>
+              <CssBaseline />
+              <Container maxWidth="lg">
+                <Header title={this.state.projectName} />
+                <main>
+                  <MainMarkDown
+                    name={this.state.projectName}
+                    description={this.state.projectDescription}
+                    date={this.state.createdDate}
+                    img={this.state.img}
+                  />
+                  <Grid container spacing={4} direction="row">
+                    <Grid item xs={6}>
+                      <Typography
+                        component="h2"
+                        variant="h5"
+                        color="inherit"
+                        align="left"
+                        noWrap
+                      >
+                        Models in Use
+                      </Typography>
+                      <br />
+                      <Grid container spacing={4} direction="column">
+                        {this.state.modelList.map(model => (
+                          <FeaturedMarkDown
+                            key={model.id}
+                            description={model.description}
+                            name={model.name}
+                            date={model.date}
+                            img={model.image}
+                            buttonContent="Train Model"
+                            id={model.id}
+                            isModel={true}
+                          />
+                        ))}
+                      </Grid>
+                    </Grid>
+                    <Grid item xs={6}>
+                      <Typography
+                        component="h2"
+                        variant="h5"
+                        color="inherit"
+                        align="left"
+                        noWrap
+                      >
+                        Datasets Available
+                      </Typography>
+                      <br />
+                      <Grid container spacing={4} direction="column">
+                        {this.state.datasetList.map(dataset => (
+                          <FeaturedMarkDown
+                            key={dataset.id}
+                            description={dataset.description}
+                            name={dataset.name}
+                            date={dataset.date}
+                            img={dataset.image}
+                            id={dataset.id}
+                            buttonContent="View"
+                            onButtonClick={this.handleView}
+                          />
+                        ))}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </main>
+              </Container>
+              <br />
+              {/* <Footer
           company={this.state.company}
           date={this.state.createdDate}
           link={this.state.companyLink}
         /> */}
-      </React.Fragment>
+            </React.Fragment>
+          </Route>
+        </Switch>
+      </div>
     );
   }
 }

@@ -10,6 +10,7 @@ import DataUploadForm from '../DataUploadForm';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Link from '@material-ui/core/Link';
+import { useParams } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -39,6 +40,7 @@ const useStyles = makeStyles(theme => ({
 
 export default function Header(props) {
   const classes = useStyles();
+  const match = useParams();
   const { title } = props;
 
   let [displayDataUploadForm, setDisplayDataUploadForm] = useState(false);
@@ -48,6 +50,10 @@ export default function Header(props) {
   };
   let handleCloseDataUploadForm = e => {
     setDisplayDataUploadForm(false);
+  };
+  let handlePriceSearchClick = e => {
+    console.log(match);
+    window.location.href = `/Dashboard/projects/${match.projectId}/priceSearch`;
   };
 
   return (
@@ -86,8 +92,9 @@ export default function Header(props) {
           variant="outlined"
           size="small"
           className={classes.toolbarButton}
+          onClick={handlePriceSearchClick}
         >
-          Simulation
+          Price Search
         </Button>
       </Toolbar>
 
