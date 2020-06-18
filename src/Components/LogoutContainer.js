@@ -1,7 +1,7 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import styled from "styled-components";
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import React from 'react';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import styled from 'styled-components';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 
 const StyledContainer = styled.div`
   border-top: 3px solid #343a40;
@@ -37,7 +37,7 @@ export default class LogoutContainer extends React.Component {
   render() {
     return (
       <StyledContainer>
-        <Link to="logout" onClick={this.handleClick}>
+        <Link to="/login" onClick={this.handleClick}>
           <div>
             <ExitToAppIcon />
             Sign Out
