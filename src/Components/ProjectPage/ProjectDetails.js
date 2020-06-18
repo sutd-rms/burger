@@ -90,7 +90,7 @@ export default class ProjectDetails extends React.Component {
       datasetList: datasetsList,
       modelList: modelsList,
       projectName: 'Default Project Name',
-      projectDescription: 'Defualt Project Description',
+      projectDescription: 'Default Project Description',
       createdDate: '06/14/2020',
       company: 'McDonald Australia',
       companyLink: 'www.google.com',
