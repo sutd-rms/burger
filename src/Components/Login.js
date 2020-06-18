@@ -1,25 +1,33 @@
 import React from 'react';
-import { Container, Row, Col, Button, InputGroup, Carousel, Figure, Form } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Button,
+  InputGroup,
+  Carousel,
+  Figure,
+  Form
+} from 'react-bootstrap';
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import LockOutlinedIcon from '@material-ui/icons/LockOutlined';
 import VisibilityIcon from '@material-ui/icons/Visibility';
-
+import { withRouter } from 'react-router-dom';
 class Login extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
       email: '',
       password: '',
       isRemember: false,
-      passwordShown: false,
+      passwordShown: false
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.togglePasswordVisiblity = this.togglePasswordVisiblity.bind(this);
   }
-  
+
   handleInputChange(event) {
     const target = event.target;
     const value = target.name === 'isRemember' ? target.checked : target.value;
@@ -31,7 +39,8 @@ class Login extends React.Component {
   }
 
   handleSubmit(event) {
-    alert('An email was submitted: ' + this.state.email);
+    // alert('An email was submitted: ' + this.state.email);
+    this.props.history.push('/dashboard');
     event.preventDefault();
   }
 
@@ -39,20 +48,16 @@ class Login extends React.Component {
     this.setState({
       passwordShown: this.state.passwordShown ? false : true
     });
-  };
+  }
 
   render() {
-    
     return (
       <React.Fragment>
         <Container className="homePage">
           <Row className="vh-100">
             <Col md={5} className="pr-5 my-auto loginForm">
               <Figure>
-                <Figure.Image
-                  alt="171x180"
-                  src= "/rms_logo.jpg"
-                />
+                <Figure.Image alt="171x180" src="/rms_logo.jpg" />
               </Figure>
               <Form className="my-3" onSubmit={this.handleSubmit}>
                 <Form.Group controlId="exampleForm.ControlInput1">
@@ -60,7 +65,7 @@ class Login extends React.Component {
                   <InputGroup>
                     <InputGroup.Prepend>
                       <InputGroup.Text className="inputIcon">
-                        <MailOutlineIcon/>                      
+                        <MailOutlineIcon />
                       </InputGroup.Text>
                     </InputGroup.Prepend>
                     <Form.Control
@@ -78,12 +83,12 @@ class Login extends React.Component {
                   <InputGroup>
                     <InputGroup.Prepend>
                       <InputGroup.Text className="inputIcon">
-                        <LockOutlinedIcon/>                    
+                        <LockOutlinedIcon />
                       </InputGroup.Text>
                     </InputGroup.Prepend>
                     <Form.Control
                       name="password"
-                      type={this.state.passwordShown ? "text" : "password"}
+                      type={this.state.passwordShown ? 'text' : 'password'}
                       placeholder="Enter Password"
                       aria-describedby="inputGroupPrepend"
                       onChange={this.handleInputChange}
@@ -91,7 +96,7 @@ class Login extends React.Component {
                     />
                     <InputGroup.Append>
                       <InputGroup.Text onClick={this.togglePasswordVisiblity}>
-                        <VisibilityIcon/>
+                        <VisibilityIcon />
                       </InputGroup.Text>
                     </InputGroup.Append>
                   </InputGroup>
@@ -103,9 +108,15 @@ class Login extends React.Component {
                     onChange={this.handleInputChange}
                   />
                 </Form.Group>
-                <Button variant="dark" type="submit">SIGN IN</Button>
+                <Button variant="dark" type="submit">
+                  SIGN IN
+                </Button>
               </Form>
-              <p class="mt-3"><a href="#" class="text-dark">Forgot Password?</a></p>
+              <p class="mt-3">
+                <a href="#" class="text-dark">
+                  Forgot Password?
+                </a>
+              </p>
             </Col>
             <Col md={7} className="pl-5 my-auto homeRightSection">
               <h1>Welcome Back :)</h1>
@@ -134,4 +145,4 @@ class Login extends React.Component {
   }
 }
 
-export default Login;
+export default withRouter(Login);
