@@ -63,7 +63,7 @@ const styles = theme => ({
   },
   overlayEditable: {
     position: 'absolute',
-    top: '70px',
+    top: '33%',
     left: '33%',
     color: 'white'
   },
