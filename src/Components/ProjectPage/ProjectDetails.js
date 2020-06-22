@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 import Header from './MarkdownComponents/Header';
 import MainMarkDown from './MarkdownComponents/MainMarkDown';
 import FeaturedMarkDown from './MarkdownComponents/FeaturedMarkDown';
@@ -23,6 +24,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import DataUploadForm from './DataUploadForm';
+import ProjectOverview from './ProjectOverview';
 
 const modelsList = [
   {
@@ -78,21 +80,22 @@ const datasetsList = [
 const styles = theme => ({
   root: {
     flexGrow: 1,
-    backgroundColor: theme.palette.background.paper
+    backgroundColor: theme.palette.background.paper,
+    padding: 0
   },
 
   appbar: {
     boxShadow: '0px 0px',
-    marginBottom: 30,
-    padding: '0px 24px'
+    marginBottom: 30
   },
 
   title: {
     paddingBottom: 6,
-    marginRight: 100,
+    marginRight: 50,
     fontSize: '1.8em',
     textTransform: 'uppercase',
-    borderBottom: '4px solid #F6B318'
+    borderBottom: '4px solid #F6B318',
+    maxWidth: 350
   },
 
   underlined: {
@@ -144,7 +147,7 @@ class ProjectDetails extends React.Component {
           className={classes.appbar}
         >
           <Box display="flex" alignItems="flex-end" alignContent="flex-start">
-            <span className={classes.title}>RMS McDonalds</span>
+            <span className={classes.title}>McDonalds Australia</span>
             <Tabs
               value={this.state.value}
               onChange={this.handleChange}
@@ -161,7 +164,7 @@ class ProjectDetails extends React.Component {
           </Box>
         </AppBar>
         <TabPanel value={this.state.value} index={0}>
-          This is an overview of RMS. Check out the page below
+          <ProjectOverview />
         </TabPanel>
         <TabPanel value={this.state.value} index={1}>
           Item Two
@@ -192,7 +195,7 @@ function TabPanel(props) {
       {...other}
     >
       {value === index && (
-        <Box p={3}>
+        <Box>
           <Typography>{children}</Typography>
         </Box>
       )}
