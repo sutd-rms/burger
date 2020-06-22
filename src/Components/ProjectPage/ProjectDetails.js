@@ -100,6 +100,10 @@ const styles = theme => ({
 
   underlined: {
     borderBottom: '1px solid grey'
+  },
+
+  disableFocus: {
+    outline: 'none !important'
   }
 });
 
@@ -155,11 +159,36 @@ class ProjectDetails extends React.Component {
               indicatorColor="primary"
               className={classes.underlined}
             >
-              <Tab label="Overview" {...a11yProps(0)} />
-              <Tab label="Datasets" {...a11yProps(1)} />
-              <Tab label="Train Models" {...a11yProps(2)} />
-              <Tab label="Price Optimisation" {...a11yProps(3)} />
-              <Tab label="Users" {...a11yProps(4)} />
+              <Tab
+                label="Overview"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(0)}
+              />
+              <Tab
+                label="Datasets"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(1)}
+              />
+              <Tab
+                label="Train Models"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(2)}
+              />
+              <Tab
+                label="Price Optimisation"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(3)}
+              />
+              <Tab
+                label="Users"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(4)}
+              />
             </Tabs>
           </Box>
         </AppBar>
