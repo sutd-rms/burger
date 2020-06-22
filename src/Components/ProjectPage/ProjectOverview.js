@@ -15,6 +15,7 @@ import CardMedia from '@material-ui/core/CardMedia';
 import Avatar from '@material-ui/core/Avatar';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
+import Dropzone from 'react-dropzone';
 
 const styles = theme => ({
   root: {
@@ -33,7 +34,7 @@ const styles = theme => ({
     height: 200,
     width: 200,
     margin: 'auto',
-    marginBottom: 15
+    marginBottom: 20
   },
 
   label: {
@@ -45,11 +46,13 @@ const styles = theme => ({
   },
 
   checkIcon: {
-    color: 'green'
+    color: 'green',
+    marginRight: 10
   },
 
   cancelIcon: {
-    color: 'red'
+    color: 'red',
+    marginLeft: 10
   }
 });
 
@@ -84,6 +87,12 @@ class ProjectOverview extends React.Component {
       editable: false
     };
 
+    this.onDrop = files => {
+      this.setState({
+        coverNew: files
+      });
+    };
+
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleEdit = this.handleEdit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
@@ -116,6 +125,8 @@ class ProjectOverview extends React.Component {
   }
 
   handleSubmit(event) {
+    //Make POST request here
+
     this.setState({
       title: this.state.titleNew,
       description: this.state.descriptionNew,
@@ -131,11 +142,33 @@ class ProjectOverview extends React.Component {
       <Box boxShadow={3} px={5} py={5}>
         <Grid container spacing={3}>
           <Grid item md={3} className={classes.profilebar}>
-            <Avatar
+            <Dropzone
+              onDrop={this.onDrop}
+              disabled={this.state.disableUpload}
+              multiple={false}
+              accept=".csv"
+            >
+              {({ getRootProps, getInputProps }) => (
+                <section
+                  className="container"
+                  className={classes.dropContainer}
+                >
+                  <div {...getRootProps({ className: 'dropzone' })}>
+                    <input {...getInputProps()} />
+                    <Avatar
+                      alt="Remy Sharp"
+                      src={this.state.cover}
+                      className={classes.media}
+                    />
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+            {/* <Avatar
               alt="Remy Sharp"
               src={this.state.cover}
               className={classes.media}
-            />
+            /> */}
             <Button
               variant="outlined"
               size="small"
