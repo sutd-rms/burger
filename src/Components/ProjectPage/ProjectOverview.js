@@ -1,21 +1,16 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { fade, withStyles } from '@material-ui/core/styles';
+import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Button from '@material-ui/core/Button';
-import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
 import Box from '@material-ui/core/Box';
 import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
-import Input from '@material-ui/core/Input';
 import InputBase from '@material-ui/core/InputBase';
 import InputLabel from '@material-ui/core/InputLabel';
-import CardMedia from '@material-ui/core/CardMedia';
 import Avatar from '@material-ui/core/Avatar';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Dropzone from 'react-dropzone';
+import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 
 const styles = theme => ({
   root: {
@@ -37,6 +32,15 @@ const styles = theme => ({
     marginBottom: 20
   },
 
+  mediaEditable: {
+    height: 200,
+    width: 200,
+    margin: 'auto',
+    marginBottom: 20,
+    opacity: 0.5,
+    filter: 'brightness(50%)'
+  },
+
   label: {
     color: 'black'
   },
@@ -53,6 +57,22 @@ const styles = theme => ({
   cancelIcon: {
     color: 'red',
     marginLeft: 10
+  },
+  card: {
+    position: 'relative'
+  },
+  overlayEditable: {
+    position: 'absolute',
+    top: '70px',
+    left: '33%',
+    color: 'white'
+  },
+  hidden: {
+    display: 'none'
+  },
+  photoIcon: {
+    width: '50px',
+    height: '50px'
   }
 });
 
@@ -88,8 +108,13 @@ class ProjectOverview extends React.Component {
     };
 
     this.onDrop = files => {
+      var acceptedFiles = files.map(file =>
+        Object.assign(file, {
+          preview: URL.createObjectURL(file)
+        })
+      );
       this.setState({
-        coverNew: files
+        coverNew: acceptedFiles[0].preview
       });
     };
 
@@ -144,9 +169,9 @@ class ProjectOverview extends React.Component {
           <Grid item md={3} className={classes.profilebar}>
             <Dropzone
               onDrop={this.onDrop}
-              disabled={this.state.disableUpload}
+              disabled={!this.state.editable}
               multiple={false}
-              accept=".csv"
+              accept="image/jpeg, image/png, image/jpg"
             >
               {({ getRootProps, getInputProps }) => (
                 <section
@@ -155,20 +180,39 @@ class ProjectOverview extends React.Component {
                 >
                   <div {...getRootProps({ className: 'dropzone' })}>
                     <input {...getInputProps()} />
-                    <Avatar
-                      alt="Remy Sharp"
-                      src={this.state.cover}
-                      className={classes.media}
-                    />
+                    <div className={classes.card}>
+                      <Avatar
+                        alt="Profile Picture"
+                        src={
+                          this.state.editable
+                            ? this.state.coverNew
+                            : this.state.cover
+                        }
+                        className={
+                          this.state.editable
+                            ? classes.mediaEditable
+                            : classes.media
+                        }
+                      />
+                      <div
+                        className={
+                          this.state.editable
+                            ? classes.overlayEditable
+                            : classes.hidden
+                        }
+                      >
+                        <PhotoCameraIcon
+                          className={
+                            this.state.editable ? classes.photoIcon : ''
+                          }
+                        />
+                        <div>Change Image</div>
+                      </div>
+                    </div>
                   </div>
                 </section>
               )}
             </Dropzone>
-            {/* <Avatar
-              alt="Remy Sharp"
-              src={this.state.cover}
-              className={classes.media}
-            /> */}
             <Button
               variant="outlined"
               size="small"
@@ -193,13 +237,13 @@ class ProjectOverview extends React.Component {
               <FormControl className={classes.root}>
                 <InputLabel
                   shrink
-                  htmlFor="bootstrap-input"
+                  htmlFor="title-input"
                   className={classes.label}
                 >
                   Title
                 </InputLabel>
                 <FormInput
-                  id="bootstrap-input"
+                  id="title-input"
                   disabled={this.state.editable ? false : true}
                   className={
                     this.state.editable ? classes.enabled : classes.disabled
@@ -216,7 +260,7 @@ class ProjectOverview extends React.Component {
               <FormControl className={classes.root}>
                 <InputLabel
                   shrink
-                  htmlFor="bootstrap-desc"
+                  htmlFor="description-desc"
                   className={classes.label}
                 >
                   Description
@@ -224,7 +268,7 @@ class ProjectOverview extends React.Component {
                 <FormInput
                   multiline
                   rows="8"
-                  id="bootstrap-input"
+                  id="description-input"
                   disabled={this.state.editable ? false : true}
                   className={
                     this.state.editable ? classes.enabled : classes.disabled
