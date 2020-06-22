@@ -11,6 +11,8 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import CancelIcon from '@material-ui/icons/Cancel';
 import Dropzone from 'react-dropzone';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 const styles = theme => ({
   root: {
@@ -93,6 +95,10 @@ const FormInput = withStyles(theme => ({
   }
 }))(InputBase);
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 class ProjectOverview extends React.Component {
   constructor(props) {
     super(props);
@@ -104,7 +110,8 @@ class ProjectOverview extends React.Component {
       titleNew: "McDonald's Australia",
       descriptionNew: 'This is a sample description!',
       coverNew: 'https://source.unsplash.com/random',
-      editable: false
+      editable: false,
+      success: false
     };
 
     this.onDrop = files => {
@@ -122,6 +129,7 @@ class ProjectOverview extends React.Component {
     this.handleEdit = this.handleEdit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
   }
 
   handleInputChange(event) {
@@ -156,7 +164,14 @@ class ProjectOverview extends React.Component {
       title: this.state.titleNew,
       description: this.state.descriptionNew,
       cover: this.state.coverNew,
-      editable: false
+      editable: false,
+      success: true
+    });
+  }
+
+  handleCloseSnackbar(event) {
+    this.setState({
+      success: false
     });
   }
 
@@ -285,6 +300,15 @@ class ProjectOverview extends React.Component {
             </div>
           </Grid>
         </Grid>
+        <Snackbar
+          open={this.state.success}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            Project Edited!
+          </Alert>
+        </Snackbar>
       </Box>
     );
   }
