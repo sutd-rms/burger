@@ -16,7 +16,7 @@ import AllUsersPage from './UsersPage/AllUsersPage';
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
-  padding: 50px;
+  padding: 74px;
   padding-top: 40px;
 `;
 

@@ -35,6 +35,12 @@ const useStyles = makeStyles(theme => ({
     // padding: theme.spacing(1),
     flexShrink: 0,
     margin: theme.spacing(1)
+  },
+  underlined: {
+    borderBottom: '4px solid #F6B318',
+    paddingBottom: 6,
+    paddingRight: 10,
+    width: 200
   }
 }));
 
@@ -67,7 +73,7 @@ export default function Header(props) {
           noWrap
           className={classes.toolbarTitle}
         >
-          Project Overciew:
+          <div className={classes.underlined}>Project Overview</div>
         </Typography>
         <IconButton>
           <SearchIcon />

@@ -22,6 +22,7 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import Typography from '@material-ui/core/Typography';
 import FloatingAddButton from '../FloatingAddButton';
 import NewDemandPredictionForm from './NewDemandPredictionForm';
+import DashboardTopNav from './../DashboardTopNav';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -78,7 +79,7 @@ export default function PriceSearchTable(props) {
       { title: 'Training set', field: 'trainset' },
       { title: 'Item Name', field: 'item' },
       { title: 'Item Price', field: 'price' },
-      { title: 'Prediced Demand', field: 'demand', type: 'numeric' }
+      { title: 'Predicted Demand', field: 'demand', type: 'numeric' }
     ],
     data: [
       {
@@ -135,7 +136,7 @@ export default function PriceSearchTable(props) {
   };
   return (
     <div className={classes.root}>
-      <Typography variant="h4">Project: {props.title}</Typography>
+      <DashboardTopNav title={'Demand Prediction: ' + props.title} />
 
       <MaterialTable
         title=""
@@ -146,7 +147,6 @@ export default function PriceSearchTable(props) {
           setSelectedRow(selectedRow.tableData.id)
         }
         options={{
-          filtering: true,
           exportButton: true,
           actionsColumnIndex: -1,
           rowStyle: rowData => ({

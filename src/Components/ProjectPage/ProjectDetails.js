@@ -1,7 +1,9 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import PropTypes from 'prop-types';
+import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 import Header from './MarkdownComponents/Header';
 import MainMarkDown from './MarkdownComponents/MainMarkDown';
 import FeaturedMarkDown from './MarkdownComponents/FeaturedMarkDown';
@@ -17,6 +19,13 @@ import {
   useRouteMatch,
   useParams
 } from 'react-router-dom';
+import AppBar from '@material-ui/core/AppBar';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Box from '@material-ui/core/Box';
+import DataUploadForm from './DataUploadForm';
+import ProjectOverview from './ProjectOverview';
+import ProjectDatasets from './ProjectDatasets';
 
 const modelsList = [
   {
@@ -69,20 +78,37 @@ const datasetsList = [
   }
 ];
 
-const useStyles = makeStyles(theme => ({
+const styles = theme => ({
   root: {
-    flexGrow: 5
+    flexGrow: 1,
+    backgroundColor: theme.palette.background.paper,
+    padding: 0
   },
-  paper: {
-    height: 140,
-    width: 100
-  },
-  control: {
-    padding: theme.spacing(5)
-  }
-}));
 
-export default class ProjectDetails extends React.Component {
+  appbar: {
+    boxShadow: '0px 0px',
+    marginBottom: 30
+  },
+
+  title: {
+    paddingBottom: 6,
+    marginRight: 50,
+    fontSize: '1.8em',
+    textTransform: 'uppercase',
+    borderBottom: '4px solid #F6B318',
+    maxWidth: 350
+  },
+
+  underlined: {
+    borderBottom: '1px solid grey'
+  },
+
+  disableFocus: {
+    outline: 'none !important'
+  }
+});
+
+class ProjectDetails extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -90,12 +116,15 @@ export default class ProjectDetails extends React.Component {
       datasetList: datasetsList,
       modelList: modelsList,
       projectName: 'Default Project Name',
-      projectDescription: 'Defualt Project Description',
+      projectDescription: 'Default Project Description',
       createdDate: '06/14/2020',
       company: 'McDonald Australia',
       companyLink: 'www.google.com',
-      img: 'https://source.unsplash.com/random'
+      img: 'https://source.unsplash.com/random',
+      value: 0
     };
+
+    this.handleChange = this.handleChange.bind(this);
   }
 
   componentDidMount() {
@@ -106,102 +135,115 @@ export default class ProjectDetails extends React.Component {
     });
   }
 
-  handleTrain(e) {
-    console.log('train model', e);
-  }
-
-  handleView(e) {
-    console.log('view');
-  }
+  handleChange = (event, newValue) => {
+    this.setState({
+      value: newValue
+    });
+  };
 
   render() {
+    const { classes } = this.props;
+
     return (
-      <div>
-        <Switch>
-          <Route path={`${this.props.match.path}/priceSearch`}>
-            <PriceSearchTable
-              projectId={this.state.projectId}
-              title={this.state.projectName}
-            />
-          </Route>
-          <Route path={`${this.props.match.path}`}>
-            <React.Fragment>
-              <CssBaseline />
-              <Container maxWidth="lg">
-                <Header title={this.state.projectName} />
-                <main>
-                  <MainMarkDown
-                    name={this.state.projectName}
-                    description={this.state.projectDescription}
-                    date={this.state.createdDate}
-                    img={this.state.img}
-                  />
-                  <Grid container spacing={4} direction="row">
-                    <Grid item xs={6}>
-                      <Typography
-                        component="h2"
-                        variant="h5"
-                        color="inherit"
-                        align="left"
-                        noWrap
-                      >
-                        Models in Use
-                      </Typography>
-                      <br />
-                      <Grid container spacing={4} direction="column">
-                        {this.state.modelList.map(model => (
-                          <FeaturedMarkDown
-                            key={model.id}
-                            description={model.description}
-                            name={model.name}
-                            date={model.date}
-                            img={model.image}
-                            buttonContent="Train Model"
-                            id={model.id}
-                            isModel={true}
-                          />
-                        ))}
-                      </Grid>
-                    </Grid>
-                    <Grid item xs={6}>
-                      <Typography
-                        component="h2"
-                        variant="h5"
-                        color="inherit"
-                        align="left"
-                        noWrap
-                      >
-                        Datasets Available
-                      </Typography>
-                      <br />
-                      <Grid container spacing={4} direction="column">
-                        {this.state.datasetList.map(dataset => (
-                          <FeaturedMarkDown
-                            key={dataset.id}
-                            description={dataset.description}
-                            name={dataset.name}
-                            date={dataset.date}
-                            img={dataset.image}
-                            id={dataset.id}
-                            buttonContent="View"
-                            onButtonClick={this.handleView}
-                          />
-                        ))}
-                      </Grid>
-                    </Grid>
-                  </Grid>
-                </main>
-              </Container>
-              <br />
-              {/* <Footer
-          company={this.state.company}
-          date={this.state.createdDate}
-          link={this.state.companyLink}
-        /> */}
-            </React.Fragment>
-          </Route>
-        </Switch>
+      <div className={classes.root}>
+        <AppBar
+          position="static"
+          color="transparent"
+          className={classes.appbar}
+        >
+          <Box display="flex" alignItems="flex-end" alignContent="flex-start">
+            <span className={classes.title}>McDonalds Australia</span>
+            <Tabs
+              value={this.state.value}
+              onChange={this.handleChange}
+              aria-label="top nav bar"
+              indicatorColor="primary"
+              className={classes.underlined}
+            >
+              <Tab
+                label="Overview"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(0)}
+              />
+              <Tab
+                label="Datasets"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(1)}
+              />
+              <Tab
+                label="Train Models"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(2)}
+              />
+              <Tab
+                label="Price Optimisation"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(3)}
+              />
+              <Tab
+                label="Users"
+                disableRipple="true"
+                className={classes.disableFocus}
+                {...a11yProps(4)}
+              />
+            </Tabs>
+          </Box>
+        </AppBar>
+        <TabPanel value={this.state.value} index={0}>
+          <ProjectOverview />
+        </TabPanel>
+        <TabPanel value={this.state.value} index={1}>
+          <ProjectDatasets />
+        </TabPanel>
+        <TabPanel value={this.state.value} index={2}>
+          Item Three
+        </TabPanel>
+        <TabPanel value={this.state.value} index={3}>
+          Item Four
+        </TabPanel>
+        <TabPanel value={this.state.value} index={4}>
+          Item Five
+        </TabPanel>
       </div>
     );
   }
 }
+
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`simple-tabpanel-${index}`}
+      aria-labelledby={`simple-tab-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box>
+          <Typography>{children}</Typography>
+        </Box>
+      )}
+    </div>
+  );
+}
+
+TabPanel.propTypes = {
+  children: PropTypes.node,
+  index: PropTypes.any.isRequired,
+  value: PropTypes.any.isRequired
+};
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    'aria-controls': `simple-tabpanel-${index}`
+  };
+}
+
+export default withStyles(styles, { withTheme: true })(ProjectDetails);
