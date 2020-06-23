@@ -99,7 +99,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-class ProjectOverview extends React.Component {
+class ProjectOverviewTab extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -314,4 +314,4 @@ class ProjectOverview extends React.Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(ProjectOverview);
+export default withStyles(styles, { withTheme: true })(ProjectOverviewTab);

@@ -1,31 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
-import Paper from '@material-ui/core/Paper';
-import Header from './MarkdownComponents/Header';
-import MainMarkDown from './MarkdownComponents/MainMarkDown';
-import FeaturedMarkDown from './MarkdownComponents/FeaturedMarkDown';
-import Footer from './MarkdownComponents/Footer';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
-import PriceSearchTable from './PriceSearchTable';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
-} from 'react-router-dom';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import DataUploadForm from './DataUploadForm';
-import ProjectOverview from './ProjectOverview';
 import ProjectDatasets from './ProjectDatasets';
+import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
+import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 
 const modelsList = [
   {
@@ -194,13 +178,13 @@ class ProjectDetails extends React.Component {
           </Box>
         </AppBar>
         <TabPanel value={this.state.value} index={0}>
-          <ProjectOverview />
+          <ProjectOverviewTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={1}>
           <ProjectDatasets />
         </TabPanel>
         <TabPanel value={this.state.value} index={2}>
-          Item Three
+          <ModelTrainingTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={3}>
           Item Four
