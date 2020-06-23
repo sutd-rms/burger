@@ -59,19 +59,19 @@ class ProjectDatasets extends React.Component {
       datasetsList: [
         {
           name: 'Sample dataset from McDonald 2017',
-          date: '2018-12-21'
+          date: '24/12/2020, 10:02:34'
         },
         {
           name: 'Sample dataset from McDonald 2018',
-          date: '2019-1-9'
+          date: '05/10/2020, 15:32:50'
         },
         {
           name: 'Sample dataset from McDonald 2019',
-          date: '2019-12-24'
+          date: '20/04/2020, 9:23:47'
         },
         {
           name: 'Sample dataset from McDonald 2020',
-          date: '2020-10-5'
+          date: '14/12/2020, 12:40:12'
         }
       ],
       columns: [
@@ -192,11 +192,17 @@ class ProjectDatasets extends React.Component {
                   newList.push({
                     name: newData.name,
                     date:
-                      date.getFullYear() +
-                      '-' +
+                      date.getDate() +
+                      '/' +
                       date.getMonth() +
-                      '-' +
-                      date.getDate()
+                      '/' +
+                      date.getFullYear() +
+                      ', ' +
+                      date.getHours() +
+                      ':' +
+                      date.getMinutes() +
+                      ':' +
+                      date.getSeconds()
                   });
                   this.setState({
                     datasetsList: newList,
