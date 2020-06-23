@@ -44,6 +44,10 @@ const styles = theme => ({
   }
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 class DataUploadForm extends React.Component {
   constructor(props) {
     super(props);
@@ -60,19 +64,30 @@ class DataUploadForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     event.preventDefault();
+    console.log(this.state.files);
 
     const form = {
       file: this.state.files
     };
-    this.setState({
-      success: true
-    });
-    this.props.handleCloseDataUploadForm();
-    this.props.successUpload();
-    // API CALL
-  }
+
+    for (let i = 0; i < this.state.files.length; i++) {
+      if (this.state.files[i].type !== '.csv') {
+        alert('File type not accepted, please upload a CSV file');
+      }
+    }
+    if (this.state.files.length < 1) {
+      this.props.noFileSelected();
+    } else {
+      this.setState({
+        success: true
+      });
+      this.props.successUpload();
+      this.props.handleCloseDataUploadForm();
+      // this.props.handleWrongType();
+    }
+  };
 
   render() {
     const { classes } = this.props;

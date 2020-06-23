@@ -99,7 +99,9 @@ class ProjectDatasets extends React.Component {
       displayUploadForm: false,
       uploadSuccess: false,
       selectedDataset: '',
-      createNew: false
+      createNew: false,
+      noFileError: false,
+      wrongTypeError: false
     };
   }
 
@@ -112,7 +114,9 @@ class ProjectDatasets extends React.Component {
     this.setState({
       success: false,
       createNew: false,
-      uploadSuccess: false
+      uploadSuccess: false,
+      noFileError: false,
+      wrongTypeError: false
     });
   };
 
@@ -122,6 +126,14 @@ class ProjectDatasets extends React.Component {
 
   handleUploadSuccess = () => {
     this.setState({ uploadSuccess: true });
+  };
+
+  handleNoFile = () => {
+    this.setState({ noFileError: true });
+  };
+
+  handleWrongType = () => {
+    this.setState({ wrongTypeError: true });
   };
 
   render() {
@@ -219,6 +231,8 @@ class ProjectDatasets extends React.Component {
           displayDataUploadForm={this.state.displayUploadForm}
           successUpload={this.handleUploadSuccess}
           selectedDataset={this.state.selectedDataset}
+          noFileSelected={this.handleNoFile}
+          handleWrongType={this.handleWrongType}
         />
         <Snackbar
           open={this.state.uploadSuccess}
@@ -229,6 +243,24 @@ class ProjectDatasets extends React.Component {
             {this.state.createNew
               ? 'New dataset created successfully!'
               : 'Data source file uploaded successfully!'}
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.noFileError}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="error">
+            No file selected. Please try again.
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.wrongTypeError}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="error">
+            File type not acceptable. Please upload a CSV file.
           </Alert>
         </Snackbar>
       </div>
