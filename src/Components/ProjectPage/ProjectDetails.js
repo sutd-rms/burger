@@ -24,7 +24,8 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import DataUploadForm from './DataUploadForm';
-import ProjectOverview from './ProjectOverview';
+import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
+import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 
 const modelsList = [
   {
@@ -193,13 +194,13 @@ class ProjectDetails extends React.Component {
           </Box>
         </AppBar>
         <TabPanel value={this.state.value} index={0}>
-          <ProjectOverview />
+          <ProjectOverviewTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={1}>
           Item Two
         </TabPanel>
         <TabPanel value={this.state.value} index={2}>
-          Item Three
+          <ModelTrainingTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={3}>
           Item Four
