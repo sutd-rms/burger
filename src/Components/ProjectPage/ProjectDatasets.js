@@ -21,6 +21,8 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import DataUploadForm from './DataUploadForm';
 import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
 import Input from '@material-ui/core/Input';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -86,7 +88,8 @@ class ProjectDatasets extends React.Component {
       editSuccess: false,
       deleteSuccess: false,
       displayUploadForm: false,
-      uploadSuccess: false
+      uploadSuccess: false,
+      selectedDataset: ''
     };
   }
 
@@ -105,7 +108,7 @@ class ProjectDatasets extends React.Component {
   };
 
   handleCloseDataUploadForm = () => {
-    this.setState({ displayUploadForm: false });
+    this.setState({ displayUploadForm: false, selectedDataset: '' });
   };
 
   handleUploadSuccess = () => {
@@ -115,8 +118,25 @@ class ProjectDatasets extends React.Component {
   render() {
     return (
       <div>
+        <Typography variant="h6">Datasets Management</Typography>
+        <Typography variant="subtitle1">
+          You can view and manage the datasets uploaded before, or create a new
+          dataset by uploading csv files
+        </Typography>
+        <Box m={2}>
+          {/* <Typography variant="subtitle1">
+            -- Navigate all uploaded datasets
+          </Typography>
+          <Typography variant="subtitle1">-- Create new datasets</Typography>
+          <Typography variant="subtitle1">-- Edit dataset name</Typography>
+          <Typography variant="subtitle1">
+            -- Modify the dataset source file
+          </Typography> */}
+        </Box>
+
+        <br />
         <MaterialTable
-          title="Datasets Uploaded"
+          title="Datasets"
           columns={this.state.columns}
           data={this.state.datasetsList}
           icons={tableIcons}
@@ -144,7 +164,10 @@ class ProjectDatasets extends React.Component {
               tooltip: 'Upload data file',
               onClick: (event, rowData) => {
                 console.log('upload');
-                this.setState({ displayUploadForm: true });
+                this.setState({
+                  displayUploadForm: true,
+                  selectedDataset: rowData.name
+                });
                 // alert('You are uploading to ' + rowData.name)
               }
             }
@@ -194,6 +217,7 @@ class ProjectDatasets extends React.Component {
           handleCloseDataUploadForm={this.handleCloseDataUploadForm}
           displayDataUploadForm={this.state.displayUploadForm}
           successUpload={this.handleUploadSuccess}
+          selectedDataset={this.state.selectedDataset}
         />
         <Snackbar
           open={this.state.success}

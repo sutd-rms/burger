@@ -9,6 +9,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   dialog: {
@@ -97,7 +98,7 @@ class DataUploadForm extends React.Component {
           id="customized-dialog-title"
           onClose={this.props.handleCloseDataUploadForm}
         >
-          Upload new Dataset
+          Upload for: {this.props.selectedDataset}
         </MuiDialogTitle>
         <div className={classes.root}>
           <Dropzone
