@@ -10,10 +10,6 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 const styles = theme => ({
   dialog: {
     margin: 0,
@@ -72,14 +68,9 @@ class DataUploadForm extends React.Component {
     this.setState({
       success: true
     });
-    // WAIT AND REFRESH PAGE HERE
-    setTimeout(function() {
-      window.location.reload(false);
-    }, 2000);
-  }
-
-  handleCloseSnackbar(event) {
-    this.setState({ success: false });
+    this.props.handleCloseDataUploadForm();
+    this.props.successUpload();
+    // API CALL
   }
 
   render() {
@@ -146,13 +137,6 @@ class DataUploadForm extends React.Component {
             </Button>
           </Box>
         </div>
-        <Snackbar
-          open={this.state.success}
-          autoHideDuration={800}
-          // onClose={this.handleCloseSnackbar}
-        >
-          <Alert severity="success">New dataset uploaded successfully!</Alert>
-        </Snackbar>
       </Dialog>
     );
   }

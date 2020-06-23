@@ -1,6 +1,54 @@
 import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import DatasetCard from './DatasetCard';
+import MaterialTable from 'material-table';
+import { forwardRef } from 'react';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import AddBox from '@material-ui/icons/AddBox';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
+import Check from '@material-ui/icons/Check';
+import ChevronLeft from '@material-ui/icons/ChevronLeft';
+import ChevronRight from '@material-ui/icons/ChevronRight';
+import Clear from '@material-ui/icons/Clear';
+import DeleteOutline from '@material-ui/icons/DeleteOutline';
+import Edit from '@material-ui/icons/Edit';
+import FilterList from '@material-ui/icons/FilterList';
+import FirstPage from '@material-ui/icons/FirstPage';
+import LastPage from '@material-ui/icons/LastPage';
+import Remove from '@material-ui/icons/Remove';
+import SaveAlt from '@material-ui/icons/SaveAlt';
+import Search from '@material-ui/icons/Search';
+import ViewColumn from '@material-ui/icons/ViewColumn';
+import DataUploadForm from './DataUploadForm';
+import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
+import Input from '@material-ui/core/Input';
+
+const tableIcons = {
+  Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
+  Check: forwardRef((props, ref) => <Check {...props} ref={ref} />),
+  Clear: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Delete: forwardRef((props, ref) => <DeleteOutline {...props} ref={ref} />),
+  DetailPanel: forwardRef((props, ref) => (
+    <ChevronRight {...props} ref={ref} />
+  )),
+  Edit: forwardRef((props, ref) => <Edit {...props} ref={ref} />),
+  Export: forwardRef((props, ref) => <SaveAlt {...props} ref={ref} />),
+  Filter: forwardRef((props, ref) => <FilterList {...props} ref={ref} />),
+  FirstPage: forwardRef((props, ref) => <FirstPage {...props} ref={ref} />),
+  LastPage: forwardRef((props, ref) => <LastPage {...props} ref={ref} />),
+  NextPage: forwardRef((props, ref) => <ChevronRight {...props} ref={ref} />),
+  PreviousPage: forwardRef((props, ref) => (
+    <ChevronLeft {...props} ref={ref} />
+  )),
+  ResetSearch: forwardRef((props, ref) => <Clear {...props} ref={ref} />),
+  Search: forwardRef((props, ref) => <Search {...props} ref={ref} />),
+  SortArrow: forwardRef((props, ref) => <ArrowDownward {...props} ref={ref} />),
+  ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
+  ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
+};
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 class ProjectDatasets extends React.Component {
   constructor(props) {
@@ -8,38 +56,182 @@ class ProjectDatasets extends React.Component {
     this.state = {
       datasetsList: [
         {
-          id: 20200623,
-          name: 'Sample dataset from McDonald',
-          description: 'Sample Description'
+          name: 'Sample dataset from McDonald 2017'
         },
         {
-          id: 20200624,
-          name: 'Sample dataset from McDonald',
-          description: 'Sample Description'
+          name: 'Sample dataset from McDonald 2018'
         },
         {
-          id: 20200625,
-          name: 'Sample dataset from McDonald',
-          description: 'Sample Description'
+          name: 'Sample dataset from McDonald 2019'
         },
         {
-          id: 20200626,
-          name: 'Sample dataset from McDonald',
-          description: 'Sample Description'
+          name: 'Sample dataset from McDonald 2020'
         }
-      ]
+      ],
+      columns: [
+        {
+          title: 'Dataset Name',
+          field: 'name',
+          editComponent: props => (
+            <Input
+              value={props.value}
+              onChange={e => props.onChange(e.target.value)}
+              fullWidth
+            />
+          )
+        }
+      ],
+      selectedRowId: '',
+      success: false,
+      editSuccess: false,
+      deleteSuccess: false,
+      displayUploadForm: false,
+      uploadSuccess: false
     };
   }
 
+  onClick = e => {
+    console.log('upload');
+    this.setState({ displayUploadForm: true });
+  };
+
+  handleCloseSnackbar = () => {
+    this.setState({
+      success: false,
+      editSuccess: false,
+      deleteSuccess: false,
+      uploadSuccess: false
+    });
+  };
+
+  handleCloseDataUploadForm = () => {
+    this.setState({ displayUploadForm: false });
+  };
+
+  handleUploadSuccess = () => {
+    this.setState({ uploadSuccess: true });
+  };
+
   render() {
     return (
-      <Grid container spacing={4} direction="column">
-        {this.state.datasetsList.map(dataset => (
-          <Grid item>
-            <DatasetCard dataset={dataset} />
-          </Grid>
-        ))}
-      </Grid>
+      <div>
+        <MaterialTable
+          title="Datasets Uploaded"
+          columns={this.state.columns}
+          data={this.state.datasetsList}
+          icons={tableIcons}
+          onRowClick={(evt, selectedRow) =>
+            this.setState({ selectedRowId: selectedRow.tableData.id })
+          }
+          options={{
+            filtering: true,
+            exportButton: true,
+            actionsColumnIndex: -1,
+            rowStyle: rowData => ({
+              backgroundColor:
+                this.state.selectedRowId === rowData.tableData.id
+                  ? '#EEE'
+                  : '#FFF'
+            }),
+            headerStyle: {
+              backgroundColor: '#184085',
+              color: '#FFF'
+            }
+          }}
+          actions={[
+            {
+              icon: () => <BackupOutlinedIcon />,
+              tooltip: 'Upload data file',
+              onClick: (event, rowData) => {
+                console.log('upload');
+                this.setState({ displayUploadForm: true });
+                // alert('You are uploading to ' + rowData.name)
+              }
+            }
+          ]}
+          editable={{
+            onRowAdd: newData =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  resolve();
+                  console.log(newData);
+                  let newList = this.state.datasetsList;
+                  newList.push(newData);
+                  this.setState({ datasetsList: newList, success: true });
+                  //   API CALL UPDATE DATABASE
+                }, 600);
+              }),
+            onRowUpdate: (newData, oldData) =>
+              new Promise(resolve => {
+                setTimeout(() => {
+                  resolve();
+                  if (oldData) {
+                    console.log(oldData, newData);
+                    let newList = this.state.datasetsList;
+                    newList[newList.indexOf(oldData)] = newData;
+                    this.setState({ datasetsList: newList, editSuccess: true });
+                    // API CALL UPDATE DATABASE
+                  }
+                }, 600);
+              }),
+            onRowDelete: oldData =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataDelete = this.state.datasetsList;
+                  const index = oldData.tableData.id;
+                  dataDelete.splice(index, 1);
+                  this.setState({
+                    datasetsList: dataDelete,
+                    deleteSuccess: true
+                  });
+                  resolve();
+                  //   API CALL UPDATE DATABASE
+                }, 600);
+              })
+          }}
+        />
+        <DataUploadForm
+          handleCloseDataUploadForm={this.handleCloseDataUploadForm}
+          displayDataUploadForm={this.state.displayUploadForm}
+          successUpload={this.handleUploadSuccess}
+        />
+        <Snackbar
+          open={this.state.success}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            New Dataset uploaded!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.editSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            Dataset Edited!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.deleteSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            Dataset Deleted Successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.uploadSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            Data source file uploaded successfully!
+          </Alert>
+        </Snackbar>
+      </div>
     );
   }
 }
