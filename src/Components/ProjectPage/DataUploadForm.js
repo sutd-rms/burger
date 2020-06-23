@@ -100,6 +100,7 @@ class DataUploadForm extends React.Component {
         >
           Upload for: {this.props.selectedDataset}
         </MuiDialogTitle>
+        <br />
         <div className={classes.root}>
           <Dropzone
             onDrop={this.onDrop}

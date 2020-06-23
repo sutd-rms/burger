@@ -58,22 +58,27 @@ class ProjectDatasets extends React.Component {
     this.state = {
       datasetsList: [
         {
-          name: 'Sample dataset from McDonald 2017'
+          name: 'Sample dataset from McDonald 2017',
+          date: '2018-12-21'
         },
         {
-          name: 'Sample dataset from McDonald 2018'
+          name: 'Sample dataset from McDonald 2018',
+          date: '2019-1-9'
         },
         {
-          name: 'Sample dataset from McDonald 2019'
+          name: 'Sample dataset from McDonald 2019',
+          date: '2019-12-24'
         },
         {
-          name: 'Sample dataset from McDonald 2020'
+          name: 'Sample dataset from McDonald 2020',
+          date: '2020-10-5'
         }
       ],
       columns: [
         {
           title: 'Dataset Name',
           field: 'name',
+          filtering: false,
           editComponent: props => (
             <Input
               value={props.value}
@@ -81,15 +86,20 @@ class ProjectDatasets extends React.Component {
               fullWidth
             />
           )
+        },
+        {
+          title: 'Created Date',
+          field: 'date',
+          filtering: false,
+          editable: false
         }
       ],
       selectedRowId: '',
       success: false,
-      editSuccess: false,
-      deleteSuccess: false,
       displayUploadForm: false,
       uploadSuccess: false,
-      selectedDataset: ''
+      selectedDataset: '',
+      createNew: false
     };
   }
 
@@ -101,8 +111,7 @@ class ProjectDatasets extends React.Component {
   handleCloseSnackbar = () => {
     this.setState({
       success: false,
-      editSuccess: false,
-      deleteSuccess: false,
+      createNew: false,
       uploadSuccess: false
     });
   };
@@ -178,37 +187,23 @@ class ProjectDatasets extends React.Component {
                 setTimeout(() => {
                   resolve();
                   console.log(newData);
+                  let date = new Date();
                   let newList = this.state.datasetsList;
-                  newList.push(newData);
-                  this.setState({ datasetsList: newList, success: true });
-                  //   API CALL UPDATE DATABASE
-                }, 600);
-              }),
-            onRowUpdate: (newData, oldData) =>
-              new Promise(resolve => {
-                setTimeout(() => {
-                  resolve();
-                  if (oldData) {
-                    console.log(oldData, newData);
-                    let newList = this.state.datasetsList;
-                    newList[newList.indexOf(oldData)] = newData;
-                    this.setState({ datasetsList: newList, editSuccess: true });
-                    // API CALL UPDATE DATABASE
-                  }
-                }, 600);
-              }),
-            onRowDelete: oldData =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataDelete = this.state.datasetsList;
-                  const index = oldData.tableData.id;
-                  dataDelete.splice(index, 1);
-                  this.setState({
-                    datasetsList: dataDelete,
-                    deleteSuccess: true
+                  newList.push({
+                    name: newData.name,
+                    date:
+                      date.getFullYear() +
+                      '-' +
+                      date.getMonth() +
+                      '-' +
+                      date.getDate()
                   });
-                  resolve();
-                  //   API CALL UPDATE DATABASE
+                  this.setState({
+                    datasetsList: newList,
+                    displayUploadForm: true,
+                    selectedDataset: newData.name,
+                    createNew: true
+                  });
                 }, 600);
               })
           }}
@@ -220,39 +215,14 @@ class ProjectDatasets extends React.Component {
           selectedDataset={this.state.selectedDataset}
         />
         <Snackbar
-          open={this.state.success}
-          autoHideDuration={6000}
-          onClose={this.handleCloseSnackbar}
-        >
-          <Alert onClose={this.handleCloseSnackbar} severity="success">
-            New Dataset uploaded!
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          open={this.state.editSuccess}
-          autoHideDuration={6000}
-          onClose={this.handleCloseSnackbar}
-        >
-          <Alert onClose={this.handleCloseSnackbar} severity="success">
-            Dataset Edited!
-          </Alert>
-        </Snackbar>
-        <Snackbar
-          open={this.state.deleteSuccess}
-          autoHideDuration={6000}
-          onClose={this.handleCloseSnackbar}
-        >
-          <Alert onClose={this.handleCloseSnackbar} severity="success">
-            Dataset Deleted Successfully!
-          </Alert>
-        </Snackbar>
-        <Snackbar
           open={this.state.uploadSuccess}
           autoHideDuration={6000}
           onClose={this.handleCloseSnackbar}
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
-            Data source file uploaded successfully!
+            {this.state.createNew
+              ? 'New dataset created successfully!'
+              : 'Data source file uploaded successfully!'}
           </Alert>
         </Snackbar>
       </div>
