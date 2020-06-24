@@ -11,6 +11,11 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
+import Dropzone from 'react-dropzone';
+import CloudUploadIcon from '@material-ui/icons/CloudUpload';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import AttachmentIcon from '@material-ui/icons/Attachment';
+import { Box } from '@material-ui/core';
 
 const styles = theme => ({
   modal: {
@@ -33,8 +38,7 @@ const styles = theme => ({
   },
   instructions: {
     marginTop: theme.spacing(1),
-    marginBottom: theme.spacing(1),
-    fontWeight: 'bold'
+    marginBottom: theme.spacing(1)
   },
   actionButtons: {
     marginTop: theme.spacing(5),
@@ -54,19 +58,37 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Model Selection', 'Dataset Selection', 'Name Selection'];
+  return [
+    'Trained Model Selection',
+    'Dataset Selection',
+    'Cost Upload',
+    'Constraint Selection'
+  ];
 }
 
-class TrainModelModal extends React.Component {
+class OptimisationModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       activeStep: 0,
-      modelList: ['Default Model', 'Neural Network'],
-      model: 'Default Model',
+      modelList: ['Test Model', 'Test Model 2', 'Test Model2', 'ABC Test'],
+      model: 'Test Model',
       datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
       dataset: 'random_csv_file.csv',
-      name: null
+      constraintsetList: [
+        'Sample Constraint 1',
+        'Testing Constraints',
+        'McDonalds Aussie',
+        'Sample Constraint 2'
+      ],
+      constraintset: 'Sample Constraint 1',
+      name: null,
+      file: []
+    };
+    this.onDrop = files => {
+      this.setState({
+        file: files
+      });
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -115,12 +137,22 @@ class TrainModelModal extends React.Component {
   }
 
   getStepContent(stepIndex) {
+    const files = this.state.file.map(file => (
+      <span key={file.name}>
+        <AttachmentIcon />
+        <Box component="span" ml={1} mr={2}>
+          {file.name} - {file.size} bytes
+        </Box>
+        <CheckCircleOutlineIcon style={{ fill: 'green' }} />
+      </span>
+    ));
+
     switch (stepIndex) {
       case 0:
         return (
           <div>
             <Typography variant="h6" gutterBottom>
-              Select a Model:
+              Select a Trained Model:
             </Typography>
             <Select
               labelId="model"
@@ -143,7 +175,7 @@ class TrainModelModal extends React.Component {
         return (
           <div>
             <Typography variant="h6" gutterBottom>
-              Select a Dataset to train your Model:
+              Select a Dataset:
             </Typography>
             <Select
               labelId="dataset"
@@ -167,19 +199,83 @@ class TrainModelModal extends React.Component {
         return (
           <div>
             <Typography variant="h6" gutterBottom>
-              Give it a name!:
+              Upload cost dataset:
             </Typography>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              name="name"
-              value={this.state.name}
-              onChange={this.handleInputChange}
-              autoFocus
-            />
+            <div
+              style={{
+                textAlign: 'center',
+                justifyContent: 'center',
+                marginTop: '20px'
+              }}
+            >
+              <Dropzone
+                onDrop={this.onDrop}
+                disabled={this.state.disableUpload}
+                multiple={false}
+                accept=".csv"
+              >
+                {({ getRootProps, getInputProps }) => (
+                  <section
+                    style={{
+                      width: 500,
+                      padding: 100,
+                      border: 3,
+                      borderRadius: 10,
+                      borderColor: '#EEEEEE',
+                      borderStyle: 'dashed',
+                      color: 'grey',
+                      margin: 'auto',
+                      marginBottom: 50,
+                      backgroundColor: '#FAFAFA'
+                    }}
+                  >
+                    <div {...getRootProps({ className: 'dropzone' })}>
+                      <input {...getInputProps()} />
+                      <CloudUploadIcon
+                        style={{ fontSize: '3em', marginBottom: 10 }}
+                        style={{
+                          color:
+                            this.state.file.length == 0 ? 'grey' : '#3176D2'
+                        }}
+                      />
+                      <p>
+                        {this.state.file.length == 0
+                          ? "Drag 'n' Drop your CSV file here, or click to select file"
+                          : 'Click to Change File'}
+                      </p>
+                      {files}
+                    </div>
+                  </section>
+                )}
+              </Dropzone>
+            </div>
           </div>
         );
+
+      case 3:
+        return (
+          <div>
+            <Typography variant="h6" gutterBottom>
+              Select a Constraint Set:
+            </Typography>
+            <Select
+              labelId="constraintset"
+              id="constraintset"
+              key="constraintset"
+              name="constraintset"
+              fullWidth
+              value={this.state.constraintset}
+              onChange={this.handleInputChange}
+            >
+              {this.state.constraintsetList.map(value => (
+                <MenuItem value={value} id={value} key={value}>
+                  {value}
+                </MenuItem>
+              ))}
+            </Select>
+          </div>
+        );
+
       default:
         return 'Unknown stepIndex';
     }
@@ -206,7 +302,7 @@ class TrainModelModal extends React.Component {
           <Fade in={this.props.open}>
             <div className={classes.paper}>
               <Typography variant="h5" className={classes.title}>
-                Train New Model
+                Run Optimisation
               </Typography>
               <div className={classes.root}>
                 <Stepper activeStep={this.state.activeStep} alternativeLabel>
@@ -230,7 +326,7 @@ class TrainModelModal extends React.Component {
                         className={classes.submitButton}
                         onClick={this.handleSubmit}
                       >
-                        Start Training
+                        Optimise
                       </Button>
                     </div>
                   ) : (
@@ -266,4 +362,4 @@ class TrainModelModal extends React.Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(TrainModelModal);
+export default withStyles(styles, { withTheme: true })(OptimisationModal);

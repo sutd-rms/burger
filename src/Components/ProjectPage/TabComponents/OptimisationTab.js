@@ -7,7 +7,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { Typography } from '@material-ui/core';
 import OptimisationTable from './OptimisationTable';
 import ConstraintsTable from './ConstraintsTable';
-import TrainModelModal from './TrainModelModal';
+import OptimisationModal from './OptimisationModal';
 
 const styles = theme => ({
   root: {},
@@ -65,7 +65,13 @@ class OptimisationTab extends React.Component {
 
     return (
       <Box>
-        <Box mb={5} px={1} display="flex" justifyContent="space-between">
+        <Box
+          mb={5}
+          px={1}
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+        >
           <Box>
             <Typography variant="h6" component="h2">
               Optimisation
@@ -98,10 +104,10 @@ class OptimisationTab extends React.Component {
           onClose={this.handleCloseSnackbar}
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
-            Model training has started! Please check again later!
+            Optimisation has started! Please check again later!
           </Alert>
         </Snackbar>
-        <TrainModelModal
+        <OptimisationModal
           open={this.state.open}
           handleClose={this.handleCloseModal}
           showAlert={this.showAlert}
