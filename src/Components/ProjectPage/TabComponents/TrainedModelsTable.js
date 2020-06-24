@@ -99,7 +99,7 @@ export default function TrainedModelsTable() {
   return (
     <div>
       <MaterialTable
-        title=""
+        title="Trained Models"
         columns={state.columns}
         data={state.data}
         icons={tableIcons}
