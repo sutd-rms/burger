@@ -58,8 +58,8 @@ export default function ConstraintsMappingTable() {
 
   const [state, setState] = React.useState({
     columns: [
-      { title: 'Item', field: 'item' },
-      { title: 'Variable', field: 'variable' }
+      { title: 'Item', field: 'item' }
+      // { title: 'Variable', field: 'variable' }
     ],
     data: [
       {
