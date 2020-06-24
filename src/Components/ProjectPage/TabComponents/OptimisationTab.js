@@ -27,7 +27,8 @@ class OptimisationTab extends React.Component {
     this.state = {
       openOptimisation: false,
       openConstraint: false,
-      success: false
+      optimisationSuccess: false,
+      constraintSuccess: false
     };
 
     this.handleOpenOptimisationModal = this.handleOpenOptimisationModal.bind(
@@ -40,9 +41,14 @@ class OptimisationTab extends React.Component {
     this.handleCloseConstraintModal = this.handleCloseConstraintModal.bind(
       this
     );
-
-    this.showAlert = this.showAlert.bind(this);
-    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
+    this.showOptimisationAlert = this.showOptimisationAlert.bind(this);
+    this.showConstraintAlert = this.showConstraintAlert.bind(this);
+    this.handleCloseOptimisationSnackbar = this.handleCloseOptimisationSnackbar.bind(
+      this
+    );
+    this.handleCloseConstraintSnackbar = this.handleCloseConstraintSnackbar.bind(
+      this
+    );
   }
 
   handleOpenOptimisationModal(event) {
@@ -69,17 +75,31 @@ class OptimisationTab extends React.Component {
     });
   }
 
-  showAlert(event) {
+  showOptimisationAlert(event) {
     //Make POST request here
 
     this.setState({
-      success: true
+      optimisationSuccess: true
     });
   }
 
-  handleCloseSnackbar(event) {
+  showConstraintAlert(event) {
+    //Make POST request here
+
     this.setState({
-      success: false
+      constraintSuccess: true
+    });
+  }
+
+  handleCloseOptimisationSnackbar(event) {
+    this.setState({
+      optimisationSuccess: false
+    });
+  }
+
+  handleCloseConstraintSnackbar(event) {
+    this.setState({
+      constraintSuccess: false
     });
   }
 
@@ -125,23 +145,38 @@ class OptimisationTab extends React.Component {
           <ConstraintsTable />
         </Box>
         <Snackbar
-          open={this.state.success}
+          open={this.state.optimisationSuccess}
           autoHideDuration={6000}
-          onClose={this.handleCloseSnackbar}
+          onClose={this.handleCloseOptimisationSnackbar}
         >
-          <Alert onClose={this.handleCloseSnackbar} severity="success">
+          <Alert
+            onClose={this.handleCloseOptimisationSnackbar}
+            severity="success"
+          >
             Optimisation has started! Please check again later!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.constraintSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleCloseConstraintSnackbar}
+        >
+          <Alert
+            onClose={this.handleCloseConstraintSnackbar}
+            severity="success"
+          >
+            Constraint Set has been added!
           </Alert>
         </Snackbar>
         <OptimisationModal
           open={this.state.openOptimisation}
           handleClose={this.handleCloseOptimisationModal}
-          showAlert={this.showAlert}
+          showAlert={this.showOptimisationAlert}
         />
         <ConstraintModal
           open={this.state.openConstraint}
           handleClose={this.handleCloseConstraintModal}
-          showAlert={this.showAlert}
+          showAlert={this.showConstraintAlert}
         />
       </Box>
     );

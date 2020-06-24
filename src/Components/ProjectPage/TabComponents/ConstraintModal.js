@@ -11,6 +11,12 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import Grid from '@material-ui/core/Grid';
+import IconButton from '@material-ui/core/IconButton';
+import ConstraintsMappingTable from './ConstraintsMappingTable';
+import InfoIcon from '@material-ui/icons/Info';
+import Tooltip from '@material-ui/core/Tooltip';
 
 const styles = theme => ({
   modal: {
@@ -22,7 +28,8 @@ const styles = theme => ({
     backgroundColor: theme.palette.background.paper,
     border: '1px solid #000',
     boxShadow: theme.shadows[5],
-    padding: theme.spacing(8, 15, 8)
+    padding: theme.spacing(8, 15, 8),
+    width: '80vw'
   },
   root: {
     width: '100%',
@@ -54,7 +61,7 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Model Selection', 'Dataset Selection', 'Name Selection'];
+  return ['Dataset Selection', 'Constraint Creation'];
 }
 
 class ConstraintModal extends React.Component {
@@ -62,11 +69,9 @@ class ConstraintModal extends React.Component {
     super(props);
     this.state = {
       activeStep: 0,
-      modelList: ['Default Model', 'Neural Network'],
-      model: 'Default Model',
       datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
       dataset: 'random_csv_file.csv',
-      name: null
+      constraints: ''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -120,30 +125,7 @@ class ConstraintModal extends React.Component {
         return (
           <div>
             <Typography variant="h6" gutterBottom>
-              Select a Model:
-            </Typography>
-            <Select
-              labelId="model"
-              id="model"
-              key="model"
-              name="model"
-              fullWidth
-              value={this.state.model}
-              onChange={this.handleInputChange}
-            >
-              {this.state.modelList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-        );
-      case 1:
-        return (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Select a Dataset to train your Model:
+              Select a Dataset to for creating constraints:
             </Typography>
             <Select
               labelId="dataset"
@@ -163,21 +145,51 @@ class ConstraintModal extends React.Component {
           </div>
         );
 
-      case 2:
+      case 1:
         return (
           <div>
-            <Typography variant="h6" gutterBottom>
-              Give it a name!:
-            </Typography>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              name="name"
-              value={this.state.name}
-              onChange={this.handleInputChange}
-              autoFocus
-            />
+            <Grid container spacing={8}>
+              <Grid item md={6}>
+                <Box display="flex" alignItems="center">
+                  <Typography variant="h6">Item Mappings</Typography>
+                  <Tooltip
+                    title="Items in csv file are mapped into variables"
+                    placement="right"
+                  >
+                    <IconButton aria-label="delete">
+                      <InfoIcon />
+                    </IconButton>
+                  </Tooltip>
+                </Box>
+                <ConstraintsMappingTable />
+              </Grid>
+              <Grid item md={6}>
+                <Box>
+                  <Box display="flex" alignItems="center">
+                    <Typography variant="h6">Constraints</Typography>
+                    <Tooltip
+                      title="Input constraints in the following format: '2X1+3X2=3, 3X3=4, 4X1<5'"
+                      placement="right"
+                    >
+                      <IconButton aria-label="delete">
+                        <InfoIcon />
+                      </IconButton>
+                    </Tooltip>
+                  </Box>
+                  <TextField
+                    variant="outlined"
+                    required
+                    fullWidth
+                    multiline
+                    rows={10}
+                    name="constraints"
+                    value={this.state.constraints}
+                    onChange={this.handleInputChange}
+                    autoFocus
+                  />
+                </Box>
+              </Grid>
+            </Grid>
           </div>
         );
       default:
@@ -206,7 +218,7 @@ class ConstraintModal extends React.Component {
           <Fade in={this.props.open}>
             <div className={classes.paper}>
               <Typography variant="h5" className={classes.title}>
-                Train New Model
+                Create Constraints
               </Typography>
               <div className={classes.root}>
                 <Stepper activeStep={this.state.activeStep} alternativeLabel>
@@ -230,7 +242,7 @@ class ConstraintModal extends React.Component {
                         className={classes.submitButton}
                         onClick={this.handleSubmit}
                       >
-                        Start Training
+                        ADD CONSTRAINT
                       </Button>
                     </div>
                   ) : (
