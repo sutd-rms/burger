@@ -8,6 +8,7 @@ import { Typography } from '@material-ui/core';
 import OptimisationTable from './OptimisationTable';
 import ConstraintsTable from './ConstraintsTable';
 import OptimisationModal from './OptimisationModal';
+import ConstraintModal from './ConstraintModal';
 
 const styles = theme => ({
   root: {},
@@ -24,25 +25,47 @@ class OptimisationTab extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      open: false,
+      openOptimisation: false,
+      openConstraint: false,
       success: false
     };
 
-    this.handleOpenModal = this.handleOpenModal.bind(this);
-    this.handleCloseModal = this.handleCloseModal.bind(this);
+    this.handleOpenOptimisationModal = this.handleOpenOptimisationModal.bind(
+      this
+    );
+    this.handleCloseOptimisationModal = this.handleCloseOptimisationModal.bind(
+      this
+    );
+    this.handleOpenConstraintModal = this.handleOpenConstraintModal.bind(this);
+    this.handleCloseConstraintModal = this.handleCloseConstraintModal.bind(
+      this
+    );
+
     this.showAlert = this.showAlert.bind(this);
     this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
   }
 
-  handleOpenModal(event) {
+  handleOpenOptimisationModal(event) {
     this.setState({
-      open: true
+      openOptimisation: true
     });
   }
 
-  handleCloseModal(event) {
+  handleCloseOptimisationModal(event) {
     this.setState({
-      open: false
+      openOptimisation: false
+    });
+  }
+
+  handleOpenConstraintModal(event) {
+    this.setState({
+      openConstraint: true
+    });
+  }
+
+  handleCloseConstraintModal(event) {
+    this.setState({
+      openConstraint: false
     });
   }
 
@@ -82,13 +105,16 @@ class OptimisationTab extends React.Component {
             </Typography>
           </Box>
           <Box>
-            <Button variant="outlined" onClick={this.handleOpenModal}>
+            <Button
+              variant="outlined"
+              onClick={this.handleOpenOptimisationModal}
+            >
               Run Optimisation
             </Button>
             <Button
               variant="outlined"
               className={classes.constraintButton}
-              onClick={this.handleOpenModal}
+              onClick={this.handleOpenConstraintModal}
             >
               Create Constraint Set
             </Button>
@@ -108,8 +134,13 @@ class OptimisationTab extends React.Component {
           </Alert>
         </Snackbar>
         <OptimisationModal
-          open={this.state.open}
-          handleClose={this.handleCloseModal}
+          open={this.state.openOptimisation}
+          handleClose={this.handleCloseOptimisationModal}
+          showAlert={this.showAlert}
+        />
+        <ConstraintModal
+          open={this.state.openConstraint}
+          handleClose={this.handleCloseConstraintModal}
           showAlert={this.showAlert}
         />
       </Box>
