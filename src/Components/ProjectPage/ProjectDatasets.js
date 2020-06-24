@@ -23,6 +23,7 @@ import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -182,7 +183,7 @@ class ProjectDatasets extends React.Component {
           actions={[
             {
               icon: () => <BackupOutlinedIcon />,
-              tooltip: 'Upload data file',
+              tooltip: 'Upload new data file',
               onClick: (event, rowData) => {
                 console.log('upload');
                 this.setState({
@@ -190,6 +191,15 @@ class ProjectDatasets extends React.Component {
                   selectedDataset: rowData.name
                 });
                 // alert('You are uploading to ' + rowData.name)
+              }
+            },
+            {
+              icon: () => <GetAppRoundedIcon />,
+              tooltip: 'Download data file',
+              onClick: (event, rowData) => {
+                console.log('downloading');
+                alert('You are downloading the dataset of ' + rowData.name);
+                // HANDLE DOWNLOAD FILE
               }
             }
           ]}
@@ -241,8 +251,8 @@ class ProjectDatasets extends React.Component {
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
             {this.state.createNew
-              ? 'New dataset created successfully!'
-              : 'Data source file uploaded successfully!'}
+              ? 'Data validation passed! New dataset created successfully!'
+              : 'Data validation passed! Data source file uploaded successfully!'}
           </Alert>
         </Snackbar>
         <Snackbar
@@ -259,8 +269,8 @@ class ProjectDatasets extends React.Component {
           autoHideDuration={6000}
           onClose={this.handleCloseSnackbar}
         >
-          <Alert onClose={this.handleCloseSnackbar} severity="error">
-            File type not acceptable. Please upload a CSV file.
+          <Alert onClose={this.handleCloseSnackbar} severity="warning">
+            Unexpected columns in the CSV file. Please try again.
           </Alert>
         </Snackbar>
       </div>

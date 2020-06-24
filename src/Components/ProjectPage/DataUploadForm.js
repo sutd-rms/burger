@@ -74,7 +74,7 @@ class DataUploadForm extends React.Component {
 
     for (let i = 0; i < this.state.files.length; i++) {
       if (this.state.files[i].type !== '.csv') {
-        alert('File type not accepted, please upload a CSV file');
+        // alert('File type not accepted, please upload a CSV file');
       }
     }
     if (this.state.files.length < 1) {
