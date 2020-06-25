@@ -241,7 +241,7 @@ class UserControlTab extends React.Component {
   render() {
     return (
       <div>
-        <Box m={2}>
+        <Box>
           <Typography variant="h6">Project Members Management</Typography>
           <Typography variant="subtitle1">
             You can view and manage the users in this project here
@@ -250,7 +250,7 @@ class UserControlTab extends React.Component {
 
         <br />
         <MaterialTable
-          title="Datasets"
+          title=""
           columns={this.state.columns}
           data={this.state.usersList}
           icons={tableIcons}
@@ -325,7 +325,7 @@ class UserControlTab extends React.Component {
           onClose={this.handleCloseSnackbar}
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
-            New user added for the project!
+            New user added to the project!
           </Alert>
         </Snackbar>
       </div>
