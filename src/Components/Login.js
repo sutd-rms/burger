@@ -40,7 +40,7 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     // alert('An email was submitted: ' + this.state.email);
-    this.props.history.push('/dashboard');
+    this.props.history.push('/dashboard/projects');
     event.preventDefault();
   }
 

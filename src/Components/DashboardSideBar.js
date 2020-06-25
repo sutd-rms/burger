@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react';
 import {
   BrowserRouter as Router,
   Route,
   Link,
   withRouter
-} from "react-router-dom";
-import NavItem from "./NavItem";
-import LogoutContainer from "./LogoutContainer";
-import styled from "styled-components";
-import { Figure, Image, Col, Row } from "react-bootstrap";
-import HomeIcon from "@material-ui/icons/Home";
-import FolderIcon from "@material-ui/icons/Folder";
-import AccountTreeIcon from "@material-ui/icons/AccountTree";
-import PersonIcon from "@material-ui/icons/Person";
-import { Typography } from "@material-ui/core";
+} from 'react-router-dom';
+import NavItem from './NavItem';
+import LogoutContainer from './LogoutContainer';
+import styled from 'styled-components';
+import { Figure, Image, Col, Row } from 'react-bootstrap';
+import HomeIcon from '@material-ui/icons/Home';
+import FolderIcon from '@material-ui/icons/Folder';
+import AccountTreeIcon from '@material-ui/icons/AccountTree';
+import PersonIcon from '@material-ui/icons/Person';
+import { Typography } from '@material-ui/core';
 
 const StyledSideNav = styled.div`
   position: fixed; /* Fixed Sidebar (stay in place on scroll and position relative to viewport) */
@@ -47,32 +47,25 @@ class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: "Meng Siong",
+      username: 'Meng Siong',
       activePath: props.location.pathname,
       items: [
         {
-          path:
-            "/Dashboard/dashboards" /* path is used as id to check which NavItem is active basically */,
-          name: "Dashboard",
-          key: 1 /* Key is required, else console throws error. Does this please you Mr. Browser?! */,
-          icon: <HomeIcon />
-        },
-        {
-          path: "/Dashboard/projects",
-          name: "Projects",
-          key: 2,
+          path: '/Dashboard/projects',
+          name: 'Projects',
+          key: 0,
           icon: <FolderIcon />
         },
         {
-          path: "/Dashboard/models",
-          name: "Models",
-          key: 3,
+          path: '/Dashboard/models',
+          name: 'Models',
+          key: 1,
           icon: <AccountTreeIcon />
         },
         {
-          path: "/Dashboard/users",
-          name: "Users",
-          key: 4,
+          path: '/Dashboard/users',
+          name: 'Users',
+          key: 2,
           icon: <PersonIcon />
         }
       ]
