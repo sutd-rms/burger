@@ -18,16 +18,10 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-// import DataUploadForm from './DataUploadForm';
-import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
-import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import AutoCompleteField from './AutoCompleteField';
 import { TextField } from '@material-ui/core';
-// import Select from '@material-ui/core/Select';
-// import MenuItem from '@material-ui/core/MenuItem';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
