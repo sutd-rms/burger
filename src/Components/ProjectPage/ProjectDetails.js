@@ -7,10 +7,11 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import DataUploadForm from './DataUploadForm';
-import ProjectDatasets from './ProjectDatasets';
+import DatasetsTab from './TabComponents/DatasetsTab';
 import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
 import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 import OptimisationTab from './TabComponents/OptimisationTab';
+import UserControlTable from './TabComponents/UserControlTab';
 
 const modelsList = [
   {
@@ -182,7 +183,7 @@ class ProjectDetails extends React.Component {
           <ProjectOverviewTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={1}>
-          <ProjectDatasets />
+          <DatasetsTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={2}>
           <ModelTrainingTab />
@@ -191,7 +192,7 @@ class ProjectDetails extends React.Component {
           <OptimisationTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={4}>
-          Item Five
+          <UserControlTable />
         </TabPanel>
       </div>
     );
