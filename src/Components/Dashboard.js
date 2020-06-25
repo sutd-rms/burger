@@ -28,10 +28,6 @@ function Dashboard() {
       <DashboardSideBar />
       <DashboardContainer>
         <Switch>
-          <Route
-            path={`${match.path}/dashboards`}
-            component={Dashboards}
-          ></Route>
           <Route path={`${match.path}/users`} component={AllUsersPage}></Route>
           <Route
             path={`${match.path}/models`}
@@ -41,7 +37,7 @@ function Dashboard() {
             path={`${match.path}/projects`}
             component={AllProjectPage}
           ></Route>
-          <Route path={match.path}></Route>
+          <Route path={match.path} component={AllProjectPage}></Route>
         </Switch>
       </DashboardContainer>
     </div>
