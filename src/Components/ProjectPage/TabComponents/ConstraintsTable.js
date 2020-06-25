@@ -3,6 +3,7 @@ import { forwardRef } from 'react';
 import MaterialTable from 'material-table';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -47,7 +48,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function UsersTable() {
+export default function OptimisationTable() {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [success, setSuccess] = React.useState(false);
 
@@ -57,80 +58,30 @@ export default function UsersTable() {
 
   const [state, setState] = React.useState({
     columns: [
-      { title: 'First Name', field: 'name' },
-      { title: 'Last Name', field: 'surname' },
-      { title: 'Email', field: 'email' },
-      { title: 'Organization', field: 'organization' },
-      { title: 'Phone Number', field: 'number', type: 'numeric' },
+      { title: 'Name', field: 'name' },
       {
-        title: 'Last Login',
-        field: 'login',
+        title: 'Date Created',
+        field: 'dateCreated',
         type: 'datetime',
         filtering: false
-      },
-      { title: 'Staff', field: 'staff', type: 'boolean' },
-      { title: 'Active Status', field: 'status', type: 'boolean' }
+      }
     ],
     data: [
       {
-        name: 'Mehmet',
-        surname: 'Baran',
-        email: 'mehmet@gmail.com',
-        organization: 'McDonaldsSG',
-        number: '91234567',
-        login: '2019-12-20 08:30:45.687',
-        staff: false,
-        status: true
+        name: 'Sample Constraint 1',
+        dateCreated: '2019-12-20 08:30:45.687'
       },
       {
-        name: 'Zerya',
-        surname: 'Betül',
-        email: 'zeryabaran@gmail.com',
-        organization: 'McDonaldsAussie',
-        number: '91230767',
-        login: '2020-02-20 10:20:46.657',
-        staff: false,
-        status: false
+        name: 'Testing Constraints',
+        dateCreated: '2020-02-20 10:20:46.657'
       },
       {
-        name: 'Meng Siong',
-        surname: 'Ang',
-        email: 'msang@gmail.com',
-        organization: 'RMS',
-        number: '91214767',
-        login: '2020-05-20 20:30:46.657',
-        staff: true,
-        status: true
+        name: 'McDonalds Aussie',
+        dateCreated: '2020-05-20 20:30:46.657'
       },
       {
-        name: 'Winny',
-        surname: 'Daud',
-        email: 'winnydaud@gmail.com',
-        organization: 'RMS',
-        number: '89230767',
-        login: '2020-06-01 20:46:46.657',
-        staff: true,
-        status: true
-      },
-      {
-        name: 'Hua Bing',
-        surname: 'Yong',
-        email: 'hbyong@gmail.com',
-        organization: 'RMS',
-        number: '81260767',
-        login: '2017-06-01 20:46:46.657',
-        staff: true,
-        status: false
-      },
-      {
-        name: 'James',
-        surname: 'Tan',
-        email: 'jamestan@gmail.com',
-        organization: 'BurgerKingUSA',
-        number: '90876541767',
-        login: '2020-04-01 20:46:46.657',
-        staff: false,
-        status: true
+        name: 'Sample Constraint 2',
+        dateCreated: '2020-06-01 20:46:46.657'
       }
     ]
   });
@@ -138,7 +89,7 @@ export default function UsersTable() {
   return (
     <div>
       <MaterialTable
-        title=""
+        title="Constraint Sets"
         columns={state.columns}
         data={state.data}
         icons={tableIcons}
@@ -154,36 +105,9 @@ export default function UsersTable() {
               selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
           }),
           headerStyle: {
-            backgroundColor: '#184085',
+            backgroundColor: 'grey',
             color: '#FFF'
           }
-        }}
-        editable={{
-          onRowAdd: newData =>
-            new Promise(resolve => {
-              setTimeout(() => {
-                resolve();
-                setState(prevState => {
-                  const data = [...prevState.data];
-                  data.push(newData);
-                  return { ...prevState, data };
-                });
-                setSuccess(true);
-              }, 600);
-            }),
-          onRowUpdate: (newData, oldData) =>
-            new Promise(resolve => {
-              setTimeout(() => {
-                resolve();
-                if (oldData) {
-                  setState(prevState => {
-                    const data = [...prevState.data];
-                    data[data.indexOf(oldData)] = newData;
-                    return { ...prevState, data };
-                  });
-                }
-              }, 600);
-            })
         }}
       />
       <Snackbar
