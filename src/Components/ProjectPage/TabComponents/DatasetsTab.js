@@ -18,7 +18,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import DataUploadForm from './DataUploadForm';
+import DataUploadForm from '../DataUploadForm';
 import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
@@ -53,7 +53,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-class ProjectDatasets extends React.Component {
+class DatasetsTab extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -278,4 +278,4 @@ class ProjectDatasets extends React.Component {
   }
 }
 
-export default ProjectDatasets;
+export default DatasetsTab;
