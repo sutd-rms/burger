@@ -10,6 +10,7 @@ import DataUploadForm from './DataUploadForm';
 import ProjectDatasets from './ProjectDatasets';
 import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
 import ModelTrainingTab from './TabComponents/ModelTrainingTab';
+import OptimisationTab from './TabComponents/OptimisationTab';
 
 const modelsList = [
   {
@@ -187,7 +188,7 @@ class ProjectDetails extends React.Component {
           <ModelTrainingTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={3}>
-          Item Four
+          <OptimisationTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={4}>
           Item Five

@@ -48,7 +48,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function TrainedModelsTable() {
+export default function ConstraintsMappingTable() {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [success, setSuccess] = React.useState(false);
 
@@ -58,40 +58,37 @@ export default function TrainedModelsTable() {
 
   const [state, setState] = React.useState({
     columns: [
-      { title: 'Name', field: 'name' },
-      { title: 'Dataset', field: 'datasetName' },
-      { title: 'Model', field: 'model' },
-      {
-        title: 'Date Trained',
-        field: 'dateTrained',
-        type: 'datetime',
-        filtering: false
-      }
+      { title: 'Item', field: 'item' }
+      // { title: 'Variable', field: 'variable' }
     ],
     data: [
       {
-        name: 'Test Model',
-        datasetName: 'random_csv_file.csv',
-        model: 'Default Model 1',
-        dateTrained: '2019-12-20 08:30:45.687'
+        item: 'Fillet-o-Fish',
+        variable: 'X1'
       },
       {
-        name: 'Test Model 2',
-        datasetName: 'random_csv_file.csv',
-        model: 'Neural Network Model',
-        dateTrained: '2020-02-20 10:20:46.657'
+        item: 'McChicken',
+        variable: 'X2'
       },
       {
-        name: 'Test Model2',
-        datasetName: 'iloverms.csv',
-        model: 'Default Model 1',
-        dateTrained: '2020-05-20 20:30:46.657'
+        item: 'FriesS',
+        variable: 'X3'
       },
       {
-        name: 'ABC Test',
-        datasetName: 'test.csv',
-        model: 'Random Forest',
-        dateTrained: '2020-06-01 20:46:46.657'
+        item: 'FriesM',
+        variable: 'X4'
+      },
+      {
+        item: 'FriesL',
+        variable: 'X5'
+      },
+      {
+        item: 'McWings',
+        variable: 'X6'
+      },
+      {
+        item: 'McFlurry',
+        variable: 'X7'
       }
     ]
   });
@@ -99,7 +96,7 @@ export default function TrainedModelsTable() {
   return (
     <div>
       <MaterialTable
-        title="Trained Models"
+        title=""
         columns={state.columns}
         data={state.data}
         icons={tableIcons}
@@ -107,15 +104,15 @@ export default function TrainedModelsTable() {
           setSelectedRow(selectedRow.tableData.id)
         }
         options={{
-          filtering: true,
-          exportButton: true,
+          maxBodyHeight: 300,
           actionsColumnIndex: -1,
+          paging: false,
           rowStyle: rowData => ({
             backgroundColor:
               selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
           }),
           headerStyle: {
-            backgroundColor: '#F5A705',
+            backgroundColor: 'grey',
             color: '#FFF'
           }
         }}

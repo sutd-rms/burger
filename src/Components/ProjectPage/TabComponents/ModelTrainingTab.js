@@ -60,11 +60,16 @@ class ModelTrainingTab extends React.Component {
     const { classes } = this.props;
 
     return (
-      <Box boxShadow={3} px={5} py={5}>
+      <Box>
         <Box mb={5} px={1} display="flex" justifyContent="space-between">
-          <Typography variant="h6" component="h2">
-            TRAINED MODELS:
-          </Typography>
+          <Box>
+            <Typography variant="h6" component="h2">
+              Model Training
+            </Typography>
+            <Typography variant="subtitle1">
+              Use your datasets and start training models now!
+            </Typography>
+          </Box>
           <Button variant="outlined" onClick={this.handleOpenModal}>
             Train New Model
           </Button>

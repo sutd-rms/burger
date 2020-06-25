@@ -48,7 +48,7 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function TrainedModelsTable() {
+export default function OptimisationTable() {
   const [selectedRow, setSelectedRow] = React.useState(null);
   const [success, setSuccess] = React.useState(false);
 
@@ -58,40 +58,45 @@ export default function TrainedModelsTable() {
 
   const [state, setState] = React.useState({
     columns: [
-      { title: 'Name', field: 'name' },
-      { title: 'Dataset', field: 'datasetName' },
-      { title: 'Model', field: 'model' },
+      { title: 'Trained Model', field: 'model' },
+      { title: 'Constraint Set', field: 'constraintSet' },
+      { title: 'Cost Set', field: 'costSet' },
+      { title: 'Data Set', field: 'dataSet' },
       {
-        title: 'Date Trained',
-        field: 'dateTrained',
+        title: 'Date Run',
+        field: 'dateRun',
         type: 'datetime',
         filtering: false
       }
     ],
     data: [
       {
-        name: 'Test Model',
-        datasetName: 'random_csv_file.csv',
-        model: 'Default Model 1',
-        dateTrained: '2019-12-20 08:30:45.687'
+        model: 'Test Model',
+        constraintSet: 'Sample Constraint 1',
+        costSet: 'Sample costset from McDonald 2017',
+        dataSet: 'Sample dataset from McDonald 2017',
+        dateRun: '2019-12-20 08:30:45.687'
       },
       {
-        name: 'Test Model 2',
-        datasetName: 'random_csv_file.csv',
-        model: 'Neural Network Model',
-        dateTrained: '2020-02-20 10:20:46.657'
+        model: 'Test Model 2',
+        constraintSet: 'Sample Constraint 1',
+        costSet: 'Sample costset from McDonald 2018',
+        dataSet: 'Sample dataset from McDonald 2018',
+        dateRun: '2020-02-20 10:20:46.657'
       },
       {
-        name: 'Test Model2',
-        datasetName: 'iloverms.csv',
-        model: 'Default Model 1',
-        dateTrained: '2020-05-20 20:30:46.657'
+        model: 'Test Model2',
+        constraintSet: 'McDonalds Aussie',
+        costSet: 'Sample costset from McDonald 2019',
+        dataSet: 'Sample dataset from McDonald 2019',
+        dateRun: '2020-05-20 20:30:46.657'
       },
       {
-        name: 'ABC Test',
-        datasetName: 'test.csv',
-        model: 'Random Forest',
-        dateTrained: '2020-06-01 20:46:46.657'
+        model: 'ABC Test',
+        constraintSet: 'Sample Constraint 2',
+        costSet: 'Sample costset from McDonald 2017',
+        dataSet: 'Sample dataset from McDonald 2018',
+        dateRun: '2020-06-01 20:46:46.657'
       }
     ]
   });
@@ -99,7 +104,7 @@ export default function TrainedModelsTable() {
   return (
     <div>
       <MaterialTable
-        title="Trained Models"
+        title="Past Optimisations"
         columns={state.columns}
         data={state.data}
         icons={tableIcons}
@@ -115,7 +120,7 @@ export default function TrainedModelsTable() {
               selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
           }),
           headerStyle: {
-            backgroundColor: '#F5A705',
+            backgroundColor: 'brown',
             color: '#FFF'
           }
         }}
