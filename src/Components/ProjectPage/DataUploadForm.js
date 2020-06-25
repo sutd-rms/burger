@@ -9,10 +9,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+import Typography from '@material-ui/core/Typography';
 
 const styles = theme => ({
   dialog: {
@@ -47,6 +44,10 @@ const styles = theme => ({
   }
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 class DataUploadForm extends React.Component {
   constructor(props) {
     super(props);
@@ -63,24 +64,30 @@ class DataUploadForm extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     event.preventDefault();
+    console.log(this.state.files);
 
     const form = {
       file: this.state.files
     };
-    this.setState({
-      success: true
-    });
-    // WAIT AND REFRESH PAGE HERE
-    setTimeout(function() {
-      window.location.reload(false);
-    }, 2000);
-  }
 
-  handleCloseSnackbar(event) {
-    this.setState({ success: false });
-  }
+    for (let i = 0; i < this.state.files.length; i++) {
+      if (this.state.files[i].type !== '.csv') {
+        // alert('File type not accepted, please upload a CSV file');
+      }
+    }
+    if (this.state.files.length < 1) {
+      this.props.noFileSelected();
+    } else {
+      this.setState({
+        success: true
+      });
+      this.props.successUpload();
+      this.props.handleCloseDataUploadForm();
+      // this.props.handleWrongType();
+    }
+  };
 
   render() {
     const { classes } = this.props;
@@ -106,8 +113,9 @@ class DataUploadForm extends React.Component {
           id="customized-dialog-title"
           onClose={this.props.handleCloseDataUploadForm}
         >
-          Upload new Dataset
+          Upload for: {this.props.selectedDataset}
         </MuiDialogTitle>
+        <br />
         <div className={classes.root}>
           <Dropzone
             onDrop={this.onDrop}
@@ -146,13 +154,6 @@ class DataUploadForm extends React.Component {
             </Button>
           </Box>
         </div>
-        <Snackbar
-          open={this.state.success}
-          autoHideDuration={800}
-          // onClose={this.handleCloseSnackbar}
-        >
-          <Alert severity="success">New dataset uploaded successfully!</Alert>
-        </Snackbar>
       </Dialog>
     );
   }
