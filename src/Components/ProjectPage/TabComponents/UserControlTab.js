@@ -86,7 +86,7 @@ class UserControlTab extends React.Component {
         {
           title: 'Last Name',
           field: 'surname',
-          cellStyle: { width: '130px' },
+          cellStyle: { width: '100px' },
           editComponent: props => (
             <TextField
               value={this.state.surname ? this.state.surname : ''}
@@ -120,7 +120,7 @@ class UserControlTab extends React.Component {
           title: 'Phone Number',
           field: 'number',
           type: 'numeric',
-          cellStyle: { width: '150px' },
+          cellStyle: { width: '100px' },
           editComponent: props => (
             <TextField
               value={this.state.phone ? this.state.phone : ''}
