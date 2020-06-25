@@ -11,6 +11,7 @@ import ProjectDatasets from './ProjectDatasets';
 import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
 import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 import OptimisationTab from './TabComponents/OptimisationTab';
+import UserControlTable from './TabComponents/UserControlTab';
 
 const modelsList = [
   {
@@ -191,7 +192,7 @@ class ProjectDetails extends React.Component {
           <OptimisationTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={4}>
-          Item Five
+          <UserControlTable />
         </TabPanel>
       </div>
     );
