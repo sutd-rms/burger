@@ -113,7 +113,7 @@ class Login extends React.Component {
                 </Button>
               </Form>
               <p class="mt-3">
-                <a href="#" class="text-dark">
+                <a href="/password-reset" class="text-dark">
                   Forgot Password?
                 </a>
               </p>
