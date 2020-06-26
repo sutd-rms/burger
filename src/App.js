@@ -10,6 +10,7 @@ import {
 import Dashboard from './Components/Dashboard.js';
 import Login from './Components/Login';
 import PasswordReset from './Components/PasswordReset';
+import PasswordResetConfirm from './Components/PasswordResetConfirm';
 
 function App() {
   return (
@@ -25,6 +26,9 @@ function App() {
         </Route>
         <Route path="/register">
           <div>register</div>
+        </Route>
+        <Route path="/password-reset/:uid/:token">
+          <PasswordResetConfirm />
         </Route>
         <Route path="/password-reset">
           <PasswordReset />
