@@ -1,14 +1,15 @@
-import React from "react";
-import "./App.css";
+import React from 'react';
+import './App.css';
 import {
   BrowserRouter as Router,
   Switch,
   Route,
   useRouteMatch,
   useParams
-} from "react-router-dom";
-import Dashboard from "./Components/Dashboard.js";
-import Login from "./Components/Login";
+} from 'react-router-dom';
+import Dashboard from './Components/Dashboard.js';
+import Login from './Components/Login';
+import PasswordReset from './Components/PasswordReset';
 
 function App() {
   return (
@@ -24,6 +25,9 @@ function App() {
         </Route>
         <Route path="/register">
           <div>register</div>
+        </Route>
+        <Route path="/password-reset">
+          <PasswordReset />
         </Route>
         <Route path="/Dashboard">
           <Dashboard />
