@@ -3,19 +3,14 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import CardMedia from '@material-ui/core/CardMedia';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import RmsLogo from '../static/images/rms_logo.jpg';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 // import { useForm } from "react-hook-form";
 
 const styles = theme => ({
-  logo: {
-    width: 400,
-    marginLeft: 100
-  },
-
   top: {
     paddingBottom: 10,
     borderBottom: '2px solid #C4C4C4'
@@ -41,12 +36,18 @@ const styles = theme => ({
   }
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 class PasswordReset extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
 
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
   }
 
   handleInputChange(event) {
@@ -65,6 +66,13 @@ class PasswordReset extends React.Component {
     event.preventDefault();
   };
 
+  handleCloseSnackbar = event => {
+    event.preventDefault();
+    this.setState({
+      success: false
+    });
+  };
+
   render() {
     const { classes } = this.props;
 
@@ -79,7 +87,7 @@ class PasswordReset extends React.Component {
           <Box>
             <Box mb={2}>
               <Typography variant="h4" className={classes.top}>
-                PASSWORD RESET
+                <b>PASSWORD RESET</b>
               </Typography>
             </Box>
             <form onSubmit={this.handleSubmit}>
@@ -88,18 +96,29 @@ class PasswordReset extends React.Component {
                 color="textSecondary"
                 gutterBottom
               >
-                Please enter your email address
+                Please enter your <b>email address</b> that you used to
+                register.
+                <br></br>
+                We'll send you an email with a link to reset your password
+              </Typography>
+              <br></br>
+              <Typography
+                variant="subtitle2"
+                color="textSecondary"
+                gutterBottom
+              >
+                Email Address:
               </Typography>
               <TextField
                 variant="outlined"
                 required
                 type="email"
-                name="name"
-                value={this.state.name}
+                name="email"
+                value={this.state.email}
                 onChange={this.handleInputChange}
                 autoFocus
               />
-              <Box mt={3}>
+              <Box my={3}>
                 <Button
                   className={classes.submit}
                   variant="contained"
@@ -108,15 +127,23 @@ class PasswordReset extends React.Component {
                   Submit
                 </Button>
               </Box>
+              <Box>
+                <Typography
+                  variant="subtitle2"
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  <a href="/">Return to Login Page</a>
+                </Typography>
+              </Box>
             </form>
           </Box>
-          <CardMedia
-            component="img"
-            title="rms logo"
-            image={RmsLogo}
-            className={classes.logo}
-          />
         </Box>
+        <Snackbar open={this.state.success} onClose={this.handleCloseSnackbar}>
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            An email has been sent!
+          </Alert>
+        </Snackbar>
       </Container>
     );
   }
