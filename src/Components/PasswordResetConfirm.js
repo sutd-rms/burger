@@ -3,22 +3,21 @@ import { withStyles } from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
-import CardMedia from '@material-ui/core/CardMedia';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
-import RmsLogo from '../static/images/rms_logo.jpg';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 
 // import { useForm } from "react-hook-form";
 
 const styles = theme => ({
-  logo: {
-    width: 400,
-    marginLeft: 100
-  },
-
   top: {
     paddingBottom: 10,
     borderBottom: '2px solid #C4C4C4'
+  },
+
+  error: {
+    color: 'red'
   },
 
   submit: {
@@ -41,12 +40,21 @@ const styles = theme => ({
   }
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 class PasswordResetConfirm extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      success: false,
+      error: ''
+    };
 
     this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
   }
 
   handleInputChange(event) {
@@ -63,6 +71,19 @@ class PasswordResetConfirm extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    this.setState({
+      success: true
+    });
+    this.setState({
+      error: 'Passwords do not match!'
+    });
+  };
+
+  handleCloseSnackbar = event => {
+    event.preventDefault();
+    this.setState({
+      success: false
+    });
   };
 
   render() {
@@ -79,7 +100,7 @@ class PasswordResetConfirm extends React.Component {
           <Box>
             <Box mb={2}>
               <Typography variant="h4" className={classes.top}>
-                PASSWORD RESET
+                <b>Reset Your Password</b>
               </Typography>
             </Box>
             <form onSubmit={this.handleSubmit}>
@@ -88,18 +109,56 @@ class PasswordResetConfirm extends React.Component {
                 color="textSecondary"
                 gutterBottom
               >
-                Please enter your email address
+                Please enter and confirm your new password below to access your
+                account
               </Typography>
-              <TextField
-                variant="outlined"
-                required
-                type="email"
-                name="name"
-                value={this.state.name}
-                onChange={this.handleInputChange}
-                autoFocus
-              />
+              <Box mt={5}>
+                <Box>
+                  <Typography
+                    variant="subtitle2"
+                    color="textSecondary"
+                    gutterBottom
+                    className={classes.error}
+                  >
+                    {this.state.error}
+                  </Typography>
+                </Box>
+                <Typography
+                  variant="subtitle2"
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  New Password
+                </Typography>
+                <TextField
+                  variant="outlined"
+                  required
+                  type="password"
+                  name="password"
+                  value={this.state.password}
+                  onChange={this.handleInputChange}
+                  autoFocus
+                />
+              </Box>
               <Box mt={3}>
+                <Typography
+                  variant="subtitle2"
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  Confirm New Password
+                </Typography>
+                <TextField
+                  variant="outlined"
+                  required
+                  type="password"
+                  name="passwordConfirm"
+                  value={this.state.passwordConfirm}
+                  onChange={this.handleInputChange}
+                  autoFocus
+                />
+              </Box>
+              <Box my={3}>
                 <Button
                   className={classes.submit}
                   variant="contained"
@@ -108,15 +167,23 @@ class PasswordResetConfirm extends React.Component {
                   Submit
                 </Button>
               </Box>
+              <Box>
+                <Typography
+                  variant="subtitle2"
+                  color="textSecondary"
+                  gutterBottom
+                >
+                  <a href="/">Return to Login Page</a>
+                </Typography>
+              </Box>
             </form>
           </Box>
-          <CardMedia
-            component="img"
-            title="rms logo"
-            image={RmsLogo}
-            className={classes.logo}
-          />
         </Box>
+        <Snackbar open={this.state.success} onClose={this.handleCloseSnackbar}>
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            Password Reset!
+          </Alert>
+        </Snackbar>
       </Container>
     );
   }
