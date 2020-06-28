@@ -7,15 +7,12 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import axios from 'axios';
 
 const styles = theme => ({
   top: {
     paddingBottom: 10,
     borderBottom: '2px solid #C4C4C4'
-  },
-
-  error: {
-    color: 'red'
   },
 
   submit: {
@@ -42,25 +39,37 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+const ErrorList = ({ list }) => (
+  <ul>
+    {list.map(item => (
+      <li style={{ color: 'red' }} key={item}>
+        {item}
+      </li>
+    ))}
+  </ul>
+);
+
 class PasswordResetConfirm extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       success: false,
-      error: ''
+      error: false,
+      errorMessage: [],
+      password: '',
+      passwordConfirm: ''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
+    this.handleCloseErrorSnackbar = this.handleCloseErrorSnackbar.bind(this);
   }
 
   handleInputChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    console.log(name);
-    console.log(value);
 
     this.setState({
       [name]: value
@@ -69,18 +78,67 @@ class PasswordResetConfirm extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    this.setState({
-      success: true
-    });
-    this.setState({
-      error: 'Passwords do not match!'
-    });
+
+    if (this.state.password != this.state.passwordConfirm) {
+      this.setState({
+        error: true,
+        errorMessage: ['Passwords given do not match!'],
+        password: '',
+        passwordConfirm: ''
+      });
+      return;
+    }
+
+    const urlPasswordReset = `http://localhost:8000/auth/users/reset_password_confirm/`;
+
+    // const urlPasswordReset = `https://secret-sauce.azurewebsites.net/auth/users/reset_password_confirm/`
+
+    const form = {
+      uid: this.props.match.params.id,
+      token: this.props.match.params.token,
+      new_password: this.state.password,
+      re_new_password: this.state.passwordConfirm
+    };
+
+    axios
+      .post(urlPasswordReset, form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      })
+      .then(res => {
+        this.setState({
+          success: true,
+          password: '',
+          passwordConfirm: '',
+          error: false,
+          errorMessage: []
+        });
+      })
+      .catch(err => {
+        const errorArray = err.response.data.new_password;
+
+        this.setState({
+          error: true,
+          errorMessage: errorArray,
+          password: '',
+          passwordConfirm: ''
+        });
+      });
   };
 
   handleCloseSnackbar = event => {
     event.preventDefault();
     this.setState({
       success: false
+    });
+  };
+
+  handleCloseErrorSnackbar = event => {
+    event.preventDefault();
+    this.setState({
+      error: false
     });
   };
 
@@ -110,16 +168,9 @@ class PasswordResetConfirm extends React.Component {
                 Please enter and confirm your new password below to access your
                 account
               </Typography>
-              <Box mt={5}>
+              <Box mt={2}>
                 <Box>
-                  <Typography
-                    variant="subtitle2"
-                    color="textSecondary"
-                    gutterBottom
-                    className={classes.error}
-                  >
-                    {this.state.error}
-                  </Typography>
+                  <ErrorList list={this.state.errorMessage} />
                 </Box>
                 <Typography
                   variant="subtitle2"
@@ -180,6 +231,14 @@ class PasswordResetConfirm extends React.Component {
         <Snackbar open={this.state.success} onClose={this.handleCloseSnackbar}>
           <Alert onClose={this.handleCloseSnackbar} severity="success">
             Password Reset!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          onClose={this.handleCloseErrorSnackbar}
+        >
+          <Alert onClose={this.handleCloseErrorSnackbar} severity="error">
+            An error has occured! Please try again!
           </Alert>
         </Snackbar>
       </Container>

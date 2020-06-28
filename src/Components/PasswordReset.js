@@ -7,6 +7,7 @@ import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import axios from 'axios';
 
 const styles = theme => ({
   top: {
@@ -41,20 +42,22 @@ function Alert(props) {
 class PasswordReset extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      email: '',
+      success: false,
+      error: false
+    };
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
+    this.handleCloseErrorSnackbar = this.handleCloseErrorSnackbar.bind(this);
   }
 
   handleInputChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    console.log(name);
-    console.log(value);
-
     this.setState({
       [name]: value
     });
@@ -62,12 +65,47 @@ class PasswordReset extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
+
+    const urlPasswordReset = `http://localhost:8000/auth/users/reset_password/`;
+
+    // const urlPasswordReset = `https://secret-sauce.azurewebsites.net/auth/users/reset_password/`
+
+    const form = {
+      email: this.state.email
+    };
+
+    axios
+      .post(urlPasswordReset, form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json'
+        }
+      })
+      .then(res => {
+        this.setState({
+          success: true,
+          email: ''
+        });
+      })
+      .catch(err => {
+        this.setState({
+          error: true,
+          email: ''
+        });
+      });
   };
 
   handleCloseSnackbar = event => {
     event.preventDefault();
     this.setState({
       success: false
+    });
+  };
+
+  handleCloseErrorSnackbar = event => {
+    event.preventDefault();
+    this.setState({
+      error: false
     });
   };
 
@@ -139,7 +177,15 @@ class PasswordReset extends React.Component {
         </Box>
         <Snackbar open={this.state.success} onClose={this.handleCloseSnackbar}>
           <Alert onClose={this.handleCloseSnackbar} severity="success">
-            An email has been sent!
+            An email has been sent! Please check your inbox!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          onClose={this.handleCloseErrorSnackbar}
+        >
+          <Alert onClose={this.handleCloseErrorSnackbar} severity="error">
+            An error has occured! Please try again later!
           </Alert>
         </Snackbar>
       </Container>

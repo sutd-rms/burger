@@ -25,9 +25,10 @@ function App() {
       <Route path="/register">
         <div>register</div>
       </Route>
-      <Route path="/password-reset/:uid/:token">
-        <PasswordResetConfirm />
-      </Route>
+      <Route
+        path="/password-reset/confirm/:id/:token"
+        component={PasswordResetConfirm}
+      />
       <Route path="/password-reset">
         <PasswordReset />
       </Route>
