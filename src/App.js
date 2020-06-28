@@ -11,6 +11,7 @@ import Dashboard from './Components/Dashboard.js';
 import Login from './Components/Login';
 import PasswordReset from './Components/PasswordReset';
 import PasswordResetConfirm from './Components/PasswordResetConfirm';
+import { DashboardRoute } from './SpecialRoutes';
 
 function App() {
   return (
@@ -30,9 +31,7 @@ function App() {
       <Route path="/password-reset">
         <PasswordReset />
       </Route>
-      <Route path="/Dashboard">
-        <Dashboard />
-      </Route>
+      <DashboardRoute path="/Dashboard" component={Dashboard} />
       <Route path="/">
         <Login />
       </Route>
