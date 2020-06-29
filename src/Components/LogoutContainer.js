@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
 import styled from 'styled-components';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
+import history from './../history';
 
 const StyledContainer = styled.div`
   border-top: 3px solid #343a40;
@@ -34,10 +35,22 @@ const StyledContainer = styled.div`
 `;
 
 export default class LogoutContainer extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick = event => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('expiry');
+    history.push('/');
+  };
+
   render() {
     return (
       <StyledContainer>
-        <Link to="/login" onClick={this.handleClick}>
+        <Link onClick={this.handleClick}>
           <div>
             <ExitToAppIcon />
             Sign Out

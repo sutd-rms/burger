@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { userLoginFetch } from '../redux/actions';
 import {
   Container,
   Row,
@@ -22,6 +24,9 @@ class Login extends React.Component {
       isRemember: false,
       passwordShown: false
     };
+    if (props.location.state) {
+      this.state.errorMessage = props.location.state.error_message;
+    }
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -40,8 +45,15 @@ class Login extends React.Component {
 
   handleSubmit(event) {
     // alert('An email was submitted: ' + this.state.email);
-    this.props.history.push('/dashboard/projects');
     event.preventDefault();
+
+    const credentials = {
+      email: this.state.email,
+      password: this.state.password,
+      isRemember: this.state.isRemember
+    };
+
+    this.props.userLoginFetch(credentials);
   }
 
   togglePasswordVisiblity(event) {
@@ -59,6 +71,7 @@ class Login extends React.Component {
               <Figure>
                 <Figure.Image alt="171x180" src="/rms_logo.jpg" />
               </Figure>
+              <p class="text-danger">{this.state.errorMessage}</p>
               <Form className="my-3" onSubmit={this.handleSubmit}>
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label>EMAIL</Form.Label>
@@ -113,7 +126,7 @@ class Login extends React.Component {
                 </Button>
               </Form>
               <p class="mt-3">
-                <a href="#" class="text-dark">
+                <a href="/password-reset" class="text-dark">
                   Forgot Password?
                 </a>
               </p>
@@ -145,4 +158,10 @@ class Login extends React.Component {
   }
 }
 
-export default withRouter(Login);
+function mapDispatchToProps(dispatch) {
+  return {
+    userLoginFetch: userInfo => dispatch(userLoginFetch(userInfo))
+  };
+}
+
+export default withRouter(connect(null, mapDispatchToProps)(Login));
