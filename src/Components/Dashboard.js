@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import AllProjectPage from './ProjectPage/AllProjectPage';
 import AllModelsPage from './ModelsPage/AllModelsPage';
 import AllUsersPage from './UsersPage/AllUsersPage';
+import Dataset from './Dataset';
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
@@ -28,6 +29,7 @@ function Dashboard() {
       <DashboardSideBar />
       <DashboardContainer>
         <Switch>
+          <Route path={`${match.path}/dataset`} component={Dataset}></Route>
           <Route path={`${match.path}/users`} component={AllUsersPage}></Route>
           <Route
             path={`${match.path}/models`}
