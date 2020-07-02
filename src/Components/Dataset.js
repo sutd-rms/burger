@@ -118,7 +118,8 @@ class Dataset extends React.Component {
         title: {
           display: true,
           text: 'Prices across items'
-        }
+        },
+        tooltipDecimals: 2
       }
     });
   }
