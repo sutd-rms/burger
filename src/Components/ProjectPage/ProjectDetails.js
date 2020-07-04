@@ -12,36 +12,7 @@ import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
 import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 import OptimisationTab from './TabComponents/OptimisationTab';
 import UserControlTable from './TabComponents/UserControlTab';
-
-const modelsList = [
-  {
-    name: 'Default Demand Model',
-    id: 1,
-    date: 'Nov 12',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text'
-  },
-  {
-    name: 'GA Model',
-    id: 2,
-    date: 'Nov 11',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content. This works as expected: data is fetched and then rendered. The problem with this solution is that our component contains data loading logic that is coupled to a lifecycle method. This means it’s harder to test and reuse the component. Ideally, we’d want to move this logic out and instead inject items array as a property into this component. That way, we can easily test it and use it in Storybook, for example.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text'
-  },
-  {
-    name: 'Other Model',
-    id: 3,
-    date: 'Nov 11',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text'
-  }
-];
+import axios from 'axios';
 
 const datasetsList = [
   {
@@ -100,25 +71,11 @@ class ProjectDetails extends React.Component {
     this.state = {
       id: '',
       datasetList: datasetsList,
-      modelList: modelsList,
-      projectName: 'Default Project Name',
-      projectDescription: 'Default Project Description',
-      createdDate: '06/14/2020',
-      company: 'McDonald Australia',
-      companyLink: 'www.google.com',
-      img: 'https://source.unsplash.com/random',
+      projectId: this.props.match.params.projectId,
       value: 0
     };
 
     this.handleChange = this.handleChange.bind(this);
-  }
-
-  componentDidMount() {
-    const id = this.props.match.params.projectId;
-    // FETCH & SET STATE
-    this.setState({
-      id: id
-    });
   }
 
   handleChange = (event, newValue) => {
@@ -138,7 +95,7 @@ class ProjectDetails extends React.Component {
           className={classes.appbar}
         >
           <Box display="flex" alignItems="flex-end" alignContent="flex-start">
-            <span className={classes.title}>McDonalds Australia</span>
+            <span className={classes.title}>Project Overview</span>
             <Tabs
               value={this.state.value}
               onChange={this.handleChange}
@@ -180,7 +137,7 @@ class ProjectDetails extends React.Component {
           </Box>
         </AppBar>
         <TabPanel value={this.state.value} index={0}>
-          <ProjectOverviewTab />
+          <ProjectOverviewTab projectId={this.state.projectId} />
         </TabPanel>
         <TabPanel value={this.state.value} index={1}>
           <DatasetsTab />
