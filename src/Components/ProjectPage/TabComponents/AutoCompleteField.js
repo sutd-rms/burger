@@ -1,29 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import axios from 'axios';
 
 export default function AutoCompleteField(props) {
-  const [value, setValue] = useState('');
   const [inputValue, setInputValue] = useState('');
+
+  let onInputChange = (evt, newInput) => {
+    setInputValue(newInput);
+  }
+
+  let onChange = (evt, newValue) => {
+    props.onChange(newValue);
+  }
 
   return (
     <Autocomplete
       id="combo-box-demo"
-      onChange={(event, newValue) => {
-        props.onChange(newValue);
-      }}
+      onChange={onChange}
+      onInputChange={onInputChange}
       inputValue={inputValue}
-      onInputChange={(event, newInputValue) => {
-        setInputValue(newInputValue);
-      }}
       options={props.options}
       getOptionLabel={option => option.email}
+      groupBy={option=> props.getCompanyName(option.company)}
       renderOption={option => (
         <React.Fragment>
-          <span style={{ fontWeight: 'bold' }}>
-            {option.name + ' ' + option.surname}
-          </span>
-          {option.email} --{option.organization}
+          <span style={{ fontWeight: 'bold' }}>{option.email}</span>
+          --{props.getCompanyName(option.company)}
         </React.Fragment>
       )}
       renderInput={params => (
@@ -33,7 +36,7 @@ export default function AutoCompleteField(props) {
           variant="outlined"
           inputProps={{
             ...params.inputProps,
-            autoComplete: 'new-password' // disable autocomplete and autofill
+            autoComplete: '' // disable autocomplete and autofill
           }}
         />
       )}

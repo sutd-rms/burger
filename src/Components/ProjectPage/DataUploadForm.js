@@ -10,6 +10,7 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 const styles = theme => ({
   dialog: {
@@ -66,25 +67,47 @@ class DataUploadForm extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    console.log(this.state.files);
+    // console.log(this.state.files);
 
-    const form = {
-      file: this.state.files
-    };
+    var formData = new FormData();
+    formData.append("upload", this.state.files[0]);
+    formData.append("project", this.props.projectId);
+    formData.append("name", this.props.datasetName);
 
-    for (let i = 0; i < this.state.files.length; i++) {
-      if (this.state.files[i].type !== '.csv') {
-        // alert('File type not accepted, please upload a CSV file');
-      }
-    }
+    console.log(formData)
+
+    // for (let i = 0; i < this.state.files.length; i++) {
+    //   if (this.state.files[i].type !== '.csv') {
+    //     alert('File type not accepted, please upload a CSV file');
+    //   }
+    // }
     if (this.state.files.length < 1) {
       this.props.noFileSelected();
     } else {
-      this.setState({
-        success: true
-      });
-      this.props.successUpload();
-      this.props.handleCloseDataUploadForm();
+      let token = localStorage.getItem('token');
+      axios
+        .post(
+          'https://secret-sauce.azurewebsites.net/portal/datablocks/',
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        )
+        .then(res => {
+          console.log(res.data);
+          if (res.status !== 400) {
+            this.setState({
+              success: true
+            });
+            this.props.successUpload();
+            this.props.handleCloseDataUploadForm();
+          }
+        });
+
       // this.props.handleWrongType();
     }
   };
@@ -129,11 +152,11 @@ class DataUploadForm extends React.Component {
                   <input {...getInputProps()} />
                   <CloudUploadIcon
                     className={`${classes.uploadIcon} ${
-                      this.state.files.length == 0 ? null : classes.uploaded
+                      this.state.files.length === 0 ? null : classes.uploaded
                     }`}
                   />
                   <p>
-                    {this.state.files.length == 0
+                    {this.state.files.length === 0
                       ? "Drag 'n' Drop your CSV file here, or click to select file"
                       : 'Click to Change File'}
                   </p>

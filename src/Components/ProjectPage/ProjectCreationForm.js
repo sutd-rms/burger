@@ -92,7 +92,7 @@ export default function ProjectCreationForm(props) {
           }
         )
         .then(res => {
-          if (res.status == 200) {
+          if (res.status = 200) {
             setSuccess(true);
             props.handleClose();
           } else {
@@ -104,7 +104,6 @@ export default function ProjectCreationForm(props) {
 
   useEffect(() => {
     let token = localStorage.getItem('token');
-    // console.log(match)
     axios
       .get('https://secret-sauce.azurewebsites.net/auth/company/', {
         headers: {
@@ -127,10 +126,6 @@ export default function ProjectCreationForm(props) {
   const handleOrganizationChange = e => {
     setOrganization(e.target.value);
   };
-
-  // const handleModelChange = e => {
-  //   setDefaultModel(e.target.value);
-  // };
 
   const handleCloseSnackbar = e => {
     setSuccess(false);

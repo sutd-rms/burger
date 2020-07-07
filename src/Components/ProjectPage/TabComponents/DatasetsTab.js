@@ -24,6 +24,7 @@ import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import axios from 'axios';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -57,24 +58,7 @@ class DatasetsTab extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      datasetsList: [
-        {
-          name: 'Sample dataset from McDonald 2017',
-          date: '24/12/2020, 10:02:34'
-        },
-        {
-          name: 'Sample dataset from McDonald 2018',
-          date: '05/10/2020, 15:32:50'
-        },
-        {
-          name: 'Sample dataset from McDonald 2019',
-          date: '20/04/2020, 9:23:47'
-        },
-        {
-          name: 'Sample dataset from McDonald 2020',
-          date: '14/12/2020, 12:40:12'
-        }
-      ],
+      datasetsList: [],
       columns: [
         {
           title: 'Dataset Name',
@@ -104,6 +88,24 @@ class DatasetsTab extends React.Component {
       noFileError: false,
       wrongTypeError: false
     };
+  }
+
+  componentDidMount() {
+    let token = localStorage.getItem('token');
+    let data = { project: this.props.projectId };
+    axios
+      .get('https://secret-sauce.azurewebsites.net/portal/datablocks', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: data
+      })
+      .then(res => {
+        this.setState({ datasetsList: res.data });
+        console.log(this.state.datasetsList);
+      });
   }
 
   onClick = e => {
@@ -197,7 +199,21 @@ class DatasetsTab extends React.Component {
               icon: () => <GetAppRoundedIcon />,
               tooltip: 'Download data file',
               onClick: (event, rowData) => {
-                console.log('downloading');
+                let token = localStorage.getItem('token');
+                axios
+                  .get(
+                    `https://secret-sauce.azurewebsites.net/portal/datablocks/${rowData.id}`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    console.log(res.data)
+                  });
                 alert('You are downloading the dataset of ' + rowData.name);
                 // HANDLE DOWNLOAD FILE
               }
@@ -243,6 +259,8 @@ class DatasetsTab extends React.Component {
           selectedDataset={this.state.selectedDataset}
           noFileSelected={this.handleNoFile}
           handleWrongType={this.handleWrongType}
+          projectId={this.props.projectId}
+          datasetName={this.state.selectedDataset}
         />
         <Snackbar
           open={this.state.uploadSuccess}

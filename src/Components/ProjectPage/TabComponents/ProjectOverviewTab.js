@@ -162,18 +162,10 @@ class ProjectOverviewTab extends React.Component {
 
   handleSubmit(event) {
     //Make POST request here
-    console.log(this.state.project);
     let newProject = {
       title: this.state.titleNew,
       description: this.state.descriptionNew
-      // cover: this.state.project.cover,
-      // company: this.state.project.company,
-      // owners: this.state.project.owners,
-      // id: this.props.projectId,
-      // constraint_blocks: this.state.project.constraint_blocks,
-      // data_blocks: this.state.project.data_blocks,
     };
-    console.log(newProject);
     const id = this.props.projectId;
     // FETCH & SET STATE
     let token = localStorage.getItem('token');

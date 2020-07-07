@@ -72,10 +72,30 @@ class ProjectDetails extends React.Component {
       id: '',
       datasetList: datasetsList,
       projectId: this.props.match.params.projectId,
-      value: 0
+      value: 0,
+      projectUserList: []
     };
 
     this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidMount() {
+    // const id = this.state.projectId;
+    // // FETCH & SET STATE
+    // let token = localStorage.getItem('token');
+    // axios
+    //   .get(`https://secret-sauce.azurewebsites.net/portal/projects/${id}`, {
+    //     headers: {
+    //       'Content-Type': 'application/json',
+    //       Accept: 'application/json',
+    //       Authorization: `Token ${token}`
+    //     }
+    //   })
+    //   .then(res => {
+    //     this.setState({
+    //       projectUserList: res.data.owners
+    //     });
+    //   });
   }
 
   handleChange = (event, newValue) => {
@@ -140,7 +160,7 @@ class ProjectDetails extends React.Component {
           <ProjectOverviewTab projectId={this.state.projectId} />
         </TabPanel>
         <TabPanel value={this.state.value} index={1}>
-          <DatasetsTab />
+          <DatasetsTab projectId={this.state.projectId} />
         </TabPanel>
         <TabPanel value={this.state.value} index={2}>
           <ModelTrainingTab />
@@ -149,7 +169,10 @@ class ProjectDetails extends React.Component {
           <OptimisationTab />
         </TabPanel>
         <TabPanel value={this.state.value} index={4}>
-          <UserControlTable />
+          <UserControlTable
+            projectId={this.state.projectId}
+            uidList={this.state.projectUserList}
+          />
         </TabPanel>
       </div>
     );
