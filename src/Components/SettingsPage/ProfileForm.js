@@ -13,6 +13,7 @@ import Dropzone from 'react-dropzone';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import ChangePasswordModal from './ChangePasswordModal';
 
 const styles = theme => ({
   root: {
@@ -115,7 +116,8 @@ class ProfileForm extends React.Component {
       phoneNew: '81234567',
       profileNew: 'https://source.unsplash.com/random',
       editable: false,
-      success: false
+      profileSuccess: false,
+      passwordSuccess: false
     };
 
     this.onDrop = files => {
@@ -133,7 +135,15 @@ class ProfileForm extends React.Component {
     this.handleEdit = this.handleEdit.bind(this);
     this.handleCancel = this.handleCancel.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
+    this.handleCloseProfileSnackbar = this.handleCloseProfileSnackbar.bind(
+      this
+    );
+    this.handleClosePasswordSnackbar = this.handleClosePasswordSnackbar.bind(
+      this
+    );
+    this.handleOpenModal = this.handleOpenModal.bind(this);
+    this.handleCloseModal = this.handleCloseModal.bind(this);
+    this.showPasswordAlert = this.showPasswordAlert.bind(this);
   }
 
   handleInputChange(event) {
@@ -171,13 +181,40 @@ class ProfileForm extends React.Component {
       profile: this.state.profileNew,
       phone: this.state.phoneNew,
       editable: false,
-      success: true
+      profileSuccess: true,
+      open: false
     });
   }
 
-  handleCloseSnackbar(event) {
+  handleCloseProfileSnackbar(event) {
     this.setState({
-      success: false
+      profileSuccess: false
+    });
+  }
+
+  handleClosePasswordSnackbar(event) {
+    this.setState({
+      passwordSuccess: false
+    });
+  }
+
+  handleOpenModal(event) {
+    this.setState({
+      open: true
+    });
+  }
+
+  handleCloseModal(event) {
+    this.setState({
+      open: false
+    });
+  }
+
+  showPasswordAlert(event) {
+    //Make POST request here
+
+    this.setState({
+      passwordSuccess: true
     });
   }
 
@@ -239,6 +276,7 @@ class ProfileForm extends React.Component {
                 variant="outlined"
                 size="small"
                 disabled={this.state.editable ? true : false}
+                onClick={this.handleOpenModal}
               >
                 Change Password
               </Button>
@@ -378,14 +416,28 @@ class ProfileForm extends React.Component {
           </Grid>
         </Grid>
         <Snackbar
-          open={this.state.success}
+          open={this.state.profileSuccess}
           autoHideDuration={6000}
-          onClose={this.handleCloseSnackbar}
+          onClose={this.handleCloseProfileSnackbar}
         >
-          <Alert onClose={this.handleCloseSnackbar} severity="success">
+          <Alert onClose={this.handleCloseProfileSnackbar} severity="success">
             Profile Edited!
           </Alert>
         </Snackbar>
+        <Snackbar
+          open={this.state.passwordSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleClosePasswordSnackbar}
+        >
+          <Alert onClose={this.handleClosePasswordSnackbar} severity="success">
+            Password Changed!
+          </Alert>
+        </Snackbar>
+        <ChangePasswordModal
+          open={this.state.open}
+          handleClose={this.handleCloseModal}
+          showAlert={this.showPasswordAlert}
+        />
       </Box>
     );
   }
