@@ -15,6 +15,7 @@ import {
 import FloatingAddButton from '../FloatingAddButton';
 import ProjectCreationForm from './ProjectCreationForm';
 import ProjectDetails from './ProjectDetails';
+import DatasetVisualisation from './../DatasetVisualisation';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -45,6 +46,10 @@ export default function AllProjectPage() {
   return (
     <div>
       <Switch>
+        <Route
+          path={`${match.path}/:projectId/dataset/:datasetId/`}
+          component={DatasetVisualisation}
+        />
         <Route path={`${match.path}/:projectId`} component={ProjectDetails} />
         <Route path={match.path}>
           <DashboardTopNav title="projects" />
