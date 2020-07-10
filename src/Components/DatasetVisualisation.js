@@ -25,6 +25,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import Chip from '@material-ui/core/Chip';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import BoxplotChart from './Boxplot';
+import LinegraphChart from './Linegraph';
 
 const styles = theme => ({
   modal: {
@@ -33,8 +35,7 @@ const styles = theme => ({
     justifyContent: 'center'
   },
   paper: {
-    padding: theme.spacing(8, 15, 8),
-    width: '80vw',
+    padding: theme.spacing(8, 15),
     marginTop: theme.spacing(5)
   },
   root: {
@@ -67,7 +68,7 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Graph Selection', 'Item Selection'];
+  return ['Graph Selection', 'Item Selection', 'Graph Generation'];
 }
 
 const ITEM_HEIGHT = 48;
@@ -123,6 +124,7 @@ class DatasetVisualisation extends React.Component {
     this.handleReset = this.handleReset.bind(this);
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.generateGraph = this.generateGraph.bind(this);
   }
 
   handleInputChange(event) {
@@ -150,8 +152,7 @@ class DatasetVisualisation extends React.Component {
   }
 
   handleChange(event, values) {
-    console.log(values.length);
-    if (values.length > 2) {
+    if (values.length > 10) {
       return;
     }
     this.setState({
@@ -170,6 +171,15 @@ class DatasetVisualisation extends React.Component {
     });
   }
 
+  generateGraph(event) {
+    if (this.state.items.length < 1) {
+      return;
+    }
+    this.setState({
+      activeStep: this.state.activeStep + 1
+    });
+  }
+
   handleBack(event) {
     this.setState({
       activeStep: this.state.activeStep - 1
@@ -179,14 +189,13 @@ class DatasetVisualisation extends React.Component {
   handleReset(event) {
     this.setState({
       activeStep: 0,
-      selected: ''
+      selected: '',
+      items: []
     });
   }
 
   handleSubmit(event) {
     //Make POST request here
-    this.props.handleClose();
-    this.props.showAlert();
     this.handleReset();
   }
 
@@ -262,37 +271,49 @@ class DatasetVisualisation extends React.Component {
 
       case 1:
         return (
-          <Box display="flex" mx="auto">
-            <Box display="flex" alignItems="center">
-              <Typography variant="h6">Choose items (up to 10)</Typography>
-              <Tooltip
-                title="Items selected will be presented in the selected graph type"
-                placement="right"
-              >
-                <IconButton aria-label="delete">
-                  <InfoIcon />
-                </IconButton>
-              </Tooltip>
+          <Box display="flex" justifyContent="center">
+            <Box mt={10}>
+              <Box display="flex" alignItems="center">
+                <Typography variant="h6">Choose items (up to 10)</Typography>
+                <Tooltip
+                  title="Items selected will be presented in the selected graph type"
+                  placement="right"
+                >
+                  <IconButton aria-label="delete">
+                    <InfoIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+              <Box style={{ width: 500 }}>
+                <Autocomplete
+                  multiple
+                  options={this.state.allitems}
+                  getOptionLabel={option => option}
+                  onChange={this.handleChange}
+                  value={this.state.items}
+                  renderInput={params => (
+                    <TextField
+                      {...params}
+                      variant="standard"
+                      placeholder="Search Item"
+                      margin="normal"
+                      fullWidth
+                    />
+                  )}
+                />
+              </Box>
             </Box>
-            <div style={{ width: 500 }}>
-              <Autocomplete
-                multiple
-                options={this.state.allitems}
-                getOptionLabel={option => option}
-                onChange={this.handleChange}
-                value={this.state.items}
-                renderInput={params => (
-                  <TextField
-                    {...params}
-                    variant="standard"
-                    label="Multiple values"
-                    placeholder="Favorites"
-                    margin="normal"
-                    fullWidth
-                  />
-                )}
-              />
-            </div>
+          </Box>
+        );
+
+      case 2:
+        return (
+          <Box display="flex" justifyContent="center">
+            {this.state.selected == 'boxplot' ? (
+              <BoxplotChart />
+            ) : (
+              <LinegraphChart />
+            )}
           </Box>
         );
       default:
@@ -317,21 +338,19 @@ class DatasetVisualisation extends React.Component {
               ))}
             </Stepper>
             <div>
-              {this.state.activeStep === steps.length ? (
-                <div className={classes.submitSection}>
-                  <Button
-                    onClick={this.handleReset}
-                    className={classes.backButton}
-                  >
-                    Reset
-                  </Button>
-                  <Button
-                    variant="contained"
-                    className={classes.submitButton}
-                    onClick={this.handleSubmit}
-                  >
-                    ADD CONSTRAINT
-                  </Button>
+              {this.state.activeStep === steps.length - 1 ? (
+                <div>
+                  <Typography className={classes.instructions}>
+                    {this.getStepContent(this.state.activeStep)}
+                  </Typography>
+                  <div className={classes.submitSection}>
+                    <Button
+                      onClick={this.handleReset}
+                      className={classes.backButton}
+                    >
+                      Reset
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <div>
@@ -346,13 +365,23 @@ class DatasetVisualisation extends React.Component {
                     >
                       Back
                     </Button>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={this.handleNext}
-                    >
-                      Next
-                    </Button>
+                    {this.state.activeStep === steps.length - 2 ? (
+                      <Button
+                        variant="contained"
+                        className={classes.submitButton}
+                        onClick={this.generateGraph}
+                      >
+                        Generate Graph
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={this.handleNext}
+                      >
+                        Next
+                      </Button>
+                    )}
                   </div>
                 </div>
               )}
