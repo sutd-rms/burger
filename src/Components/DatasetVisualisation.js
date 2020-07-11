@@ -5,13 +5,9 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
-import ConstraintsMappingTable from './ProjectPage/TabComponents/ConstraintsMappingTable';
 import InfoIcon from '@material-ui/icons/Info';
 import Tooltip from '@material-ui/core/Tooltip';
 import DashboardTopNav from './DashboardTopNav';
@@ -20,10 +16,6 @@ import Card from '@material-ui/core/Card';
 import Boxplot from './../static/images/candlestick.svg';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import Linegraph from './../static/images/growth.svg';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
-import FormControl from '@material-ui/core/FormControl';
-import Chip from '@material-ui/core/Chip';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BoxplotChart from './Boxplot';
 import LinegraphChart from './Linegraph';
@@ -115,7 +107,6 @@ class DatasetVisualisation extends React.Component {
       selected: ''
     };
 
-    this.handleInputChange = this.handleInputChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
     this.handleNext = this.handleNext.bind(this);
     this.setBoxplot = this.setBoxplot.bind(this);
@@ -125,18 +116,6 @@ class DatasetVisualisation extends React.Component {
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.generateGraph = this.generateGraph.bind(this);
-  }
-
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-    console.log(name);
-    console.log(value);
-
-    this.setState({
-      [name]: value
-    });
   }
 
   setBoxplot(event) {
