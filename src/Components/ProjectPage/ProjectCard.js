@@ -40,7 +40,7 @@ export default function ProjectCard(props) {
   };
 
   const handleClick = () => {
-    window.location.href = `${match.path}/${props.project.id}`;
+    window.location.href = `${match.path}/${props.projectId}/`;
   };
 
   return (

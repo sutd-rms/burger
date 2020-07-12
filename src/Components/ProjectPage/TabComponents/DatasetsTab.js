@@ -26,6 +26,8 @@ import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import axios from 'axios';
+import AssessmentIcon from '@material-ui/icons/Assessment';
+import history from './../../../history';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -230,6 +232,15 @@ class DatasetsTab extends React.Component {
                 window.open(
                   `https://secret-sauce.azurewebsites.net/portal/datablocks/${rowData.id}`
                 );
+              }
+            },
+            {
+              icon: () => <AssessmentIcon />,
+              tooltip: 'Data Visualisation',
+              onClick: (event, rowData) => {
+                const rowIndex = rowData.tableData.id;
+                const datasetId = this.state.datasetsList[rowIndex].id;
+                history.push(`dataset/${datasetId}/`);
               }
             }
           ]}

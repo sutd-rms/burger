@@ -36,7 +36,7 @@ export const userLoginFetch = credentials => {
       })
       .catch(err => {
         const errMessage = err.response.data.non_field_errors[0];
-        if (errMessage == 'Unable to log in with provided credentials.') {
+        if (errMessage === 'Unable to log in with provided credentials.') {
           history.push({
             pathname: '/login',
             state: { error_message: errMessage }
