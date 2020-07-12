@@ -1,21 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardTopNav from './../DashboardTopNav';
 import UsersTable from './UsersTable';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useRouteMatch,
-  useParams
-} from 'react-router-dom';
+import { Switch, Route, useRouteMatch, useParams } from 'react-router-dom';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import Typography from '@material-ui/core/Typography';
 import UserInvitationModal from './UserInvitationModal';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({}));
 
@@ -24,8 +17,7 @@ function Alert(props) {
 }
 
 export default function AllUsersPage(props) {
-  const classes = useStyles();
-  const [companyList, setCompanyList] = useState([]);
+  // const classes = useStyles();
   const [allUsers, setAllUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const [success, setSuccess] = useState(false);
