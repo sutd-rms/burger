@@ -24,6 +24,8 @@ import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
+import AssessmentIcon from '@material-ui/icons/Assessment';
+import history from './../../../history';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -59,18 +61,22 @@ class DatasetsTab extends React.Component {
     this.state = {
       datasetsList: [
         {
+          id: 'test',
           name: 'Sample dataset from McDonald 2017',
           date: '24/12/2020, 10:02:34'
         },
         {
+          id: 'test2',
           name: 'Sample dataset from McDonald 2018',
           date: '05/10/2020, 15:32:50'
         },
         {
+          id: 'test3',
           name: 'Sample dataset from McDonald 2019',
           date: '20/04/2020, 9:23:47'
         },
         {
+          id: 'test4',
           name: 'Sample dataset from McDonald 2020',
           date: '14/12/2020, 12:40:12'
         }
@@ -200,6 +206,15 @@ class DatasetsTab extends React.Component {
                 console.log('downloading');
                 alert('You are downloading the dataset of ' + rowData.name);
                 // HANDLE DOWNLOAD FILE
+              }
+            },
+            {
+              icon: () => <AssessmentIcon />,
+              tooltip: 'Data Visualisation',
+              onClick: (event, rowData) => {
+                const rowIndex = rowData.tableData.id;
+                const datasetId = this.state.datasetsList[rowIndex].id;
+                history.push(`dataset/${datasetId}/`);
               }
             }
           ]}
