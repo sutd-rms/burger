@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { forwardRef } from 'react';
 import MaterialTable from 'material-table';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -18,6 +18,9 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import TextField from '@material-ui/core/TextField';
+import Autocomplete from '@material-ui/lab/Autocomplete';
+import axios from 'axios';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -43,97 +46,182 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+function AutoCompleteField(props) {
+  const [inputValue, setInputValue] = useState(props.value);
+
+  let onInputChange = (evt, newInput) => {
+    setInputValue(newInput);
+  };
+
+  let onChange = (evt, newValue) => {
+    props.onChange(newValue);
+  };
+
+  return (
+    <Autocomplete
+      id="combo-box-demo"
+      onChange={onChange}
+      onInputChange={onInputChange}
+      inputValue={inputValue}
+      options={props.options}
+      getOptionLabel={option => option.name}
+      renderOption={option => <React.Fragment>{option.name}</React.Fragment>}
+      renderInput={params => (
+        <TextField
+          {...params}
+          label="Choose a company"
+          variant="outlined"
+          inputProps={{
+            ...params.inputProps,
+            autoComplete: '' // disable autocomplete and autofill
+          }}
+        />
+      )}
+    />
+  );
+}
+
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function UsersTable() {
-  const [selectedRow, setSelectedRow] = React.useState(null);
-  const [success, setSuccess] = React.useState(false);
+export default function UsersTable(props) {
+  const token = localStorage.getItem('token');
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [selectedCompanyId, setSelectedCompanyId] = useState('');
+  // const []
 
   const handleCloseSnackbar = e => {
-    setSuccess(false);
+    setError(false);
   };
 
   const [state, setState] = React.useState({
     columns: [
-      { title: 'First Name', field: 'name' },
-      { title: 'Last Name', field: 'surname' },
+      { title: 'First Name', field: 'first_name' },
+      { title: 'Last Name', field: 'last_name' },
       { title: 'Email', field: 'email' },
-      { title: 'Organization', field: 'organization' },
-      { title: 'Phone Number', field: 'number', type: 'numeric' },
+      {
+        title: 'Organization',
+        field: 'company',
+        editComponent: props => (
+          <AutoCompleteField
+            onChange={onCompanySelect}
+            options={companyList}
+            getCompanyName={getCompanyName}
+          />
+        )
+      },
+      { title: 'Phone Number', field: 'phone', type: 'numeric' },
       {
         title: 'Last Login',
-        field: 'login',
+        field: 'last_login',
         type: 'datetime',
-        filtering: false
+        filtering: false,
+        editable: false
       },
-      { title: 'Staff', field: 'staff', type: 'boolean' },
-      { title: 'Active Status', field: 'status', type: 'boolean' }
-    ],
-    data: [
+      { title: 'Staff', field: 'is_staff', type: 'boolean' },
       {
-        name: 'Mehmet',
-        surname: 'Baran',
-        email: 'mehmet@gmail.com',
-        organization: 'McDonaldsSG',
-        number: '91234567',
-        login: '2019-12-20 08:30:45.687',
-        staff: false,
-        status: true
-      },
-      {
-        name: 'Zerya',
-        surname: 'Betül',
-        email: 'zeryabaran@gmail.com',
-        organization: 'McDonaldsAussie',
-        number: '91230767',
-        login: '2020-02-20 10:20:46.657',
-        staff: false,
-        status: false
-      },
-      {
-        name: 'Meng Siong',
-        surname: 'Ang',
-        email: 'msang@gmail.com',
-        organization: 'RMS',
-        number: '91214767',
-        login: '2020-05-20 20:30:46.657',
-        staff: true,
-        status: true
-      },
-      {
-        name: 'Winny',
-        surname: 'Daud',
-        email: 'winnydaud@gmail.com',
-        organization: 'RMS',
-        number: '89230767',
-        login: '2020-06-01 20:46:46.657',
-        staff: true,
-        status: true
-      },
-      {
-        name: 'Hua Bing',
-        surname: 'Yong',
-        email: 'hbyong@gmail.com',
-        organization: 'RMS',
-        number: '81260767',
-        login: '2017-06-01 20:46:46.657',
-        staff: true,
-        status: false
-      },
-      {
-        name: 'James',
-        surname: 'Tan',
-        email: 'jamestan@gmail.com',
-        organization: 'BurgerKingUSA',
-        number: '90876541767',
-        login: '2020-04-01 20:46:46.657',
-        staff: false,
-        status: true
+        title: 'Active Status',
+        field: 'is_active',
+        type: 'boolean',
+        editable: false
       }
-    ]
+    ],
+    data: props.data
   });
+  const [companyList, setCompanyList] = useState([]);
+  const [error, setError] = useState(false);
+  const [successEdit, setSuccessEdit] = useState(false);
+
+  const getCompanyName = id => {
+    for (let i = 0; i < companyList.length; i++) {
+      if (companyList[i].id === id) {
+        return companyList[i].name;
+      }
+    }
+  };
+
+  const onCompanySelect = opt => {
+    if (opt) {
+      setSelectedCompanyId(opt.id);
+      // setOrganization(getCompanyName(opt.company));
+      // setUid(opt.id);
+    } else {
+      setSelectedCompanyId('');
+      // setOrganization('');
+      // setUid('');
+    }
+  };
+
+  useEffect(() => {
+    axios
+      .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(data => setCompanyList(data.data));
+  }, []);
+
+  useEffect(() => {
+    setState({
+      columns: [
+        { title: 'First Name', field: 'first_name' },
+        { title: 'Last Name', field: 'last_name' },
+        { title: 'Email', field: 'email' },
+        {
+          title: 'Organization',
+          field: 'company',
+          editable: false,
+          editComponent: props => (
+            <AutoCompleteField
+              onChange={onCompanySelect}
+              options={companyList}
+              getCompanyName={getCompanyName}
+            />
+          )
+        },
+        { title: 'Phone Number', field: 'phone', type: 'numeric' },
+        {
+          title: 'Last Login',
+          field: 'last_login',
+          type: 'datetime',
+          filtering: false,
+          editable: false
+        },
+        { title: 'Staff', field: 'is_staff', type: 'boolean' },
+        {
+          title: 'Active Status',
+          field: 'is_active',
+          type: 'boolean',
+          editable: false
+        }
+      ],
+      data: props.data
+    });
+    // FETCH & SET STATE
+    axios
+      .get('https://secret-sauce.azurewebsites.net/auth/users', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        let convertedUsersList = [];
+        res.data.map(user => {
+          user.company = getCompanyName(user.company);
+          convertedUsersList.push(user);
+        });
+        setState(prevState => {
+          const data = convertedUsersList;
+          return { ...prevState, data };
+        });
+      });
+  }, [companyList]);
 
   return (
     <div>
@@ -142,9 +230,10 @@ export default function UsersTable() {
         columns={state.columns}
         data={state.data}
         icons={tableIcons}
-        onRowClick={(evt, selectedRow) =>
-          setSelectedRow(selectedRow.tableData.id)
-        }
+        onRowClick={(evt, selectedRow) => {
+          setSelectedRow(selectedRow.tableData.id);
+          setSelectedCompanyId(selectedRow.company);
+        }}
         options={{
           filtering: true,
           exportButton: true,
@@ -159,40 +248,64 @@ export default function UsersTable() {
           }
         }}
         editable={{
-          onRowAdd: newData =>
-            new Promise(resolve => {
-              setTimeout(() => {
-                resolve();
-                setState(prevState => {
-                  const data = [...prevState.data];
-                  data.push(newData);
-                  return { ...prevState, data };
-                });
-                setSuccess(true);
-              }, 600);
-            }),
           onRowUpdate: (newData, oldData) =>
             new Promise(resolve => {
               setTimeout(() => {
-                resolve();
-                if (oldData) {
-                  setState(prevState => {
-                    const data = [...prevState.data];
-                    data[data.indexOf(oldData)] = newData;
-                    return { ...prevState, data };
+                let newPatchData = {
+                  first_name: newData.first_name,
+                  last_name: newData.last_name,
+                  phone: newData.phone,
+                  is_staff: newData.is_staff,
+                  email: newData.email,
+                };
+                axios
+                  .patch(
+                    `https://secret-sauce.azurewebsites.net/auth/users/${oldData.id}/`,
+                    newPatchData,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    if (res.status === 200) {
+                      if (oldData) {
+                        setState(prevState => {
+                          const data = [...prevState.data];
+                          data[data.indexOf(oldData)] = newData;
+                          return { ...prevState, data };
+                        });
+                        setSuccessEdit(true);
+                      }
+                      resolve();
+                    } else {
+                      setError(true);
+                      resolve();
+                    }
                   });
-                }
               }, 600);
             })
         }}
       />
       <Snackbar
-        open={success}
+        open={successEdit}
         autoHideDuration={6000}
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="success">
-          New User created! An invite will be sent out shortly!
+          User information edited successfully!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={error}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          An error occured! Please try again!
         </Alert>
       </Snackbar>
     </div>
