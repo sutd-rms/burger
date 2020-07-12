@@ -9,6 +9,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
+import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 
@@ -59,7 +60,8 @@ class DataUploadForm extends React.Component {
     };
     this.state = {
       files: [],
-      success: false
+      success: false,
+      datasetName: ''
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -70,11 +72,9 @@ class DataUploadForm extends React.Component {
     // console.log(this.state.files);
 
     var formData = new FormData();
-    formData.append("upload", this.state.files[0]);
-    formData.append("project", this.props.projectId);
-    formData.append("name", this.props.datasetName);
-
-    console.log(formData)
+    formData.append('upload', this.state.files[0]);
+    formData.append('project', this.props.projectId);
+    formData.append('name', this.state.datasetName);
 
     // for (let i = 0; i < this.state.files.length; i++) {
     //   if (this.state.files[i].type !== '.csv') {
@@ -98,18 +98,24 @@ class DataUploadForm extends React.Component {
           }
         )
         .then(res => {
-          console.log(res.data);
-          if (res.status !== 400) {
-            this.setState({
-              success: true
-            });
-            this.props.successUpload();
-            this.props.handleCloseDataUploadForm();
-          }
+          console.log(res);
+          this.setState({
+            success: true
+          });
+          this.props.successUpload(this.state.datasetName);
+          this.props.handleCloseDataUploadForm();
+        })
+        .catch(error => {
+          alert(error);
+          this.props.handleUploadFail();
+          this.props.handleCloseDataUploadForm();
         });
-
       // this.props.handleWrongType();
     }
+  };
+
+  handleNameChange = evt => {
+    this.setState({ datasetName: evt.target.value });
   };
 
   render() {
@@ -136,10 +142,25 @@ class DataUploadForm extends React.Component {
           id="customized-dialog-title"
           onClose={this.props.handleCloseDataUploadForm}
         >
-          Upload for: {this.props.selectedDataset}
+          {this.props.createNew
+            ? 'Create a New Dataset'
+            : 'Upload new data for: ' + this.props.datasetName}
         </MuiDialogTitle>
         <br />
         <div className={classes.root}>
+          {this.props.createNew ? (
+            <Box p={2} m={2}>
+              <TextField
+                id="standard-basic"
+                label="Dataset Name"
+                onChange={this.handleNameChange}
+                value={this.state.datasetName}
+                fullWidth
+              />
+            </Box>
+          ) : (
+            ''
+          )}
           <Dropzone
             onDrop={this.onDrop}
             disabled={this.state.disableUpload}

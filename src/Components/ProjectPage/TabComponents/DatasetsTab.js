@@ -23,6 +23,7 @@ import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
+import Button from '@material-ui/core/Button';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import axios from 'axios';
 
@@ -71,13 +72,13 @@ class DatasetsTab extends React.Component {
               fullWidth
             />
           )
-        },
-        {
-          title: 'Created Date',
-          field: 'date',
-          filtering: false,
-          editable: false
         }
+        // {
+        //   title: 'Created Date',
+        //   field: 'date',
+        //   filtering: false,
+        //   editable: false
+        // }
       ],
       selectedRowId: '',
       success: false,
@@ -86,7 +87,9 @@ class DatasetsTab extends React.Component {
       selectedDataset: '',
       createNew: false,
       noFileError: false,
-      wrongTypeError: false
+      wrongTypeError: false,
+      error: false,
+      waitFoUpload: false
     };
   }
 
@@ -103,6 +106,7 @@ class DatasetsTab extends React.Component {
         params: data
       })
       .then(res => {
+        console.log(res.data);
         this.setState({ datasetsList: res.data });
         console.log(this.state.datasetsList);
       });
@@ -119,16 +123,27 @@ class DatasetsTab extends React.Component {
       createNew: false,
       uploadSuccess: false,
       noFileError: false,
-      wrongTypeError: false
+      wrongTypeError: false,
+      error: false
     });
   };
 
   handleCloseDataUploadForm = () => {
-    this.setState({ displayUploadForm: false, selectedDataset: '' });
+    this.setState({
+      displayUploadForm: false,
+      selectedDataset: '',
+      waitFoUpload: false
+    });
   };
 
-  handleUploadSuccess = () => {
+  handleUploadSuccess = name => {
     this.setState({ uploadSuccess: true });
+    let datasets = this.state.datasetsList;
+    datasets.push({ name: name });
+    this.setState({ datasetsList: datasets });
+  };
+  handleUploadFail = () => {
+    this.setState({ error: true });
   };
 
   handleNoFile = () => {
@@ -139,23 +154,35 @@ class DatasetsTab extends React.Component {
     this.setState({ wrongTypeError: true });
   };
 
+  handleOpenModal = () => {
+    this.setState({
+      displayUploadForm: true,
+      createNew: true
+    });
+  };
+
   render() {
     return (
       <div>
-        <Typography variant="h6">Datasets Management</Typography>
-        <Typography variant="subtitle1">
-          You can view and manage the datasets uploaded before, or create a new
-          dataset by uploading csv files
-        </Typography>
-        <Box m={2}>
-          {/* <Typography variant="subtitle1">
-            -- Navigate all uploaded datasets
-          </Typography>
-          <Typography variant="subtitle1">-- Create new datasets</Typography>
-          <Typography variant="subtitle1">-- Edit dataset name</Typography>
-          <Typography variant="subtitle1">
-            -- Modify the dataset source file
-          </Typography> */}
+        <Box
+          mb={5}
+          px={1}
+          display="flex"
+          alignItems="center"
+          justifyContent="space-between"
+        >
+          <Box>
+            <Typography variant="h6">Datasets Management</Typography>
+            <Typography variant="subtitle1">
+              You can view and manage the datasets uploaded before, or create a
+              new dataset by uploading csv files
+            </Typography>
+          </Box>
+          <Box>
+            <Button variant="outlined" onClick={this.handleOpenModal}>
+              Upload New Dataset
+            </Button>
+          </Box>
         </Box>
 
         <br />
@@ -183,84 +210,41 @@ class DatasetsTab extends React.Component {
             }
           }}
           actions={[
-            {
-              icon: () => <BackupOutlinedIcon />,
-              tooltip: 'Upload new data file',
-              onClick: (event, rowData) => {
-                console.log('upload');
-                this.setState({
-                  displayUploadForm: true,
-                  selectedDataset: rowData.name
-                });
-                // alert('You are uploading to ' + rowData.name)
-              }
-            },
+            // {
+            //   icon: () => <BackupOutlinedIcon />,
+            //   tooltip: 'Upload new data file',
+            //   onClick: (event, rowData) => {
+            //     console.log('upload');
+            //     this.setState({
+            //       displayUploadForm: true,
+            //       selectedDataset: rowData.name
+            //     });
+            //     alert('You are uploading to ' + rowData.name)
+            //   }
+            // },
             {
               icon: () => <GetAppRoundedIcon />,
               tooltip: 'Download data file',
               onClick: (event, rowData) => {
-                let token = localStorage.getItem('token');
-                axios
-                  .get(
-                    `https://secret-sauce.azurewebsites.net/portal/datablocks/${rowData.id}`,
-                    {
-                      headers: {
-                        'Content-Type': 'application/json',
-                        Accept: 'application/json',
-                        Authorization: `Token ${token}`
-                      }
-                    }
-                  )
-                  .then(res => {
-                    console.log(res.data)
-                  });
                 alert('You are downloading the dataset of ' + rowData.name);
-                // HANDLE DOWNLOAD FILE
+                window.open(
+                  `https://secret-sauce.azurewebsites.net/portal/datablocks/${rowData.id}`
+                );
               }
             }
           ]}
-          editable={{
-            onRowAdd: newData =>
-              new Promise(resolve => {
-                setTimeout(() => {
-                  resolve();
-                  console.log(newData);
-                  let date = new Date();
-                  let newList = this.state.datasetsList;
-                  newList.push({
-                    name: newData.name,
-                    date:
-                      date.getDate() +
-                      '/' +
-                      date.getMonth() +
-                      '/' +
-                      date.getFullYear() +
-                      ', ' +
-                      date.getHours() +
-                      ':' +
-                      date.getMinutes() +
-                      ':' +
-                      date.getSeconds()
-                  });
-                  this.setState({
-                    datasetsList: newList,
-                    displayUploadForm: true,
-                    selectedDataset: newData.name,
-                    createNew: true
-                  });
-                }, 600);
-              })
-          }}
         />
         <DataUploadForm
           handleCloseDataUploadForm={this.handleCloseDataUploadForm}
           displayDataUploadForm={this.state.displayUploadForm}
+          createNew={this.state.createNew}
           successUpload={this.handleUploadSuccess}
           selectedDataset={this.state.selectedDataset}
           noFileSelected={this.handleNoFile}
           handleWrongType={this.handleWrongType}
           projectId={this.props.projectId}
-          datasetName={this.state.selectedDataset}
+          // datasetName={this.state.selectedDataset}
+          handleUploadFail={this.handleUploadFail}
         />
         <Snackbar
           open={this.state.uploadSuccess}
@@ -289,6 +273,15 @@ class DatasetsTab extends React.Component {
         >
           <Alert onClose={this.handleCloseSnackbar} severity="warning">
             Unexpected columns in the CSV file. Please try again.
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="error">
+            An error has occured! Please try again.
           </Alert>
         </Snackbar>
       </div>
