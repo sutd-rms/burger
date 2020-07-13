@@ -5,7 +5,8 @@ import history from './../history';
 // const urlUser = `http://localhost:8000/auth/users/me/`;
 
 const urlLogin = `https://secret-sauce.azurewebsites.net/auth/token/login`;
-const urlUser = `https://secret-sauce.azurewebsites.net/auth/users/me/`;
+const urlUser = `https://secret-sauce.azurewebsites.net/auth/users/`;
+const urlCurrentUser = `https://secret-sauce.azurewebsites.net/auth/users/me/`;
 
 const loginUser = userObj => ({
   type: 'LOGIN_USER',
@@ -31,7 +32,23 @@ export const userLoginFetch = credentials => {
         });
       })
       .then(res => {
-        dispatch(loginUser(res.data));
+        if (res.data.length == 1) {
+          dispatch(loginUser(res.data[0]));
+        } else {
+          const token = localStorage.getItem('token');
+          return axios.get(urlCurrentUser, {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          });
+        }
+      })
+      .then(res => {
+        if (typeof res !== 'undefined') {
+          dispatch(loginUser(res.data));
+        }
         history.push('/dashboard/projects');
       })
       .catch(err => {
