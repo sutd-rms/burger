@@ -297,7 +297,7 @@ class ConstraintModal extends React.Component {
 
     return (
       <Box display="flex">
-        <Box mr={10} mt={5} className={classes.constraintItems}>
+        <Box mr={15} mt={5} className={classes.constraintItems}>
           <TableContainer component={Paper} className={classes.table}>
             <Table stickyHeader aria-label="simple table">
               <TableHead>
@@ -321,7 +321,7 @@ class ConstraintModal extends React.Component {
             </Table>
           </TableContainer>
         </Box>
-        <Box ml={10}>
+        <Box ml={15}>
           <Box textAlign="left">
             <Box mt={5}>
               <FormControl>
@@ -476,10 +476,10 @@ class ConstraintModal extends React.Component {
 
       case 3:
         return (
-          <div>
+          <Box mx={15}>
             <Typography variant="h6">Create Constraints</Typography>
             {this.createConstraintsForm()}
-          </div>
+          </Box>
         );
       default:
         return 'Unknown stepIndex';
