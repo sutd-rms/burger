@@ -70,8 +70,15 @@ const styles = theme => ({
     fontWeight: 'bold'
   },
   constraintItems: {
-    height: '300px',
     border: '1px solid #ced4da'
+  },
+  table: {
+    maxHeight: 440,
+    width: 400
+  },
+  tableHeader: {
+    backgroundColor: theme.palette.common.black,
+    color: theme.palette.common.white
   }
 });
 
@@ -94,7 +101,23 @@ const FormInput = withStyles(theme => ({
   input: {
     position: 'relative',
     border: '1px solid #ced4da',
-    width: '50px',
+    width: '100%',
+    padding: '10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow'])
+  }
+}))(InputBase);
+
+const ItemsFormInput = withStyles(theme => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3)
+    }
+  },
+
+  input: {
+    position: 'relative',
+    border: '1px solid #ced4da',
+    width: '150px',
     padding: '10px 12px',
     transition: theme.transitions.create(['border-color', 'box-shadow'])
   }
@@ -245,8 +268,9 @@ class ConstraintModal extends React.Component {
     const { classes } = this.props;
     const listItems = this.state.constraints.map((constraint, idx) => [
       constraint.item,
-      <FormInput
+      <ItemsFormInput
         name="coefficient"
+        type="number"
         value={constraint.coefficient}
         onChange={this.handleConstraintsInputChange(idx)}
       />
@@ -273,13 +297,15 @@ class ConstraintModal extends React.Component {
 
     return (
       <Box display="flex">
-        <Box mr={10} className={classes.constraintItems}>
-          <TableContainer component={Paper}>
-            <Table className={classes.table} aria-label="simple table">
+        <Box mr={10} mt={5} className={classes.constraintItems}>
+          <TableContainer component={Paper} className={classes.table}>
+            <Table stickyHeader aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Item</TableCell>
-                  <TableCell align="right">Coefficient</TableCell>
+                  <TableCell className={classes.tableHeader}>Item</TableCell>
+                  <TableCell className={classes.tableHeader}>
+                    Coefficient
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -288,7 +314,7 @@ class ConstraintModal extends React.Component {
                     <TableCell component="th" scope="row">
                       {row[0]}
                     </TableCell>
-                    <TableCell align="right">{row[1]}</TableCell>
+                    <TableCell>{row[1]}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -296,7 +322,7 @@ class ConstraintModal extends React.Component {
           </TableContainer>
         </Box>
         <Box ml={10}>
-          <Box textAlign="center">
+          <Box textAlign="left">
             <Box mt={5}>
               <FormControl>
                 <InputLabel shrink htmlFor="title-input">
