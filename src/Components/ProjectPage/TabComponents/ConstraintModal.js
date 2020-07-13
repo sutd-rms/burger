@@ -65,7 +65,12 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Dataset Selection', 'Item Selection', 'Constraint Creation'];
+  return [
+    'Dataset Selection',
+    'Name Input',
+    'Variable Selection',
+    'Constraint Creation'
+  ];
 }
 
 const FormInput = withStyles(theme => ({
@@ -84,39 +89,42 @@ const FormInput = withStyles(theme => ({
   }
 }))(InputBase);
 
+const initialState = {
+  name: '',
+  activeStep: 0,
+  datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
+  dataset: 'random_csv_file.csv',
+  inequalities: ['=', '<', '<=', '>', '>='],
+  constraints: '',
+  constraints: [],
+  items: [],
+  allitems: [
+    '1102',
+    '1103',
+    '1104',
+    '1105',
+    '1106',
+    '1107',
+    '1108',
+    '3102',
+    '3106',
+    '3109',
+    '4102',
+    '5102',
+    '5602',
+    '5802',
+    '6102',
+    '7102',
+    '8102',
+    '9102',
+    '9202'
+  ]
+};
+
 class ConstraintModal extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {
-      activeStep: 0,
-      datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
-      dataset: 'random_csv_file.csv',
-      inequalities: ['=', '<', '<=', '>', '>='],
-      constraints: '',
-      constraints: [],
-      items: [],
-      allitems: [
-        '1102',
-        '1103',
-        '1104',
-        '1105',
-        '1106',
-        '1107',
-        '1108',
-        '3102',
-        '3106',
-        '3109',
-        '4102',
-        '5102',
-        '5602',
-        '5802',
-        '6102',
-        '7102',
-        '8102',
-        '9102',
-        '9202'
-      ]
-    };
+    this.state = initialState;
 
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleConstraintsInputChange = this.handleConstraintsInputChange.bind(
@@ -130,6 +138,7 @@ class ConstraintModal extends React.Component {
     this.handleReset = this.handleReset.bind(this);
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   handleInputChange(event) {
@@ -175,7 +184,7 @@ class ConstraintModal extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 1) {
+    if (this.state.activeStep == 2) {
       this.createConstraintsArray(this.state.items);
     }
     this.setState({
@@ -190,9 +199,12 @@ class ConstraintModal extends React.Component {
   }
 
   handleReset(event) {
-    this.setState({
-      activeStep: 0
-    });
+    this.setState(initialState);
+  }
+
+  handleClose(event) {
+    this.handleReset();
+    this.props.handleClose();
   }
 
   handleSubmit(event) {
@@ -203,6 +215,7 @@ class ConstraintModal extends React.Component {
   }
 
   createConstraintsArray(selectedItems) {
+    console.log('here');
     this.state.constraints = [];
     selectedItems.forEach((selectedItem, idx) =>
       this.state.constraints.push({
@@ -299,6 +312,24 @@ class ConstraintModal extends React.Component {
 
       case 1:
         return (
+          <div>
+            <Typography variant="h6" gutterBottom>
+              Give it a name!:
+            </Typography>
+            <TextField
+              variant="outlined"
+              required
+              fullWidth
+              name="name"
+              value={this.state.name}
+              onChange={this.handleInputChange}
+              autoFocus
+            />
+          </div>
+        );
+
+      case 2:
+        return (
           <Box display="flex" justifyContent="center">
             <Box mt={5}>
               <Box display="flex" alignItems="center">
@@ -336,7 +367,7 @@ class ConstraintModal extends React.Component {
           </Box>
         );
 
-      case 2:
+      case 3:
         return (
           <div>
             <Typography variant="h6">Create Constraints</Typography>
@@ -352,6 +383,86 @@ class ConstraintModal extends React.Component {
     const { classes } = this.props;
     const steps = getSteps();
 
+    const renderButtons = () => {
+      if (this.state.activeStep === 1) {
+        return (
+          <div>
+            <Typography className={classes.instructions}>
+              {this.getStepContent(this.state.activeStep)}
+            </Typography>
+            <div className={classes.actionButtons}>
+              <Button
+                disabled={this.state.activeStep === 0}
+                onClick={this.handleBack}
+                className={classes.backButton}
+              >
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleNext}
+              >
+                Create Constraint Set
+              </Button>
+            </div>
+          </div>
+        );
+      }
+      if (this.state.activeStep === 2) {
+        return (
+          <div>
+            <Typography className={classes.instructions}>
+              {this.getStepContent(this.state.activeStep)}
+            </Typography>
+            <div className={classes.actionButtons}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleNext}
+              >
+                Next
+              </Button>
+            </div>
+            <Box display="flex" justifyContent="flex-end" mt={2}>
+              <Button
+                variant="contained"
+                color="secondary"
+                disabled={this.state.activeStep === 0}
+                onClick={this.handleClose}
+              >
+                Skip Constraint Creation
+              </Button>
+            </Box>
+          </div>
+        );
+      } else {
+        return (
+          <div>
+            <Typography className={classes.instructions}>
+              {this.getStepContent(this.state.activeStep)}
+            </Typography>
+            <div className={classes.actionButtons}>
+              <Button
+                disabled={this.state.activeStep === 0}
+                onClick={this.handleBack}
+                className={classes.backButton}
+              >
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.handleNext}
+              >
+                Next
+              </Button>
+            </div>
+          </div>
+        );
+      }
+    };
+
     return (
       <React.Fragment>
         <Modal
@@ -359,7 +470,7 @@ class ConstraintModal extends React.Component {
           aria-describedby="transition-modal-description"
           className={classes.modal}
           open={this.props.open}
-          onClose={this.props.handleClose}
+          onClose={this.handleClose}
           closeAfterTransition
           BackdropComponent={Backdrop}
           BackdropProps={{
@@ -369,7 +480,9 @@ class ConstraintModal extends React.Component {
           <Fade in={this.props.open}>
             <div className={classes.paper}>
               <Typography variant="h5" className={classes.title}>
-                Create Constraints
+                {this.state.activeStep <= 1
+                  ? 'Constraint Set Creation'
+                  : 'Add a Constraint'}
               </Typography>
               <div className={classes.root}>
                 <Stepper activeStep={this.state.activeStep} alternativeLabel>
@@ -380,7 +493,8 @@ class ConstraintModal extends React.Component {
                   ))}
                 </Stepper>
                 <div>
-                  {this.state.activeStep === steps.length ? (
+                  {renderButtons()}
+                  {/* {this.state.activeStep === steps.length ? (
                     <div className={classes.submitSection}>
                       <Button
                         onClick={this.handleReset}
@@ -418,7 +532,7 @@ class ConstraintModal extends React.Component {
                         </Button>
                       </div>
                     </div>
-                  )}
+                  )} */}
                 </div>
               </div>
             </div>
