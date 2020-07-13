@@ -21,6 +21,13 @@ import FormControl from '@material-ui/core/FormControl';
 import InputBase from '@material-ui/core/InputBase';
 import InputLabel from '@material-ui/core/InputLabel';
 import NativeSelect from '@material-ui/core/NativeSelect';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableContainer from '@material-ui/core/TableContainer';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import Paper from '@material-ui/core/Paper';
 
 const styles = theme => ({
   modal: {
@@ -61,6 +68,10 @@ const styles = theme => ({
   },
   title: {
     fontWeight: 'bold'
+  },
+  constraintItems: {
+    height: '300px',
+    border: '1px solid #ced4da'
   }
 });
 
@@ -91,10 +102,14 @@ const FormInput = withStyles(theme => ({
 
 const initialState = {
   name: '',
-  activeStep: 0,
+  activeStep: 2,
   datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
   dataset: 'random_csv_file.csv',
   inequalities: ['=', '<', '<=', '>', '>='],
+  inequality: '=',
+  rhs: '',
+  penalty: 'hard',
+  penaltyScore: '',
   constraints: '',
   constraints: [],
   items: [],
@@ -221,67 +236,133 @@ class ConstraintModal extends React.Component {
       this.state.constraints.push({
         id: idx,
         item: selectedItem,
-        coefficient: '',
-        inequality: '',
-        rhs: ''
+        coefficient: ''
       })
     );
   }
 
   createConstraintsForm() {
-    const listItems = this.state.constraints.map((constraint, idx) => (
-      <Box display="flex" alignItems="center" mt={5}>
-        <Box mr={5}>
-          <Typography>Item</Typography>
-          <Typography>{constraint.item}:</Typography>
+    const { classes } = this.props;
+    const listItems = this.state.constraints.map((constraint, idx) => [
+      constraint.item,
+      <FormInput
+        name="coefficient"
+        value={constraint.coefficient}
+        onChange={this.handleConstraintsInputChange(idx)}
+      />
+    ]);
+    // <Box display="flex" alignItems="center" justifyContent="center" px={10} pb={2}>
+    //   <Box mr={5}>
+    //     <Typography>Item</Typography>
+    //     <Typography>{constraint.item}:</Typography>
+    //   </Box>
+    //   <Box>
+    //     <FormControl>
+    //       <InputLabel shrink htmlFor="title-input">
+    //         Coefficient
+    //       </InputLabel>
+    //       <FormInput
+    //         id="title-input"
+    //         name="coefficient"
+    //         value={constraint.coefficient}
+    //         onChange={this.handleConstraintsInputChange(idx)}
+    //       />
+    //     </FormControl>
+    //   </Box>
+    // </Box>
+
+    return (
+      <Box display="flex">
+        <Box mr={10} className={classes.constraintItems}>
+          <TableContainer component={Paper}>
+            <Table className={classes.table} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>Item</TableCell>
+                  <TableCell align="right">Coefficient</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {listItems.map(row => (
+                  <TableRow key={row[0]}>
+                    <TableCell component="th" scope="row">
+                      {row[0]}
+                    </TableCell>
+                    <TableCell align="right">{row[1]}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
-        <Box mr={5}>
-          <FormControl>
-            <InputLabel shrink htmlFor="title-input">
-              Coefficient
-            </InputLabel>
-            <FormInput
-              id="title-input"
-              name="coefficient"
-              value={constraint.coefficient}
-              onChange={this.handleConstraintsInputChange(idx)}
-            />
-          </FormControl>
-        </Box>
-        <Box mr={5}>
-          <FormControl>
-            <InputLabel shrink htmlFor="title-input">
-              Inequality
-            </InputLabel>
-            <NativeSelect
-              name="inequality"
-              value={constraint.inequality}
-              input={<FormInput />}
-              onChange={this.handleConstraintsInputChange(idx)}
-            >
-              {this.state.inequalities.map(value => (
-                <option value={value}>{value}</option>
-              ))}
-            </NativeSelect>
-          </FormControl>
-        </Box>
-        <Box>
-          <FormControl>
-            <InputLabel shrink htmlFor="title-input">
-              RHS
-            </InputLabel>
-            <FormInput
-              id="title-input"
-              name="rhs"
-              value={constraint.rhs}
-              onChange={this.handleConstraintsInputChange(idx)}
-            />
-          </FormControl>
+        <Box ml={10}>
+          <Box textAlign="center">
+            <Box mt={5}>
+              <FormControl>
+                <InputLabel shrink htmlFor="title-input">
+                  Inequality
+                </InputLabel>
+                <NativeSelect
+                  name="inequality"
+                  defaultValue="="
+                  value={this.state.inequality}
+                  input={<FormInput />}
+                  onChange={this.handleInputChange}
+                >
+                  {this.state.inequalities.map(value => (
+                    <option value={value}>{value}</option>
+                  ))}
+                </NativeSelect>
+              </FormControl>
+            </Box>
+            <Box mt={5}>
+              <FormControl>
+                <InputLabel shrink htmlFor="title-input">
+                  RHS
+                </InputLabel>
+                <FormInput
+                  id="title-input"
+                  name="rhs"
+                  value={this.state.rhs}
+                  onChange={this.handleInputChange}
+                />
+              </FormControl>
+            </Box>
+            <Box mt={5}>
+              <FormControl>
+                <InputLabel shrink htmlFor="title-input">
+                  Penalty
+                </InputLabel>
+                <NativeSelect
+                  name="penalty"
+                  value={this.state.penalty}
+                  input={<FormInput />}
+                  onChange={this.handleInputChange}
+                >
+                  <option value="hard">Hard</option>
+                  <option value="soft">Soft</option>
+                </NativeSelect>
+              </FormControl>
+            </Box>
+            <Box mt={5}>
+              <FormControl>
+                <InputLabel shrink htmlFor="title-input">
+                  Score
+                </InputLabel>
+                <FormInput
+                  id="title-input"
+                  name="penaltyScore"
+                  defaultValue="hard"
+                  disabled={this.state.penalty == 'soft' ? false : true}
+                  value={this.state.penaltyScore}
+                  onChange={this.handleInputChange}
+                />
+              </FormControl>
+            </Box>
+          </Box>
         </Box>
       </Box>
-    ));
-
-    return listItems;
+    );
   }
 
   getStepContent(stepIndex) {
