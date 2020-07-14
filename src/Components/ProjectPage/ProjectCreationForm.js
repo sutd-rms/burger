@@ -14,6 +14,7 @@ import Box from '@material-ui/core/Box';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
+import { store } from '../../redux/store';
 
 const styles = theme => ({
   root: {
@@ -57,15 +58,15 @@ function Alert(props) {
 }
 
 export default function ProjectCreationForm(props) {
+  let userCompany = store.getState().currentUser.company;
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [organization, setOrganization] = useState('');
   const [organizationList, setOrganizationList] = useState([]);
-  // const [modelList, setModelList] = useState(["MCMC", "Brute Force"]);
-  // const [defaultModel, setDefaultModel] = useState("");
   const [success, setSuccess] = useState(false);
   const [fail, setFail] = useState(false);
   const [empty, setEmpty] = useState(false);
+  const [displayCompany, setDisplayCompany] = useState(false);
 
   const onFormSubmission = e => {
     e.preventDefault();
@@ -92,7 +93,7 @@ export default function ProjectCreationForm(props) {
           }
         )
         .then(res => {
-          if (res.status = 200) {
+          if ((res.status = 200)) {
             setSuccess(true);
             props.handleClose();
           } else {
@@ -103,17 +104,25 @@ export default function ProjectCreationForm(props) {
   };
 
   useEffect(() => {
-    let token = localStorage.getItem('token');
-    axios
-      .get('https://secret-sauce.azurewebsites.net/auth/company/', {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Token ${token}`
-        }
-      })
-      .then(res => setOrganizationList(res.data));
-  }, []);
+    // CHECK FOR USER COMPANY, BETTER CHANGE THE HARDCODE COMPANY ID TO STATIC FILE
+    if (userCompany === '8bead4d0-fb36-4c05-8fbb-825feed1ba4f') {
+      setDisplayCompany(true);
+      let token = localStorage.getItem('token');
+      axios
+        .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        })
+        .then(res => {
+          setOrganizationList(res.data);
+        });
+    } else {
+      setOrganization(userCompany);
+    }
+  }, [userCompany]);
 
   const handleNameChange = e => {
     setName(e.target.value);
@@ -124,6 +133,7 @@ export default function ProjectCreationForm(props) {
   };
 
   const handleOrganizationChange = e => {
+    console.log(e.target.value);
     setOrganization(e.target.value);
   };
 
@@ -173,38 +183,29 @@ export default function ProjectCreationForm(props) {
               name="description"
               id="description"
             />
-            <Typography variant="subtitle2" gutterBottom>
-              Client Organization
-            </Typography>
-            <Select
-              labelId="demo-simple-select-filled-label"
-              id="demo-simple-select-filled"
-              fullWidth
-              value={organization}
-              onChange={handleOrganizationChange}
-            >
-              {organizationList.map(value => (
-                <MenuItem value={value.id} id={value.id} key={value.id}>
-                  {value.name}
-                </MenuItem>
-              ))}
-            </Select>
-            {/* <Typography variant="subtitle2" gutterBottom>
-              Default Model for this Project
-            </Typography>
-            <Select
-              labelId="model"
-              id="model"
-              fullWidth
-              value={defaultModel}
-              onChange={handleModelChange}
-            >
-              {modelList.map(value => (
-                <MenuItem value={value} id={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select> */}
+            {displayCompany ? (
+              <div>
+                <Typography variant="subtitle2" gutterBottom>
+                  Client Organization
+                </Typography>
+                <Select
+                  labelId="demo-simple-select-filled-label"
+                  id="demo-simple-select-filled"
+                  fullWidth
+                  value={organization}
+                  onChange={handleOrganizationChange}
+                >
+                  {organizationList.map(value => (
+                    <MenuItem value={value.id} id={value.id} key={value.id}>
+                      {value.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
+            ) : (
+              ''
+            )}
+
             <Box m={2}>
               <Button
                 type="submit"
