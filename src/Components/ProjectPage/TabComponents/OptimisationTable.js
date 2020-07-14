@@ -50,11 +50,6 @@ function Alert(props) {
 
 export default function OptimisationTable() {
   const [selectedRow, setSelectedRow] = React.useState(null);
-  const [success, setSuccess] = React.useState(false);
-
-  const handleCloseSnackbar = e => {
-    setSuccess(false);
-  };
 
   const [state, setState] = React.useState({
     columns: [
@@ -125,15 +120,6 @@ export default function OptimisationTable() {
           }
         }}
       />
-      <Snackbar
-        open={success}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success">
-          New User created! An invite will be sent out shortly!
-        </Alert>
-      </Snackbar>
     </div>
   );
 }

@@ -19,6 +19,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import PageviewIcon from '@material-ui/icons/Pageview';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -48,13 +49,8 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function OptimisationTable() {
+export default function ConstraintsTable() {
   const [selectedRow, setSelectedRow] = React.useState(null);
-  const [success, setSuccess] = React.useState(false);
-
-  const handleCloseSnackbar = e => {
-    setSuccess(false);
-  };
 
   const [state, setState] = React.useState({
     columns: [
@@ -109,16 +105,14 @@ export default function OptimisationTable() {
             color: '#FFF'
           }
         }}
+        actions={[
+          {
+            icon: () => <PageviewIcon />,
+            tooltip: 'View or Edit Constraint Set',
+            onClick: (event, rowData) => {}
+          }
+        ]}
       />
-      <Snackbar
-        open={success}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success">
-          New User created! An invite will be sent out shortly!
-        </Alert>
-      </Snackbar>
     </div>
   );
 }
