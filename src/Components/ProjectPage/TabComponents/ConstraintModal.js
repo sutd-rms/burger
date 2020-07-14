@@ -135,7 +135,7 @@ const InitialConstraintState = {
 
 const initialState = {
   name: '',
-  activeStep: 4,
+  activeStep: 0,
   datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
   dataset: 'random_csv_file.csv',
   inequalities: ['=', '<', '<=', '>', '>='],
