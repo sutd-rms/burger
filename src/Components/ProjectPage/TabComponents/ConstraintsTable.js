@@ -51,7 +51,6 @@ class ConstraintsTable extends React.Component {
     super(props);
     this.state = {
       selectedRowId: '',
-      open: false,
       columns: [
         { title: 'Name', field: 'name' },
         {
@@ -63,18 +62,22 @@ class ConstraintsTable extends React.Component {
       ],
       data: [
         {
+          id: '1',
           name: 'Sample Constraint 1',
           dateCreated: '2019-12-20 08:30:45.687'
         },
         {
+          id: '2',
           name: 'Testing Constraints',
           dateCreated: '2020-02-20 10:20:46.657'
         },
         {
+          id: '3',
           name: 'McDonalds Aussie',
           dateCreated: '2020-05-20 20:30:46.657'
         },
         {
+          id: '4',
           name: 'Sample Constraint 2',
           dateCreated: '2020-06-01 20:46:46.657'
         }
@@ -113,17 +116,12 @@ class ConstraintsTable extends React.Component {
               icon: () => <PageviewIcon />,
               tooltip: 'View or Edit Constraint Set',
               onClick: (event, rowData) => {
-                this.setState({
-                  open: true
-                });
+                const rowIndex = rowData.tableData.id;
+                const constraintSetID = this.state.data[rowIndex].id;
+                window.open(`constraintset/${constraintSetID}/`, '_blank');
               }
             }
           ]}
-        />
-        <ConstraintModal
-          open={this.state.open}
-          handleClose={this.handleCloseConstraintModal}
-          showAlert={this.showConstraintAlert}
         />
       </div>
     );
