@@ -28,6 +28,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 
 const styles = theme => ({
   modal: {
@@ -123,9 +124,18 @@ const ItemsFormInput = withStyles(theme => ({
   }
 }))(InputBase);
 
+const InitialConstraintState = {
+  inequality: '=',
+  rhs: '',
+  penalty: 'hard',
+  penaltyScore: '',
+  constraintItems: [],
+  createConstraintError: false
+};
+
 const initialState = {
   name: '',
-  activeStep: 2,
+  activeStep: 4,
   datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
   dataset: 'random_csv_file.csv',
   inequalities: ['=', '<', '<=', '>', '>='],
@@ -133,9 +143,9 @@ const initialState = {
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
-  constraints: '',
-  constraints: [],
+  constraintItems: [],
   items: [],
+  createConstraintError: false,
   allitems: [
     '1102',
     '1103',
@@ -169,7 +179,9 @@ class ConstraintModal extends React.Component {
       this
     );
     this.handleItemsChange = this.handleItemsChange.bind(this);
-    this.createConstraintsArray = this.createConstraintsArray.bind(this);
+    this.createConstraintsItemsArray = this.createConstraintsItemsArray.bind(
+      this
+    );
     this.createConstraintsForm = this.createConstraintsForm.bind(this);
     this.handleNext = this.handleNext.bind(this);
     this.handleBack = this.handleBack.bind(this);
@@ -177,6 +189,7 @@ class ConstraintModal extends React.Component {
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.addAnotherConstraint = this.addAnotherConstraint.bind(this);
   }
 
   handleInputChange(event) {
@@ -187,6 +200,12 @@ class ConstraintModal extends React.Component {
     this.setState({
       [name]: value
     });
+
+    if (this.state.penalty == 'hard') {
+      this.setState({
+        penaltyScore: ''
+      });
+    }
   }
 
   handleConstraintsInputChange = idx => event => {
@@ -194,7 +213,7 @@ class ConstraintModal extends React.Component {
     const value = target.value;
     const name = target.name;
 
-    const newConstraints = this.state.constraints.map(item => {
+    const newConstraints = this.state.constraintItems.map(item => {
       if (item.id === idx) {
         const updatedItem = {
           ...item,
@@ -208,7 +227,7 @@ class ConstraintModal extends React.Component {
     });
 
     this.setState({
-      constraints: newConstraints
+      constraintItems: newConstraints
     });
   };
 
@@ -222,8 +241,33 @@ class ConstraintModal extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 2) {
-      this.createConstraintsArray(this.state.items);
+    if (this.state.activeStep == 1 && this.state.name == '') {
+      return;
+    }
+    if (this.state.activeStep == 2 && this.state.items.length > 0) {
+      this.createConstraintsItemsArray(this.state.items);
+    }
+    if (this.state.activeStep == 2 && this.state.items.length <= 0) {
+      return;
+    }
+    if (this.state.activeStep == 3) {
+      for (var constraint of this.state.constraintItems) {
+        if (constraint.coefficient == '') {
+          this.setState({
+            createConstraintError: true
+          });
+          return;
+        }
+      }
+      if (
+        this.state.rhs == '' ||
+        (this.state.penalty == 'soft' && this.state.penaltyScore == '')
+      ) {
+        this.setState({
+          createConstraintError: true
+        });
+        return;
+      }
     }
     this.setState({
       activeStep: this.state.activeStep + 1
@@ -231,6 +275,9 @@ class ConstraintModal extends React.Component {
   }
 
   handleBack(event) {
+    if (this.state.activeStep == 3) {
+      this.setState(InitialConstraintState);
+    }
     this.setState({
       activeStep: this.state.activeStep - 1
     });
@@ -238,6 +285,14 @@ class ConstraintModal extends React.Component {
 
   handleReset(event) {
     this.setState(initialState);
+  }
+
+  addAnotherConstraint(event) {
+    this.setState(InitialConstraintState);
+    this.setState({
+      activeStep: 2,
+      items: []
+    });
   }
 
   handleClose(event) {
@@ -252,11 +307,10 @@ class ConstraintModal extends React.Component {
     this.handleReset();
   }
 
-  createConstraintsArray(selectedItems) {
-    console.log('here');
-    this.state.constraints = [];
+  createConstraintsItemsArray(selectedItems) {
+    this.state.constraintItems = [];
     selectedItems.forEach((selectedItem, idx) =>
-      this.state.constraints.push({
+      this.state.constraintItems.push({
         id: idx,
         item: selectedItem,
         coefficient: ''
@@ -266,34 +320,16 @@ class ConstraintModal extends React.Component {
 
   createConstraintsForm() {
     const { classes } = this.props;
-    const listItems = this.state.constraints.map((constraint, idx) => [
+    const listItems = this.state.constraintItems.map((constraint, idx) => [
       constraint.item,
       <ItemsFormInput
         name="coefficient"
         type="number"
         value={constraint.coefficient}
+        required
         onChange={this.handleConstraintsInputChange(idx)}
       />
     ]);
-    // <Box display="flex" alignItems="center" justifyContent="center" px={10} pb={2}>
-    //   <Box mr={5}>
-    //     <Typography>Item</Typography>
-    //     <Typography>{constraint.item}:</Typography>
-    //   </Box>
-    //   <Box>
-    //     <FormControl>
-    //       <InputLabel shrink htmlFor="title-input">
-    //         Coefficient
-    //       </InputLabel>
-    //       <FormInput
-    //         id="title-input"
-    //         name="coefficient"
-    //         value={constraint.coefficient}
-    //         onChange={this.handleConstraintsInputChange(idx)}
-    //       />
-    //     </FormControl>
-    //   </Box>
-    // </Box>
 
     return (
       <Box display="flex">
@@ -304,7 +340,7 @@ class ConstraintModal extends React.Component {
                 <TableRow>
                   <TableCell className={classes.tableHeader}>Item</TableCell>
                   <TableCell className={classes.tableHeader}>
-                    Coefficient
+                    Coefficient*
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -324,7 +360,7 @@ class ConstraintModal extends React.Component {
         <Box ml={15}>
           <Box textAlign="left">
             <Box mt={5}>
-              <FormControl>
+              <FormControl required>
                 <InputLabel shrink htmlFor="title-input">
                   Inequality
                 </InputLabel>
@@ -342,25 +378,27 @@ class ConstraintModal extends React.Component {
               </FormControl>
             </Box>
             <Box mt={5}>
-              <FormControl>
+              <FormControl required>
                 <InputLabel shrink htmlFor="title-input">
                   RHS
                 </InputLabel>
                 <FormInput
                   id="title-input"
                   name="rhs"
+                  type="number"
                   value={this.state.rhs}
                   onChange={this.handleInputChange}
                 />
               </FormControl>
             </Box>
             <Box mt={5}>
-              <FormControl>
+              <FormControl required>
                 <InputLabel shrink htmlFor="title-input">
                   Penalty
                 </InputLabel>
                 <NativeSelect
                   name="penalty"
+                  defaultValue="hard"
                   value={this.state.penalty}
                   input={<FormInput />}
                   onChange={this.handleInputChange}
@@ -378,7 +416,7 @@ class ConstraintModal extends React.Component {
                 <FormInput
                   id="title-input"
                   name="penaltyScore"
-                  defaultValue="hard"
+                  type="number"
                   disabled={this.state.penalty == 'soft' ? false : true}
                   value={this.state.penaltyScore}
                   onChange={this.handleInputChange}
@@ -477,8 +515,24 @@ class ConstraintModal extends React.Component {
       case 3:
         return (
           <Box mx={15}>
-            <Typography variant="h6">Create Constraints</Typography>
+            <Typography variant="h6" gutterBottom={true}>
+              Create Constraints
+            </Typography>
+            {this.state.createConstraintError == false ? null : (
+              <Typography variant="subtitle" color="error">
+                Please fill up all required fields
+              </Typography>
+            )}
             {this.createConstraintsForm()}
+          </Box>
+        );
+      case 4:
+        return (
+          <Box display="flex" justifyContent="center" alignItems="center">
+            <Typography variant="h6">Constraint Created!</Typography>
+            <CheckCircleOutlineIcon
+              style={{ color: 'green', marginLeft: '10px' }}
+            />
           </Box>
         );
       default:
@@ -541,6 +595,56 @@ class ConstraintModal extends React.Component {
                 Skip Constraint Creation
               </Button>
             </Box>
+          </div>
+        );
+      }
+      if (this.state.activeStep === 3) {
+        return (
+          <div>
+            <Typography className={classes.instructions}>
+              {this.getStepContent(this.state.activeStep)}
+            </Typography>
+            <div className={classes.actionButtons}>
+              <Button
+                disabled={this.state.activeStep === 0}
+                onClick={this.handleBack}
+                className={classes.backButton}
+              >
+                Back
+              </Button>
+              <Button
+                variant="contained"
+                style={{ backgroundColor: 'green', color: 'white' }}
+                onClick={this.handleNext}
+              >
+                Add Constraint
+              </Button>
+            </div>
+          </div>
+        );
+      }
+      if (this.state.activeStep === 4) {
+        return (
+          <div>
+            <Typography className={classes.instructions}>
+              {this.getStepContent(this.state.activeStep)}
+            </Typography>
+            <div className={classes.actionButtons}>
+              <Button
+                disabled={this.state.activeStep === 0}
+                onClick={this.handleClose}
+                className={classes.backButton}
+              >
+                Quit
+              </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={this.addAnotherConstraint}
+              >
+                Add Another Constraint
+              </Button>
+            </div>
           </div>
         );
       } else {
