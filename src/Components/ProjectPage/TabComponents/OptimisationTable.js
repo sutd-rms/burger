@@ -44,10 +44,6 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
 export default function OptimisationTable() {
   const [selectedRow, setSelectedRow] = React.useState(null);
 
