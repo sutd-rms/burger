@@ -84,12 +84,7 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return [
-    'Dataset Selection',
-    'Name Input',
-    'Variable Selection',
-    'Constraint Creation'
-  ];
+  return ['Variable Selection', 'Constraint Creation'];
 }
 
 const FormInput = withStyles(theme => ({
@@ -134,10 +129,7 @@ const InitialConstraintState = {
 };
 
 const initialState = {
-  name: '',
   activeStep: 0,
-  datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
-  dataset: 'random_csv_file.csv',
   inequalities: ['=', '<', '<=', '>', '>='],
   inequality: '=',
   rhs: '',
@@ -169,7 +161,7 @@ const initialState = {
   ]
 };
 
-class ConstraintModal extends React.Component {
+class AddConstraintModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = initialState;
@@ -241,16 +233,13 @@ class ConstraintModal extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 1 && this.state.name == '') {
-      return;
-    }
-    if (this.state.activeStep == 2 && this.state.items.length > 0) {
+    if (this.state.activeStep == 0 && this.state.items.length > 0) {
       this.createConstraintsItemsArray(this.state.items);
     }
-    if (this.state.activeStep == 2 && this.state.items.length <= 0) {
+    if (this.state.activeStep == 0 && this.state.items.length <= 0) {
       return;
     }
-    if (this.state.activeStep == 3) {
+    if (this.state.activeStep == 1) {
       for (var constraint of this.state.constraintItems) {
         if (constraint.coefficient == '') {
           this.setState({
@@ -275,7 +264,7 @@ class ConstraintModal extends React.Component {
   }
 
   handleBack(event) {
-    if (this.state.activeStep == 3) {
+    if (this.state.activeStep == 1) {
       this.setState(InitialConstraintState);
     }
     this.setState({
@@ -290,7 +279,7 @@ class ConstraintModal extends React.Component {
   addAnotherConstraint(event) {
     this.setState(InitialConstraintState);
     this.setState({
-      activeStep: 2,
+      activeStep: 0,
       items: []
     });
   }
@@ -433,48 +422,6 @@ class ConstraintModal extends React.Component {
     switch (stepIndex) {
       case 0:
         return (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Select a Dataset for creating constraints:
-            </Typography>
-            <Select
-              labelId="dataset"
-              id="dataset"
-              key="dataset"
-              name="dataset"
-              fullWidth
-              value={this.state.dataset}
-              onChange={this.handleInputChange}
-            >
-              {this.state.datasetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-        );
-
-      case 1:
-        return (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Give it a name!:
-            </Typography>
-            <TextField
-              variant="outlined"
-              required
-              fullWidth
-              name="name"
-              value={this.state.name}
-              onChange={this.handleInputChange}
-              autoFocus
-            />
-          </div>
-        );
-
-      case 2:
-        return (
           <Box display="flex" justifyContent="center">
             <Box mt={5}>
               <Box display="flex" alignItems="center">
@@ -512,7 +459,7 @@ class ConstraintModal extends React.Component {
           </Box>
         );
 
-      case 3:
+      case 1:
         return (
           <Box mx={15}>
             <Typography variant="h6" gutterBottom={true}>
@@ -526,7 +473,7 @@ class ConstraintModal extends React.Component {
             {this.createConstraintsForm()}
           </Box>
         );
-      case 4:
+      case 2:
         return (
           <Box display="flex" justifyContent="center" alignItems="center">
             <Typography variant="h6">Constraint Created!</Typography>
@@ -545,32 +492,7 @@ class ConstraintModal extends React.Component {
     const steps = getSteps();
 
     const renderButtons = () => {
-      if (this.state.activeStep === 1) {
-        return (
-          <div>
-            <Typography className={classes.instructions}>
-              {this.getStepContent(this.state.activeStep)}
-            </Typography>
-            <div className={classes.actionButtons}>
-              <Button
-                disabled={this.state.activeStep === 0}
-                onClick={this.handleBack}
-                className={classes.backButton}
-              >
-                Back
-              </Button>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={this.handleNext}
-              >
-                Create Constraint Set
-              </Button>
-            </div>
-          </div>
-        );
-      }
-      if (this.state.activeStep === 2) {
+      if (this.state.activeStep === 0) {
         return (
           <div>
             <Typography className={classes.instructions}>
@@ -585,20 +507,10 @@ class ConstraintModal extends React.Component {
                 Next
               </Button>
             </div>
-            <Box display="flex" justifyContent="flex-end" mt={2}>
-              <Button
-                variant="contained"
-                color="secondary"
-                disabled={this.state.activeStep === 0}
-                onClick={this.handleClose}
-              >
-                Skip Constraint Creation
-              </Button>
-            </Box>
           </div>
         );
       }
-      if (this.state.activeStep === 3) {
+      if (this.state.activeStep === 1) {
         return (
           <div>
             <Typography className={classes.instructions}>
@@ -623,7 +535,7 @@ class ConstraintModal extends React.Component {
           </div>
         );
       }
-      if (this.state.activeStep === 4) {
+      if (this.state.activeStep === 2) {
         return (
           <div>
             <Typography className={classes.instructions}>
@@ -691,9 +603,7 @@ class ConstraintModal extends React.Component {
           <Fade in={this.props.open}>
             <div className={classes.paper}>
               <Typography variant="h5" className={classes.title}>
-                {this.state.activeStep <= 1
-                  ? 'Constraint Set Creation'
-                  : 'Add a Constraint'}
+                Add a Constraint
               </Typography>
               <div className={classes.root}>
                 <Stepper activeStep={this.state.activeStep} alternativeLabel>
@@ -713,4 +623,4 @@ class ConstraintModal extends React.Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(ConstraintModal);
+export default withStyles(styles, { withTheme: true })(AddConstraintModal);

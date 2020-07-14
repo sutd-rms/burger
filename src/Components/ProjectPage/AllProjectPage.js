@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ProjectCard from './ProjectCard';
-import DataUploadForm from './DataUploadForm';
+import ConstraintSetPage from './ConstraintSetPage';
 import DashboardTopNav from './../DashboardTopNav';
 import {
   BrowserRouter as Router,
@@ -49,6 +49,10 @@ export default function AllProjectPage() {
         <Route
           path={`${match.path}/:projectId/dataset/:datasetId/`}
           component={DatasetVisualisation}
+        />
+        <Route
+          path={`${match.path}/:projectId/constraintset/:constraintsetId/`}
+          component={ConstraintSetPage}
         />
         <Route path={`${match.path}/:projectId`} component={ProjectDetails} />
         <Route path={match.path}>
