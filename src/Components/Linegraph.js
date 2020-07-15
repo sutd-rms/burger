@@ -1,7 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Chart from 'chart.js';
-import 'chartjs-chart-box-and-violin-plot';
 import * as d3 from 'd3';
 
 const styles = theme => ({
@@ -71,7 +70,7 @@ class Linegraph extends React.Component {
   }
 
   componentDidMount() {
-    d3.csv('http://localhost:3000/data.csv').then(this.makeChart);
+    d3.csv('/data.csv').then(this.makeChart);
   }
 
   render() {
