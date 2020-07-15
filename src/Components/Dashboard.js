@@ -13,6 +13,7 @@ import styled from 'styled-components';
 import AllProjectPage from './ProjectPage/AllProjectPage';
 import AllModelsPage from './ModelsPage/AllModelsPage';
 import AllUsersPage from './UsersPage/AllUsersPage';
+import SettingsPage from './SettingsPage/SettingsPage';
 
 const DashboardContainer = styled.div`
   margin-left: 250px; /* Set the width of the sidebar */
@@ -36,6 +37,10 @@ function Dashboard() {
           <Route
             path={`${match.path}/projects`}
             component={AllProjectPage}
+          ></Route>
+          <Route
+            path={`${match.path}/settings`}
+            component={SettingsPage}
           ></Route>
           <Route path={match.path} component={AllProjectPage}></Route>
         </Switch>

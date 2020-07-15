@@ -13,6 +13,7 @@ import HomeIcon from '@material-ui/icons/Home';
 import FolderIcon from '@material-ui/icons/Folder';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import PersonIcon from '@material-ui/icons/Person';
+import SettingsIcon from '@material-ui/icons/Settings';
 import { Typography } from '@material-ui/core';
 
 const StyledSideNav = styled.div`
@@ -67,6 +68,12 @@ class Sidebar extends React.Component {
           name: 'Users',
           key: 2,
           icon: <PersonIcon />
+        },
+        {
+          path: '/Dashboard/settings',
+          name: 'Settings',
+          key: 2,
+          icon: <SettingsIcon />
         }
       ]
     };
