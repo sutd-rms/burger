@@ -78,7 +78,8 @@ class Boxplot extends React.Component {
   }
 
   componentDidMount() {
-    d3.csv('http://localhost:3000/data.csv').then(this.makeBoxPlot);
+    // d3.csv('http://localhost:3000/data.csv').then(this.makeBoxPlot);
+    this.makeBoxPlot();
   }
 
   render() {
