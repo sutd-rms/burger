@@ -1,7 +1,6 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Chart from 'chart.js';
-import 'chartjs-chart-box-and-violin-plot';
 import * as d3 from 'd3';
 
 const styles = theme => ({
