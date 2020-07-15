@@ -1,7 +1,7 @@
 import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Chart from 'chart.js';
-import 'chartjs-chart-box-and-violin-plot';
+import 'chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.js';
 import * as d3 from 'd3';
 
 const styles = theme => ({
@@ -78,7 +78,8 @@ class Boxplot extends React.Component {
   }
 
   componentDidMount() {
-    d3.csv('http://localhost:3000/data.csv').then(this.makeBoxPlot);
+    // d3.csv('http://localhost:3000/data.csv').then(this.makeBoxPlot);
+    this.makeBoxPlot();
   }
 
   render() {
