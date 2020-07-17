@@ -74,10 +74,12 @@ export default function ProjectCreationForm(props) {
     if (name === '' || organization === '') {
       setEmpty(true);
     } else {
+      let uid = store.getState().currentUser.id;
       let newProject = {
         title: name,
         description: description,
-        company: organization
+        company: organization,
+        owners: [uid]
       };
       let token = localStorage.getItem('token');
       axios
@@ -96,6 +98,7 @@ export default function ProjectCreationForm(props) {
           if ((res.status = 200)) {
             setSuccess(true);
             props.handleClose();
+            window.location.reload();
           } else {
             setFail(true);
           }

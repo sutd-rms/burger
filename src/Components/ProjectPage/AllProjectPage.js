@@ -47,7 +47,9 @@ export default function AllProjectPage() {
           Authorization: `Token ${token}`
         }
       })
-      .then(data => setProjectIdList(data.data));
+      .then(data => {
+        setProjectIdList(data.data);
+      });
   }, []);
 
   const handleOpen = () => {
@@ -78,7 +80,7 @@ export default function AllProjectPage() {
               <Grid container justify="flex-start" spacing={7}>
                 {projectIdList.map(value => (
                   <Grid key={value.id} item>
-                    <ProjectCard project={value} />
+                    <ProjectCard project={value} projectId={value.id} />
                   </Grid>
                 ))}
               </Grid>

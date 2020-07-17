@@ -8,10 +8,7 @@ import ModelIcon from '../../static/images/model_icon.png';
 export default class ProjectCardContent extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      discription: 'Prizing Optimization for McDonald Australia 2020',
-      title: 'McDonald'
-    };
+    this.state = {};
   }
 
   render() {
@@ -19,7 +16,7 @@ export default class ProjectCardContent extends Component {
       <CardContent className={this.props.backstyle}>
         <Typography variant="body1">{this.props.project.title}</Typography>
         <Typography variant="body2">
-          {this.props.project.discription}
+          {this.props.project.description}
         </Typography>
       </CardContent>
     ) : (
