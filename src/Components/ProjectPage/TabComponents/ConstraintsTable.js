@@ -19,6 +19,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import PageviewIcon from '@material-ui/icons/Pageview';
+import ConstraintModal from './ConstraintModal';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -44,81 +46,86 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
-export default function OptimisationTable() {
-  const [selectedRow, setSelectedRow] = React.useState(null);
-  const [success, setSuccess] = React.useState(false);
-
-  const handleCloseSnackbar = e => {
-    setSuccess(false);
-  };
-
-  const [state, setState] = React.useState({
-    columns: [
-      { title: 'Name', field: 'name' },
-      {
-        title: 'Date Created',
-        field: 'dateCreated',
-        type: 'datetime',
-        filtering: false
-      }
-    ],
-    data: [
-      {
-        name: 'Sample Constraint 1',
-        dateCreated: '2019-12-20 08:30:45.687'
-      },
-      {
-        name: 'Testing Constraints',
-        dateCreated: '2020-02-20 10:20:46.657'
-      },
-      {
-        name: 'McDonalds Aussie',
-        dateCreated: '2020-05-20 20:30:46.657'
-      },
-      {
-        name: 'Sample Constraint 2',
-        dateCreated: '2020-06-01 20:46:46.657'
-      }
-    ]
-  });
-
-  return (
-    <div>
-      <MaterialTable
-        title="Constraint Sets"
-        columns={state.columns}
-        data={state.data}
-        icons={tableIcons}
-        onRowClick={(evt, selectedRow) =>
-          setSelectedRow(selectedRow.tableData.id)
+class ConstraintsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedRowId: '',
+      columns: [
+        { title: 'Name', field: 'name' },
+        {
+          title: 'Date Created',
+          field: 'dateCreated',
+          type: 'datetime',
+          filtering: false
         }
-        options={{
-          filtering: true,
-          exportButton: true,
-          actionsColumnIndex: -1,
-          rowStyle: rowData => ({
-            backgroundColor:
-              selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
-          }),
-          headerStyle: {
-            backgroundColor: 'grey',
-            color: '#FFF'
+      ],
+      data: [
+        {
+          id: '1',
+          name: 'Sample Constraint 1',
+          dateCreated: '2019-12-20 08:30:45.687'
+        },
+        {
+          id: '2',
+          name: 'Testing Constraints',
+          dateCreated: '2020-02-20 10:20:46.657'
+        },
+        {
+          id: '3',
+          name: 'McDonalds Aussie',
+          dateCreated: '2020-05-20 20:30:46.657'
+        },
+        {
+          id: '4',
+          name: 'Sample Constraint 2',
+          dateCreated: '2020-06-01 20:46:46.657'
+        }
+      ]
+    };
+  }
+
+  render() {
+    return (
+      <div>
+        <MaterialTable
+          title="Constraint Sets"
+          columns={this.state.columns}
+          data={this.state.data}
+          icons={tableIcons}
+          onRowClick={(evt, selectedRow) =>
+            this.setState({ selectedRowId: selectedRow.tableData.id })
           }
-        }}
-      />
-      <Snackbar
-        open={success}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success">
-          New User created! An invite will be sent out shortly!
-        </Alert>
-      </Snackbar>
-    </div>
-  );
+          options={{
+            filtering: true,
+            exportButton: true,
+            actionsColumnIndex: -1,
+            rowStyle: rowData => ({
+              backgroundColor:
+                this.state.selectedRowId === rowData.tableData.id
+                  ? '#EEE'
+                  : '#FFF'
+            }),
+            headerStyle: {
+              backgroundColor: 'grey',
+              color: '#FFF'
+            }
+          }}
+          actions={[
+            {
+              icon: () => <PageviewIcon />,
+              tooltip: 'View or Edit Constraint Set',
+              onClick: (event, rowData) => {
+                const rowIndex = rowData.tableData.id;
+                const constraintSetID = this.state.data[rowIndex].id;
+                window.open(`constraintset/${constraintSetID}/`, '_blank');
+              }
+            }
+          ]}
+        />
+      </div>
+    );
+  }
 }
+
+export default ConstraintsTable;

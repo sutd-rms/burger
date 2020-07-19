@@ -19,6 +19,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import PageviewIcon from '@material-ui/icons/Pageview';
+import ConstraintModal from './TabComponents/ConstraintModal';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -44,78 +46,81 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-export default function OptimisationTable() {
-  const [selectedRow, setSelectedRow] = React.useState(null);
-
-  const [state, setState] = React.useState({
-    columns: [
-      { title: 'Trained Model', field: 'model' },
-      { title: 'Constraint Set', field: 'constraintSet' },
-      { title: 'Cost Set', field: 'costSet' },
-      { title: 'Data Set', field: 'dataSet' },
-      {
-        title: 'Date Run',
-        field: 'dateRun',
-        type: 'datetime',
-        filtering: false
-      }
-    ],
-    data: [
-      {
-        model: 'Test Model',
-        constraintSet: 'Sample Constraint 1',
-        costSet: 'Sample costset from McDonald 2017',
-        dataSet: 'Sample dataset from McDonald 2017',
-        dateRun: '2019-12-20 08:30:45.687'
-      },
-      {
-        model: 'Test Model 2',
-        constraintSet: 'Sample Constraint 1',
-        costSet: 'Sample costset from McDonald 2018',
-        dataSet: 'Sample dataset from McDonald 2018',
-        dateRun: '2020-02-20 10:20:46.657'
-      },
-      {
-        model: 'Test Model2',
-        constraintSet: 'McDonalds Aussie',
-        costSet: 'Sample costset from McDonald 2019',
-        dataSet: 'Sample dataset from McDonald 2019',
-        dateRun: '2020-05-20 20:30:46.657'
-      },
-      {
-        model: 'ABC Test',
-        constraintSet: 'Sample Constraint 2',
-        costSet: 'Sample costset from McDonald 2017',
-        dataSet: 'Sample dataset from McDonald 2018',
-        dateRun: '2020-06-01 20:46:46.657'
-      }
-    ]
-  });
-
-  return (
-    <div>
-      <MaterialTable
-        title="Past Optimisations"
-        columns={state.columns}
-        data={state.data}
-        icons={tableIcons}
-        onRowClick={(evt, selectedRow) =>
-          setSelectedRow(selectedRow.tableData.id)
+class ConstraintSetDetailsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedRowId: '',
+      columns: [{ title: 'Constraint', field: 'name' }],
+      data: [
+        {
+          id: '1',
+          name: '2*[1901] + 3*[2780] <= 2',
+          dateCreated: '2019-12-20 08:30:45.687'
+        },
+        {
+          id: '2',
+          name: '[2780] = 3.79',
+          dateCreated: '2020-02-20 10:20:46.657'
+        },
+        {
+          id: '3',
+          name: '[1190] = 2.8',
+          dateCreated: '2020-05-20 20:30:46.657'
+        },
+        {
+          id: '4',
+          name: '3*[1089] - 2*[1190] > 3',
+          dateCreated: '2020-06-01 20:46:46.657'
         }
-        options={{
-          filtering: true,
-          exportButton: true,
-          actionsColumnIndex: -1,
-          rowStyle: rowData => ({
-            backgroundColor:
-              selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
-          }),
-          headerStyle: {
-            backgroundColor: 'brown',
-            color: '#FFF'
+      ]
+    };
+  }
+
+  render() {
+    return (
+      <div>
+        <MaterialTable
+          title=""
+          columns={this.state.columns}
+          data={this.state.data}
+          icons={tableIcons}
+          onRowClick={(evt, selectedRow) =>
+            this.setState({ selectedRowId: selectedRow.tableData.id })
           }
-        }}
-      />
-    </div>
-  );
+          options={{
+            filtering: true,
+            exportButton: true,
+            actionsColumnIndex: -1,
+            rowStyle: rowData => ({
+              backgroundColor:
+                this.state.selectedRowId === rowData.tableData.id
+                  ? '#EEE'
+                  : '#FFF'
+            }),
+            headerStyle: {
+              backgroundColor: 'grey',
+              color: '#FFF'
+            }
+          }}
+          editable={{
+            onRowDelete: oldData =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  const dataDelete = [...this.state.data];
+                  const index = oldData.tableData.id;
+                  dataDelete.splice(index, 1);
+                  this.setState({
+                    data: [...dataDelete]
+                  });
+                  resolve();
+                }, 1000);
+              })
+          }}
+        />
+      </div>
+    );
+  }
 }
+
+export default ConstraintSetDetailsTable;
