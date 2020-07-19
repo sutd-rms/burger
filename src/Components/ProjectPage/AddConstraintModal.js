@@ -124,6 +124,7 @@ const InitialConstraintState = {
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
+  constraintName: '',
   constraintItems: [],
   createConstraintError: false
 };
@@ -135,6 +136,7 @@ const initialState = {
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
+  constraintName: '',
   constraintItems: [],
   items: [],
   createConstraintError: false,
@@ -250,6 +252,7 @@ class AddConstraintModal extends React.Component {
       }
       if (
         this.state.rhs == '' ||
+        this.state.constraintName == '' ||
         (this.state.penalty == 'soft' && this.state.penaltyScore == '')
       ) {
         this.setState({
@@ -348,6 +351,19 @@ class AddConstraintModal extends React.Component {
         </Box>
         <Box ml={15}>
           <Box textAlign="left">
+            <Box mt={5}>
+              <FormControl required>
+                <InputLabel shrink htmlFor="title-input">
+                  Name of Constraint
+                </InputLabel>
+                <FormInput
+                  id="title-input"
+                  name="constraintName"
+                  value={this.state.constraintName}
+                  onChange={this.handleInputChange}
+                />
+              </FormControl>
+            </Box>
             <Box mt={5}>
               <FormControl required>
                 <InputLabel shrink htmlFor="title-input">
