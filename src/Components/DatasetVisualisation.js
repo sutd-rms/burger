@@ -27,7 +27,7 @@ const styles = theme => ({
     justifyContent: 'center'
   },
   paper: {
-    padding: theme.spacing(8, 15),
+    padding: theme.spacing(8, 0),
     marginTop: theme.spacing(5)
   },
   root: {
