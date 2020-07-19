@@ -19,6 +19,7 @@ import Linegraph from './../static/images/growth.svg';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BoxplotChart from './Boxplot';
 import LinegraphChart from './Linegraph';
+import axios from 'axios';
 
 const styles = theme => ({
   modal: {
@@ -83,27 +84,7 @@ class DatasetVisualisation extends React.Component {
       dataset: 'random_csv_file.csv',
       constraints: '',
       items: [],
-      allitems: [
-        '1102',
-        '1103',
-        '1104',
-        '1105',
-        '1106',
-        '1107',
-        '1108',
-        '3102',
-        '3106',
-        '3109',
-        '4102',
-        '5102',
-        '5602',
-        '5802',
-        '6102',
-        '7102',
-        '8102',
-        '9102',
-        '9202'
-      ],
+      allitems: [],
       selected: ''
     };
 
@@ -154,6 +135,24 @@ class DatasetVisualisation extends React.Component {
     if (this.state.items.length < 1) {
       return;
     }
+
+    const token = localStorage.getItem('token');
+
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        this.setState({ allitems: res.data.items });
+      });
+
     this.setState({
       activeStep: this.state.activeStep + 1
     });
@@ -176,6 +175,7 @@ class DatasetVisualisation extends React.Component {
   handleSubmit(event) {
     //Make POST request here
     this.handleReset();
+    console.log(this.props.match.params.datasetId);
   }
 
   getStepContent(stepIndex) {
