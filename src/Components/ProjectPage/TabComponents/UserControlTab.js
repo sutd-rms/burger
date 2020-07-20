@@ -64,6 +64,7 @@ function UserControlTab(props) {
   const [addFail, setAddFail] = useState(false);
   const [uid, setUid] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [userExisted, setUserExisted] = useState(false);
   const [projectUserList, setProjectUserList] = useState([]);
 
   // const [columns, setColumns] = useState();
@@ -172,6 +173,7 @@ function UserControlTab(props) {
     setSuccess(false);
     setAddFail(false);
     setDeleteSuccess(false);
+    setUserExisted(false);
   };
 
   return (
@@ -226,7 +228,7 @@ function UserControlTab(props) {
                   }
                 }
                 if (repeatedUser) {
-                  alert('This user is already in the project!');
+                  setUserExisted(true);
                 } else {
                   const dataUpdate = usersList;
                   dataUpdate.push(obj);
@@ -305,6 +307,15 @@ function UserControlTab(props) {
       >
         <Alert onClose={handleCloseSnackbar} severity="success">
           New user added to the project!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={userExisted}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          This user is already in the project!
         </Alert>
       </Snackbar>
       <Snackbar

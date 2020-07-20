@@ -4,6 +4,8 @@ import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 import { Box, Button } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -21,6 +23,10 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center'
   }
 }));
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 function AutoCompleteField(props) {
   const [inputValue, setInputValue] = useState(props.value);
@@ -63,6 +69,9 @@ export default function UserInvitationModal(props) {
   const [newEmail, setNewEmail] = useState('');
   const [newCompany, setNewCompany] = useState('');
   const [companyList, setCompanyList] = useState([]);
+  const [emptyField, setEmptyField] = useState(false);
+  const [error, setError] = useState('');
+  const [invitationError, setInvitationError] = useState(false);
 
   useEffect(() => {
     axios
@@ -108,11 +117,17 @@ export default function UserInvitationModal(props) {
             props.setSuccess(true);
           }
         })
-        .catch(error => {
-          alert(error);
+        .catch(err => {
+          let errorString = "";
+          for(var item in err.response.data) {
+            errorString = errorString + err.response.data[item] + "\n "
+         }
+          setError(errorString);
+          console.log(errorString);
+          setInvitationError(true);
         });
     } else {
-      alert('Company of Email could not be empty!');
+      setEmptyField(true);
     }
   };
 
@@ -146,6 +161,11 @@ export default function UserInvitationModal(props) {
     </div>
   );
 
+  const handleCloseSnackbar = () => {
+    setEmptyField(false);
+    setInvitationError(false);
+  };
+
   return (
     <div>
       <Modal
@@ -157,6 +177,24 @@ export default function UserInvitationModal(props) {
       >
         {body}
       </Modal>
+      <Snackbar
+        open={emptyField}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+        Company of Email could not be empty!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={invitationError}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+        {error}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
