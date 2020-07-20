@@ -65,9 +65,7 @@ function UserControlTab(props) {
   const [uid, setUid] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [userExisted, setUserExisted] = useState(false);
-  const [projectUserList, setProjectUserList] = useState([]);
 
-  // const [columns, setColumns] = useState();
   const columns = [
     {
       title: 'Email',
@@ -109,7 +107,9 @@ function UserControlTab(props) {
           Authorization: `Token ${token}`
         }
       })
-      .then(data => setCompanyList(data.data));
+      .then(data => {
+        setCompanyList(data.data);
+      });
     
       const id = props.projectId;
     // FETCH & SET STATE
@@ -140,6 +140,7 @@ function UserControlTab(props) {
       })
       .then(res => {
         setAllUsers(res.data);
+        // console.log(allUsers)
         let userList = [];
         for (let i = 0; i < uidList.length; i++) {
           res.data.map(user => {

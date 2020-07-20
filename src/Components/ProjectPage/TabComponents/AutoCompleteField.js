@@ -12,6 +12,7 @@ export default function AutoCompleteField(props) {
 
   let onChange = (evt, newValue) => {
     props.onChange(newValue);
+    setInputValue(newValue);
   }
 
   return (
@@ -20,7 +21,7 @@ export default function AutoCompleteField(props) {
       onChange={onChange}
       onInputChange={onInputChange}
       inputValue={inputValue}
-      options={props.options}
+      options={props.options.sort((a, b) => -b.company.localeCompare(a.company))}
       getOptionLabel={option => option.email}
       groupBy={option=> props.getCompanyName(option.company)}
       renderOption={option => (
