@@ -14,6 +14,8 @@ import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import ChangePasswordModal from './ChangePasswordModal';
+import { store } from '../../redux/store';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
@@ -105,15 +107,15 @@ class ProfileForm extends React.Component {
     super(props);
     this.state = {
       id: '',
-      email: 'mengsiong@rms.com',
-      organisation: "McDonald's Australia",
-      firstName: 'Meng',
-      lastName: 'Siong',
-      phone: '81234567',
+      email: store.getState().currentUser.email,
+      organisation: store.getState().currentUser.company,
+      firstName: store.getState().currentUser.first_name,
+      lastName: store.getState().currentUser.last_name,
+      phone: store.getState().currentUser.phone,
       profile: 'https://source.unsplash.com/random',
-      firstNameNew: 'Meng',
-      lastNameNew: 'Siong',
-      phoneNew: '81234567',
+      firstNameNew: store.getState().currentUser.first_name,
+      lastNameNew: store.getState().currentUser.last_name,
+      phoneNew: store.getState().currentUser.phone,
       profileNew: 'https://source.unsplash.com/random',
       editable: false,
       profileSuccess: false,
@@ -173,17 +175,41 @@ class ProfileForm extends React.Component {
   }
 
   handleSubmit(event) {
-    //Make POST request here
-
-    this.setState({
-      firstName: this.state.firstNameNew,
-      lastName: this.state.lastNameNew,
-      profile: this.state.profileNew,
-      phone: this.state.phoneNew,
-      editable: false,
-      profileSuccess: true,
-      open: false
-    });
+    let newUser = {
+      first_name: this.state.firstNameNew,
+      last_name: this.state.lastNameNew,
+      phone: this.state.phoneNew
+    };
+    const id = this.props.projectId;
+    // FETCH & SET STATE
+    let token = localStorage.getItem('token');
+    axios
+      .patch(
+        `https://secret-sauce.azurewebsites.net/auth/editprofile/`,
+        newUser,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 200) {
+          this.setState({
+            firstName: this.state.firstNameNew,
+            lastName: this.state.lastNameNew,
+            profile: this.state.profileNew,
+            phone: this.state.phoneNew,
+            editable: false,
+            profileSuccess: true,
+            open: false
+          });
+        } else {
+          console.log('edit profile error');
+        }
+      });
   }
 
   handleCloseProfileSnackbar(event) {
@@ -216,6 +242,65 @@ class ProfileForm extends React.Component {
     this.setState({
       passwordSuccess: true
     });
+  }
+
+  // getCompanyName = id => {
+  //   for (let i = 0; i < this.props.companyList.length; i++) {
+  //     if (this.props.companyList[i].id === id) {
+  //       return this.props.companyList[i].name;
+  //     }
+  //   }
+  // };
+
+  componentDidMount() {
+    let token = localStorage.getItem('token');
+    if(store.getState().currentUser.is_staff){
+      axios
+      .get(`https://secret-sauce.azurewebsites.net/auth/users/me/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        this.setState({
+          firstName: res.data.first_name,
+            lastName: res.data.last_name,
+            profile: res.data,
+            phone: res.data.phone,
+            email: res.data.email,
+            organisation: res.data.company,
+            lastNameNew: res.data.last_name,
+            firstNameNew: res.data.firstNameNew,
+            phoneNew: res.data.phone
+        })
+      });
+    }else{
+      axios
+      .get(`https://secret-sauce.azurewebsites.net/auth/users/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        this.setState({
+          firstName: res.data[0].first_name,
+            lastName: res.data[0].last_name,
+            profile: res.data[0],
+            phone: res.data[0].phone,
+            email: res.data[0].email,
+            organisation: res.data[0].company,
+            lastNameNew: res.data.last_name,
+            firstNameNew: res.data.firstNameNew,
+            phoneNew: res.data.phone
+        })
+      });
+    }
+    
+    console.log(store.getState().currentUser);
   }
 
   render() {
