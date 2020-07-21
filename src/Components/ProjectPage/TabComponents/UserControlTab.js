@@ -74,6 +74,7 @@ function UserControlTab(props) {
         <AutoCompleteField
           style={{ width: 600 }}
           onChange={onEmailSelect}
+          value={email}
           options={allUsers}
           getCompanyName={getCompanyName}
         />
@@ -160,6 +161,7 @@ function UserControlTab(props) {
 
   const onEmailSelect = opt => {
     if (opt != null) {
+      console.log("parent, ", opt)
       setEmail(opt.email);
       setOrganization(getCompanyName(opt.company));
       setUid(opt.id);

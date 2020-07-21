@@ -80,7 +80,7 @@ class ProjectDetails extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props.match.params);
+    // console.log(this.props.match.params);
     // const id = this.state.projectId;
     // // FETCH & SET STATE
     // let token = localStorage.getItem('token');

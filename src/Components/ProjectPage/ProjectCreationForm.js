@@ -59,6 +59,7 @@ function Alert(props) {
 
 export default function ProjectCreationForm(props) {
   let userCompany = store.getState().currentUser.company;
+  let userIsStaff = store.getState().currentUser.is_staff;
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const [organization, setOrganization] = useState('');
@@ -107,8 +108,7 @@ export default function ProjectCreationForm(props) {
   };
 
   useEffect(() => {
-    // CHECK FOR USER COMPANY, BETTER CHANGE THE HARDCODE COMPANY ID TO STATIC FILE
-    if (userCompany === '8bead4d0-fb36-4c05-8fbb-825feed1ba4f') {
+    if (userIsStaff) {
       setDisplayCompany(true);
       let token = localStorage.getItem('token');
       axios

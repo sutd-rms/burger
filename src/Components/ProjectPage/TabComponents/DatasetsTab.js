@@ -108,7 +108,7 @@ class DatasetsTab extends React.Component {
         params: data
       })
       .then(res => {
-        console.log(res.data);
+        console.log(res.data); // id, name, upload, project
         this.setState({ datasetsList: res.data });
         console.log(this.state.datasetsList);
       });
