@@ -106,7 +106,6 @@ class DataUploadForm extends React.Component {
           this.props.handleCloseDataUploadForm();
         })
         .catch(error => {
-          alert(error);
           this.props.handleUploadFail();
           this.props.handleCloseDataUploadForm();
         });
