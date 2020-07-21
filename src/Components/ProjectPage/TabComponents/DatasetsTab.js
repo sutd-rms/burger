@@ -214,7 +214,7 @@ class DatasetsTab extends React.Component {
               onClick: (event, rowData) => {
                 const rowIndex = rowData.tableData.id;
                 const datasetId = this.state.datasetsList[rowIndex].id;
-                history.push(`dataset/${datasetId}/`);
+                window.open(`dataset/${datasetId}`);
               }
             }
           ]}
