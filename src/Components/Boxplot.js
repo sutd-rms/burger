@@ -26,6 +26,8 @@ class Boxplot extends React.Component {
   boxRef = React.createRef();
 
   makeBoxPlot() {
+    // FOR CREATING MOCK DATA
+
     // function randomValues(count, min, max) {
     //   const delta = max - min;
     //   return Array.from({ length: count }).map(
@@ -94,6 +96,7 @@ class Boxplot extends React.Component {
   }
 
   componentDidMount() {
+    // FOR CREATING MOCK DATA
     // d3.csv('http://localhost:3000/data.csv').then(this.makeBoxPlot);
     this.makeBoxPlot();
   }

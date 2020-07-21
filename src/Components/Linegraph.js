@@ -19,13 +19,17 @@ class Linegraph extends React.Component {
   constructor(props) {
     super(props);
     this.makeChart = this.makeChart.bind(this);
-    this.processData = this.processData.bind(this);
+    // this.processData = this.processData.bind(this);
+
+    this.state = {
+      data: this.props.data
+    };
 
     [...Array(10)].map((e, i) => (this[`chart-${i}`] = React.createRef()));
   }
 
   makeChart(processedData) {
-    [...Array(10)].map((e, idx) => {
+    [...Array(processedData.length)].map((e, idx) => {
       var myChartRef = this[`chart-${idx}`].current.getContext('2d');
       new Chart(myChartRef, {
         type: 'line',
@@ -44,47 +48,62 @@ class Linegraph extends React.Component {
     });
   }
 
-  processData(players) {
-    function onlyUnique(value, index, self) {
-      return self.indexOf(value) === index;
-    }
+  // FOR CREATING MOCK DATA
 
-    function getItemsIndex(target, item) {
-      return target.findIndex(element => element == item);
-    }
+  // processData(players) {
+  //   function onlyUnique(value, index, self) {
+  //     return self.indexOf(value) === index;
+  //   }
 
-    var items = players
-      .map(function(d) {
-        return d.Item_ID;
-      })
-      .sort();
-    var uniqueItems = items.filter(onlyUnique);
-    var weeks = players.map(function(d) {
-      return d.Wk;
-    });
-    var uniqueWeeks = weeks.filter(onlyUnique);
+  //   function getItemsIndex(target, item) {
+  //     return target.findIndex(element => element == item);
+  //   }
 
-    var processedData = [];
+  //   var items = players
+  //     .map(function(d) {
+  //       return d.Item_ID;
+  //     })
+  //     .sort();
+  //   var uniqueItems = items.filter(onlyUnique);
+  //   var weeks = players.map(function(d) {
+  //     return d.Wk;
+  //   });
+  //   var uniqueWeeks = weeks.filter(onlyUnique);
 
-    uniqueItems.forEach(item => {
+  //   var processedData = [];
+
+  //   uniqueItems.forEach(item => {
+  //     processedData.push({
+  //       labels: uniqueWeeks,
+  //       datasets: [{ data: [], label: item }]
+  //     });
+  //   });
+
+  //   players.forEach(item => {
+  //     var idx = getItemsIndex(uniqueItems, item.Item_ID);
+  //     processedData[idx].datasets[0].data.push(item.Qty_);
+  //   });
+
+  //   return processedData;
+  // }
+
+  componentDidMount() {
+    // FOR CREATING MOCK DATA
+    // d3.csv('/data.csv')
+    //   .then(this.processData)
+    //   .then(this.makeChart);
+
+    const weeks = this.state.data.weeks;
+    const processedData = [];
+
+    Object.keys(this.state.data.datasets).forEach(key => {
       processedData.push({
-        labels: uniqueWeeks,
-        datasets: [{ data: [], label: item }]
+        labels: weeks,
+        datasets: [{ data: this.state.data.datasets[key], label: key }]
       });
     });
 
-    players.forEach(item => {
-      var idx = getItemsIndex(uniqueItems, item.Item_ID);
-      processedData[idx].datasets[0].data.push(item.Qty_);
-    });
-
-    return processedData;
-  }
-
-  componentDidMount() {
-    d3.csv('/data.csv')
-      .then(this.processData)
-      .then(this.makeChart);
+    this.makeChart(processedData);
   }
 
   render() {

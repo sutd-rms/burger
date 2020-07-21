@@ -144,11 +144,6 @@ class DatasetVisualisation extends React.Component {
     }
 
     if (this.state.selected == 'boxplot') {
-      // const form = {
-      //   query: "price",
-      //   items: this.state.items
-      // }
-
       var form = new FormData();
       form.append('query', 'price');
       this.state.items.forEach(item => form.append('items', item));
@@ -169,14 +164,29 @@ class DatasetVisualisation extends React.Component {
           this.setState({ boxplotData: res.data });
           this.setState({ hasFetched: true });
         });
-    } else {
     }
+    if (this.state.selected == 'linegraph') {
+      var form = new FormData();
+      form.append('query', 'quantity');
+      this.state.items.forEach(item => form.append('items', item));
 
-    // {this.state.selected == 'boxplot' ? (
-    //   <BoxplotChart />
-    // ) : (
-    //   <LinegraphChart />
-    // )}
+      axios
+        .post(
+          `http://localhost:8000/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
+          form,
+          // `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Token ${token}`
+            }
+          }
+        )
+        .then(res => {
+          this.setState({ linegraphData: res.data });
+          this.setState({ hasFetched: true });
+        });
+    }
 
     this.setState({
       activeStep: this.state.activeStep + 1
@@ -208,7 +218,7 @@ class DatasetVisualisation extends React.Component {
     if (this.state.selected == 'boxplot') {
       return <BoxplotChart data={this.state.boxplotData} />;
     } else {
-      return <LinegraphChart />;
+      return <LinegraphChart data={this.state.linegraphData} />;
     }
   }
 
