@@ -102,6 +102,16 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+const ErrorList = ({ list }) => (
+  <ul>
+    {list.map(item => (
+      <li style={{ color: 'white', width: '240px' }} key={item}>
+        {item}
+      </li>
+    ))}
+  </ul>
+);
+
 class ProfileForm extends React.Component {
   constructor(props) {
     super(props);
@@ -119,7 +129,8 @@ class ProfileForm extends React.Component {
       profileNew: 'https://source.unsplash.com/random',
       editable: false,
       profileSuccess: false,
-      passwordSuccess: false
+      passwordSuccess: false,
+      error: false
     };
 
     this.onDrop = files => {
@@ -204,7 +215,9 @@ class ProfileForm extends React.Component {
             phone: this.state.phoneNew,
             editable: false,
             profileSuccess: true,
-            open: false
+            open: false,
+            errorMsg: '',
+            fail: false
           });
         } else {
           console.log('edit profile error');
@@ -224,6 +237,13 @@ class ProfileForm extends React.Component {
     });
   }
 
+  handleCloseErrorSnackbar = event => {
+    event.preventDefault();
+    this.setState({
+      error: false
+    });
+  };
+
   handleOpenModal(event) {
     this.setState({
       open: true
@@ -238,11 +258,17 @@ class ProfileForm extends React.Component {
 
   showPasswordAlert(event) {
     //Make POST request here
-
     this.setState({
       passwordSuccess: true
     });
   }
+
+  resetPwFail = errorList => {
+    this.setState({
+      error: true,
+      errorMsg: errorList
+    });
+  };
 
   // getCompanyName = id => {
   //   for (let i = 0; i < this.props.companyList.length; i++) {
@@ -254,18 +280,18 @@ class ProfileForm extends React.Component {
 
   componentDidMount() {
     let token = localStorage.getItem('token');
-    if(store.getState().currentUser.is_staff){
+    if (store.getState().currentUser.is_staff) {
       axios
-      .get(`https://secret-sauce.azurewebsites.net/auth/users/me/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Token ${token}`
-        }
-      })
-      .then(res => {
-        this.setState({
-          firstName: res.data.first_name,
+        .get(`https://secret-sauce.azurewebsites.net/auth/users/me/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        })
+        .then(res => {
+          this.setState({
+            firstName: res.data.first_name,
             lastName: res.data.last_name,
             profile: res.data,
             phone: res.data.phone,
@@ -274,20 +300,20 @@ class ProfileForm extends React.Component {
             lastNameNew: res.data.last_name,
             firstNameNew: res.data.firstNameNew,
             phoneNew: res.data.phone
-        })
-      });
-    }else{
+          });
+        });
+    } else {
       axios
-      .get(`https://secret-sauce.azurewebsites.net/auth/users/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Token ${token}`
-        }
-      })
-      .then(res => {
-        this.setState({
-          firstName: res.data[0].first_name,
+        .get(`https://secret-sauce.azurewebsites.net/auth/users/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        })
+        .then(res => {
+          this.setState({
+            firstName: res.data[0].first_name,
             lastName: res.data[0].last_name,
             profile: res.data[0],
             phone: res.data[0].phone,
@@ -296,10 +322,10 @@ class ProfileForm extends React.Component {
             lastNameNew: res.data.last_name,
             firstNameNew: res.data.firstNameNew,
             phoneNew: res.data.phone
-        })
-      });
+          });
+        });
     }
-    
+
     console.log(store.getState().currentUser);
   }
 
@@ -522,7 +548,18 @@ class ProfileForm extends React.Component {
           open={this.state.open}
           handleClose={this.handleCloseModal}
           showAlert={this.showPasswordAlert}
+          resetFail={this.resetPwFail}
         />
+        <Snackbar
+          open={this.state.error}
+          onClose={this.handleCloseErrorSnackbar}
+        >
+          <Alert onClose={this.handleCloseErrorSnackbar} severity="error">
+            <Box mt={2}>
+              <ErrorList list={this.state.errorMsg} />
+            </Box>
+          </Alert>
+        </Snackbar>
       </Box>
     );
   }
