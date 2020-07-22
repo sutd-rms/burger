@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import MaterialTable from 'material-table';
 import { forwardRef } from 'react';
 import Snackbar from '@material-ui/core/Snackbar';
@@ -22,6 +22,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import AutoCompleteField from './AutoCompleteField';
 import { TextField } from '@material-ui/core';
+import axios from 'axios';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -51,286 +52,295 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-class UserControlTab extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      usersList: [
-        {
-          name: 'Mehmet',
-          surname: 'Baran',
-          email: 'mehmet@gmail.com',
-          organization: 'McDonaldsSG',
-          number: '91234567'
-        },
-        {
-          name: 'Zerya',
-          surname: 'Betül',
-          email: 'zeryabaran@gmail.com',
-          organization: 'McDonaldsAussie',
-          number: '91230767'
-        }
-      ],
-      columns: [
-        {
-          title: 'First Name',
-          field: 'name',
-          cellStyle: { width: '150px' },
-          editComponent: props => (
-            <TextField
-              value={this.state.name ? this.state.name : ''}
-              disabled
-            />
-          )
-        },
-        {
-          title: 'Last Name',
-          field: 'surname',
-          cellStyle: { width: '100px' },
-          editComponent: props => (
-            <TextField
-              value={this.state.surname ? this.state.surname : ''}
-              disabled
-            />
-          )
-        },
-        {
-          title: 'Email',
-          field: 'email',
-          editComponent: props => (
-            <AutoCompleteField
-              style={{ width: 600 }}
-              onChange={this.onEmailSelect}
-              options={this.state.allUsers}
-            />
-          )
-        },
-        {
-          title: 'Organization',
-          field: 'organization',
-          cellStyle: { width: '150px' },
-          editComponent: props => (
-            <TextField
-              value={this.state.organization ? this.state.organization : ''}
-              disabled
-            />
-          )
-        },
-        {
-          title: 'Phone Number',
-          field: 'number',
-          type: 'numeric',
-          cellStyle: { width: '100px' },
-          editComponent: props => (
-            <TextField
-              value={this.state.phone ? this.state.phone : ''}
-              disabled
-            />
-          )
-        }
-      ],
-      allUsers: [
-        {
-          name: 'Mehmet',
-          surname: 'Baran',
-          email: 'mehmet@gmail.com',
-          organization: 'McDonaldsSG',
-          number: '91234567'
-        },
-        {
-          name: 'Zerya',
-          surname: 'Betül',
-          email: 'zeryabaran@gmail.com',
-          organization: 'McDonaldsAussie',
-          number: '91230767'
-        },
-        {
-          name: 'Meng Siong',
-          surname: 'Ang',
-          email: 'msang@gmail.com',
-          organization: 'RMS',
-          number: '91214767'
-        },
-        {
-          name: 'Winny',
-          surname: 'Daud',
-          email: 'winnydaud@gmail.com',
-          organization: 'RMS',
-          number: '89230767'
-        },
-        {
-          name: 'Hua Bing',
-          surname: 'Yong',
-          email: 'hbyong@gmail.com',
-          organization: 'RMS',
-          number: '81260767'
-        },
-        {
-          name: 'James',
-          surname: 'Tan',
-          email: 'jamestan@gmail.com',
-          organization: 'BurgerKingUSA',
-          number: '90876541767'
-        }
-      ],
-      selectedRowId: '',
-      success: false,
-      name: '',
-      email: '',
-      surname: '',
-      organization: '',
-      phone: ''
-    };
-  }
+function UserControlTab(props) {
+  const [usersList, setUsersList] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedRow, setSelectedRow] = useState('');
+  const [success, setSuccess] = useState(false);
+  const [email, setEmail] = useState('');
+  const [organization, setOrganization] = useState('');
+  const [uidList, setUidList] = useState([]);
+  const [companyList, setCompanyList] = useState([]);
+  const [addFail, setAddFail] = useState(false);
+  const [uid, setUid] = useState('');
+  const [deleteSuccess, setDeleteSuccess] = useState(false);
+  const [userExisted, setUserExisted] = useState(false);
 
-  onNameSelect = e => {
-    this.setState({ name: e.target.value });
-  };
+  const columns = [
+    {
+      title: 'Email',
+      field: 'email',
+      editComponent: props => (
+        <AutoCompleteField
+          style={{ width: 600 }}
+          onChange={onEmailSelect}
+          value={email}
+          options={allUsers}
+          getCompanyName={getCompanyName}
+        />
+      )
+    },
+    {
+      title: 'Company',
+      field: 'company',
+      cellStyle: { width: '300px' },
+      editComponent: props => (
+        <TextField value={organization ? organization : ''} disabled />
+      )
+    }
+  ];
 
-  onEmailSelect = opt => {
-    if (opt) {
-      this.setState({
-        name: opt.name,
-        surname: opt.surname,
-        email: opt.email,
-        phone: opt.number,
-        organization: opt.organization
-      });
-    } else {
-      this.setState({
-        name: '',
-        surname: '',
-        email: '',
-        phone: '',
-        organization: ''
-      });
+  const getCompanyName = id => {
+    for (let i = 0; i < companyList.length; i++) {
+      if (companyList[i].id === id) {
+        return companyList[i].name;
+      }
     }
   };
 
-  onClick = e => {
-    console.log('upload');
-    this.setState({ displayUploadForm: true });
-  };
+  useEffect(() => {
+    let token = localStorage.getItem('token');
+    axios
+      .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(data => {
+        setCompanyList(data.data);
+      });
+    
+      const id = props.projectId;
+    // FETCH & SET STATE
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/projects/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        setUidList(res.data.owners);
+      });
+  }, []);
 
-  handleCloseSnackbar = () => {
-    this.setState({
-      success: false
-    });
-  };
+  useEffect(() => {
+    // FETCH & SET STATE
+    let token = localStorage.getItem('token');
 
-  handleChange = e => {
-    this.setState({ name: e.target.value });
-  };
-
-  handleCloseDataUploadForm = () => {
-    this.setState({ displayUploadForm: false, selectedDataset: '' });
-  };
-
-  handleUploadSuccess = () => {
-    this.setState({ uploadSuccess: true });
-  };
-
-  handleNoFile = () => {
-    this.setState({ noFileError: true });
-  };
-
-  handleWrongType = () => {
-    this.setState({ wrongTypeError: true });
-  };
-
-  render() {
-    return (
-      <div>
-        <Box>
-          <Typography variant="h6">Project Members Management</Typography>
-          <Typography variant="subtitle1">
-            You can view and manage the users in this project here
-          </Typography>
-        </Box>
-
-        <br />
-        <MaterialTable
-          title=""
-          columns={this.state.columns}
-          data={this.state.usersList}
-          icons={tableIcons}
-          onRowClick={(evt, selectedRow) =>
-            this.setState({ selectedRowId: selectedRow.tableData.id })
-          }
-          options={{
-            filtering: true,
-            exportButton: true,
-            actionsColumnIndex: -1,
-            rowStyle: rowData => ({
-              backgroundColor:
-                this.state.selectedRowId === rowData.tableData.id
-                  ? '#EEE'
-                  : '#FFF'
-            }),
-            headerStyle: {
-              backgroundColor: '#184085',
-              color: '#FFF'
+    axios
+      .get('https://secret-sauce.azurewebsites.net/auth/users', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        setAllUsers(res.data);
+        // console.log(allUsers)
+        let userList = [];
+        for (let i = 0; i < uidList.length; i++) {
+          res.data.map(user => {
+            if (user.id === uidList[i]) {
+              let newUser = {
+                id: user.id,
+                company: getCompanyName(user.company),
+                email: user.email
+              };
+              userList.push(newUser);
             }
-          }}
-          editable={{
-            onRowAdd: newData =>
-              new Promise(resolve => {
-                setTimeout(() => {
-                  const obj = {
-                    name: this.state.name,
-                    surname: this.state.surname,
-                    email: this.state.email,
-                    organization: this.state.organization,
-                    number: this.state.phone
-                  };
+          });
+        }
+        setUsersList(userList);
+      });
+  }, [companyList, uidList]);
 
-                  let repeatedUser = false;
+  const onEmailSelect = opt => {
+    if (opt != null) {
+      console.log("parent, ", opt)
+      setEmail(opt.email);
+      setOrganization(getCompanyName(opt.company));
+      setUid(opt.id);
+    } else {
+      setEmail('');
+      setOrganization('');
+      setUid('');
+    }
+  };
 
-                  for (let i = 0; i < this.state.usersList.length; i++) {
-                    if (obj.email == this.state.usersList[i].email) {
-                      repeatedUser = true;
-                      break;
-                    }
+  const handleCloseSnackbar = () => {
+    setSuccess(false);
+    setAddFail(false);
+    setDeleteSuccess(false);
+    setUserExisted(false);
+  };
+
+  return (
+    <div>
+      <Box>
+        <Typography variant="h6">Project Members Management</Typography>
+        <Typography variant="subtitle1">
+          You can view and manage the users in this project here
+        </Typography>
+      </Box>
+
+      <br />
+      <MaterialTable
+        title=""
+        columns={columns}
+        data={usersList}
+        icons={tableIcons}
+        onRowClick={(evt, selectedRow) =>
+          setSelectedRow(selectedRow.tableData.id)
+        }
+        options={{
+          filtering: true,
+          exportButton: true,
+          actionsColumnIndex: -1,
+          rowStyle: rowData => ({
+            backgroundColor:
+              selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
+          }),
+          headerStyle: {
+            backgroundColor: '#184085',
+            color: '#FFF'
+          }
+        }}
+        editable={{
+          onRowAdd: newData =>
+            new Promise(resolve => {
+              setTimeout(() => {
+                const obj = {
+                  // name: this.state.name,
+                  // surname: this.state.surname,
+                  email: email,
+                  company: organization
+                  // number: phone
+                };
+
+                let repeatedUser = false;
+
+                for (let i = 0; i < usersList.length; i++) {
+                  if (obj.email === usersList[i].email) {
+                    repeatedUser = true;
+                    break;
                   }
-                  if (repeatedUser) {
-                    alert('This user is already in the project!');
-                  } else {
-                    const dataUpdate = this.state.usersList;
-                    console.log(obj.email == this.state.usersList[0].email);
-                    dataUpdate.push(obj);
-                    this.setState({ usersList: dataUpdate, success: true });
-                    //   API CALL UPDATE DATABASE
-                  }
-                  resolve();
-                }, 600);
-              }),
-            onRowDelete: oldData =>
-              new Promise((resolve, reject) => {
-                setTimeout(() => {
-                  const dataDelete = this.state.usersList;
-                  const index = oldData.tableData.id;
-                  dataDelete.splice(index, 1);
-                  this.setState({
-                    usersList: dataDelete
-                  });
+                }
+                if (repeatedUser) {
+                  setUserExisted(true);
+                } else {
+                  const dataUpdate = usersList;
+                  dataUpdate.push(obj);
                   //   API CALL UPDATE DATABASE
-                  resolve();
-                }, 1000);
-              })
-          }}
-        />
-        <Snackbar
-          open={this.state.success}
-          autoHideDuration={6000}
-          onClose={this.handleCloseSnackbar}
-        >
-          <Alert onClose={this.handleCloseSnackbar} severity="success">
-            New user added to the project!
-          </Alert>
-        </Snackbar>
-      </div>
-    );
-  }
+                  uidList.push(uid);
+                  let newProject = { owners: uidList };
+                  const id = props.projectId;
+                  let token = localStorage.getItem('token');
+                  axios
+                    .patch(
+                      `https://secret-sauce.azurewebsites.net/portal/projects/${id}`,
+                      newProject,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Accept: 'application/json',
+                          Authorization: `Token ${token}`
+                        }
+                      }
+                    )
+                    .then(res => {
+                      if (res.status === 200) {
+                        // setUsersList(dataUpdate);
+                        setSuccess(true);
+                      } else {
+                        setAddFail(true);
+                      }
+                    });
+                }
+                resolve();
+              }, 600);
+            }),
+          onRowDelete: oldData =>
+            new Promise((resolve, reject) => {
+              setTimeout(() => {
+                const dataDelete = usersList;
+                const index = oldData.tableData.id;
+                dataDelete.splice(index, 1);
+                const deletedIdList = [];
+                dataDelete.map(obj => {
+                  deletedIdList.push(obj.id);
+                });
+                //   API CALL UPDATE DATABASE
+                const id = props.projectId;
+                let token = localStorage.getItem('token');
+                const newProject = { owners: deletedIdList };
+                axios
+                  .patch(
+                    `https://secret-sauce.azurewebsites.net/portal/projects/${id}`,
+                    newProject,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    if (res.status === 200) {
+                      // setUsersList(dataDelete);
+                      setDeleteSuccess(true);
+                    } else {
+                      setAddFail(true);
+                    }
+                  });
+                resolve();
+              }, 1000);
+            })
+        }}
+      />
+      <Snackbar
+        open={success}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          New user added to the project!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={userExisted}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          This user is already in the project!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={addFail}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          Error! Please try again!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={deleteSuccess}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          User deleted from the project!
+        </Alert>
+      </Snackbar>
+    </div>
+  );
 }
 
 export default UserControlTab;

@@ -1,29 +1,38 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { set } from 'd3';
 
 export default function AutoCompleteField(props) {
-  const [value, setValue] = useState('');
   const [inputValue, setInputValue] = useState('');
+  const [value, setValue] = React.useState(null);
+
+  let onInputChange = (evt, newInput) => {
+    setInputValue(newInput);
+  };
+
+  let onChange = (evt, newValue) => {
+    // console.log(newValue);
+    props.onChange(newValue);
+    setValue(newValue);
+  };
 
   return (
     <Autocomplete
       id="combo-box-demo"
-      onChange={(event, newValue) => {
-        props.onChange(newValue);
-      }}
+      value={value}
+      onChange={onChange}
+      onInputChange={onInputChange}
       inputValue={inputValue}
-      onInputChange={(event, newInputValue) => {
-        setInputValue(newInputValue);
-      }}
-      options={props.options}
+      options={props.options.sort(
+        (a, b) => -b.company.localeCompare(a.company)
+      )}
       getOptionLabel={option => option.email}
+      groupBy={option => props.getCompanyName(option.company)}
       renderOption={option => (
         <React.Fragment>
-          <span style={{ fontWeight: 'bold' }}>
-            {option.name + ' ' + option.surname}
-          </span>
-          {option.email} --{option.organization}
+          <span style={{ fontWeight: 'bold' }}>{option.email}</span>
+          --{props.getCompanyName(option.company)}
         </React.Fragment>
       )}
       renderInput={params => (

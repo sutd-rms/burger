@@ -9,6 +9,9 @@ import FormControl from '@material-ui/core/FormControl';
 import InputBase from '@material-ui/core/InputBase';
 import InputLabel from '@material-ui/core/InputLabel';
 import Box from '@material-ui/core/Box';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import axios from 'axios';
 
 const styles = theme => ({
   modal: {
@@ -52,12 +55,16 @@ const FormInput = withStyles(theme => ({
 const ErrorList = ({ list }) => (
   <ul>
     {list.map(item => (
-      <li style={{ color: 'red' }} key={item}>
+      <li style={{ color: 'white', width:'240px' }} key={item}>
         {item}
       </li>
     ))}
   </ul>
 );
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 class ChangePasswordModal extends React.Component {
   constructor(props) {
@@ -66,7 +73,8 @@ class ChangePasswordModal extends React.Component {
       currentPassword: '',
       newPassword: '',
       reNewPassword: '',
-      errorMessage: []
+      errorMessage: [],
+      error: false,
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -79,8 +87,8 @@ class ChangePasswordModal extends React.Component {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    console.log(name);
-    console.log(value);
+    // console.log(name);
+    // console.log(value);
 
     this.setState({
       [name]: value
@@ -101,27 +109,75 @@ class ChangePasswordModal extends React.Component {
     this.props.handleClose();
   }
 
+  // handleCloseErrorSnackbar = event => {
+  //   event.preventDefault();
+  //   this.setState({
+  //     error: false
+  //   });
+  // };
+
   handleSubmit(event) {
     //Make POST request here
+    let token = localStorage.getItem('token');
+    const form = {
+      new_password: this.state.newPassword,
+      re_new_password: this.state.reNewPassword,
+      current_password: this.state.currentPassword
+    };
 
-    if (this.state.newPassword != this.state.reNewPassword) {
-      this.setState({
-        errorMessage: ['New Passwords given do not match!'],
-        currentPassword: '',
-        newPassword: '',
-        reNewPassword: ''
+    axios
+      .post(
+        `https://secret-sauce.azurewebsites.net/auth/users/set_password/`,
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 204) {
+          this.props.showAlert();
+          this.closeModal();
+        }
+      })
+      .catch(err => {
+        console.log(err.response.data);
+        let errorList = [];
+        for (var item in err.response.data) {
+          if(item!='status_code'){
+            errorList = [...errorList, ...err.response.data[item]];
+          }
+        }
+        // console.log(errorList)
+        this.setState({
+          // errorMessage: errorList,
+          // error: true,
+          currentPassword: '',
+          newPassword: '',
+          reNewPassword: ''
+        });
+        this.props.resetFail(errorList);
       });
-      return;
-    }
 
-    this.props.showAlert();
-    this.closeModal();
+    // if (this.state.newPassword != this.state.reNewPassword) {
+    //   this.setState({
+    //     errorMessage: ['New Passwords given do not match!'],
+    //     currentPassword: '',
+    //     newPassword: '',
+    //     reNewPassword: ''
+    //   });
+    //   return;
+    // }
   }
 
   render() {
     const { classes } = this.props;
 
     return (
+      <div>
       <React.Fragment>
         <Modal
           aria-labelledby="transition-modal-title"
@@ -209,6 +265,8 @@ class ChangePasswordModal extends React.Component {
           </Fade>
         </Modal>
       </React.Fragment>
+      
+      </div>
     );
   }
 }
