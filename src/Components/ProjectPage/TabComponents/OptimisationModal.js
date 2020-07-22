@@ -235,11 +235,11 @@ class OptimisationModal extends React.Component {
                         style={{ fontSize: '3em', marginBottom: 10 }}
                         style={{
                           color:
-                            this.state.file.length == 0 ? 'grey' : '#3176D2'
+                            this.state.file.length === 0 ? 'grey' : '#3176D2'
                         }}
                       />
                       <p>
-                        {this.state.file.length == 0
+                        {this.state.file.length === 0
                           ? "Drag 'n' Drop your CSV file here, or click to select file"
                           : 'Click to Change File'}
                       </p>

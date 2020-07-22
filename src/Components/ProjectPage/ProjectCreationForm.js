@@ -1,19 +1,20 @@
-import React, { useState } from "react";
-import { withStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import MuiDialogTitle from "@material-ui/core/DialogTitle";
-import MuiDialogContent from "@material-ui/core/DialogContent";
-import MuiDialogActions from "@material-ui/core/DialogActions";
-import IconButton from "@material-ui/core/IconButton";
-import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
-import TextField from "@material-ui/core/TextField";
-import MenuItem from "@material-ui/core/MenuItem";
-import Select from "@material-ui/core/Select";
-import Box from "@material-ui/core/Box";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
+import React, { useState, useEffect } from 'react';
+import { withStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import MuiDialogTitle from '@material-ui/core/DialogTitle';
+import MuiDialogContent from '@material-ui/core/DialogContent';
+import IconButton from '@material-ui/core/IconButton';
+import CloseIcon from '@material-ui/icons/Close';
+import Typography from '@material-ui/core/Typography';
+import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
+import Select from '@material-ui/core/Select';
+import Box from '@material-ui/core/Box';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
+import axios from 'axios';
+import { store } from '../../redux/store';
 
 const styles = theme => ({
   root: {
@@ -21,7 +22,7 @@ const styles = theme => ({
     padding: theme.spacing(2)
   },
   closeButton: {
-    position: "absolute",
+    position: 'absolute',
     right: theme.spacing(1),
     top: theme.spacing(1),
     color: theme.palette.grey[500]
@@ -57,34 +58,74 @@ function Alert(props) {
 }
 
 export default function ProjectCreationForm(props) {
-  const [name, setName] = useState("");
-  const [description, setDescription] = useState("");
-  const [organization, setOrganization] = useState("");
-  const [organizationList, setOrganizationList] = useState([
-    "RMS",
-    "McDonald Australia",
-    "McDonald SG"
-  ]);
-  const [modelList, setModelList] = useState(["MCMC", "Brute Force"]);
-  const [defaultModel, setDefaultModel] = useState("");
+  let userCompany = store.getState().currentUser.company;
+  let userIsStaff = store.getState().currentUser.is_staff;
+  const [name, setName] = useState('');
+  const [description, setDescription] = useState('');
+  const [organization, setOrganization] = useState('');
+  const [organizationList, setOrganizationList] = useState([]);
   const [success, setSuccess] = useState(false);
+  const [fail, setFail] = useState(false);
+  const [empty, setEmpty] = useState(false);
+  const [displayCompany, setDisplayCompany] = useState(false);
 
   const onFormSubmission = e => {
     e.preventDefault();
     // ADD API CALL HERE
-    console.log(
-      "creating new project with name: ",
-      name,
-      ", description: ",
-      description,
-      ", organization: ",
-      organization,
-      ", model: ",
-      defaultModel
-    );
-    props.handleClose();
-    setSuccess(true);
+    if (name === '' || organization === '') {
+      setEmpty(true);
+    } else {
+      let uid = store.getState().currentUser.id;
+      let newProject = {
+        title: name,
+        description: description,
+        company: organization,
+        owners: [uid]
+      };
+      let token = localStorage.getItem('token');
+      axios
+        .post(
+          `https://secret-sauce.azurewebsites.net/portal/projects/`,
+          newProject,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        )
+        .then(res => {
+          if ((res.status = 200)) {
+            setSuccess(true);
+            props.handleClose();
+            window.location.reload();
+          } else {
+            setFail(true);
+          }
+        });
+    }
   };
+
+  useEffect(() => {
+    if (userIsStaff) {
+      setDisplayCompany(true);
+      let token = localStorage.getItem('token');
+      axios
+        .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        })
+        .then(res => {
+          setOrganizationList(res.data);
+        });
+    } else {
+      setOrganization(userCompany);
+    }
+  }, [userCompany]);
 
   const handleNameChange = e => {
     setName(e.target.value);
@@ -95,15 +136,14 @@ export default function ProjectCreationForm(props) {
   };
 
   const handleOrganizationChange = e => {
+    console.log(e.target.value);
     setOrganization(e.target.value);
-  };
-
-  const handleModelChange = e => {
-    setDefaultModel(e.target.value);
   };
 
   const handleCloseSnackbar = e => {
     setSuccess(false);
+    setFail(false);
+    setEmpty(false);
   };
 
   return (
@@ -146,38 +186,29 @@ export default function ProjectCreationForm(props) {
               name="description"
               id="description"
             />
-            <Typography variant="subtitle2" gutterBottom>
-              Client Organization
-            </Typography>
-            <Select
-              labelId="demo-simple-select-filled-label"
-              id="demo-simple-select-filled"
-              fullWidth
-              value={organization}
-              onChange={handleOrganizationChange}
-            >
-              {organizationList.map(value => (
-                <MenuItem value={value} id={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
-            <Typography variant="subtitle2" gutterBottom>
-              Default Model for this Project
-            </Typography>
-            <Select
-              labelId="model"
-              id="model"
-              fullWidth
-              value={defaultModel}
-              onChange={handleModelChange}
-            >
-              {modelList.map(value => (
-                <MenuItem value={value} id={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
+            {displayCompany ? (
+              <div>
+                <Typography variant="subtitle2" gutterBottom>
+                  Client Organization
+                </Typography>
+                <Select
+                  labelId="demo-simple-select-filled-label"
+                  id="demo-simple-select-filled"
+                  fullWidth
+                  value={organization}
+                  onChange={handleOrganizationChange}
+                >
+                  {organizationList.map(value => (
+                    <MenuItem value={value.id} id={value.id} key={value.id}>
+                      {value.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </div>
+            ) : (
+              ''
+            )}
+
             <Box m={2}>
               <Button
                 type="submit"
@@ -199,6 +230,24 @@ export default function ProjectCreationForm(props) {
       >
         <Alert onClose={handleCloseSnackbar} severity="success">
           New project created!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={fail}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          Error! Please try again!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={empty}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="error">
+          Please fill up the fields required!
         </Alert>
       </Snackbar>
     </div>

@@ -13,6 +13,7 @@ import Dropzone from 'react-dropzone';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {
@@ -104,14 +105,15 @@ class ProjectOverviewTab extends React.Component {
     super(props);
     this.state = {
       id: '',
-      title: "McDonald's Australia",
-      description: 'This is a sample description!',
+      title: this.props.projectName,
+      description: this.props.projectDescription,
       cover: 'https://source.unsplash.com/random',
-      titleNew: "McDonald's Australia",
-      descriptionNew: 'This is a sample description!',
+      titleNew: this.props.projectName,
+      descriptionNew: this.props.projectDescription,
       coverNew: 'https://source.unsplash.com/random',
       editable: false,
-      success: false
+      success: false,
+      project: {}
     };
 
     this.onDrop = files => {
@@ -143,6 +145,7 @@ class ProjectOverviewTab extends React.Component {
   }
 
   handleEdit(event) {
+    console.log(this.props.projectId);
     this.setState({
       editable: true
     });
@@ -159,20 +162,64 @@ class ProjectOverviewTab extends React.Component {
 
   handleSubmit(event) {
     //Make POST request here
-
-    this.setState({
+    let newProject = {
       title: this.state.titleNew,
-      description: this.state.descriptionNew,
-      cover: this.state.coverNew,
-      editable: false,
-      success: true
-    });
+      description: this.state.descriptionNew
+    };
+    const id = this.props.projectId;
+    // FETCH & SET STATE
+    let token = localStorage.getItem('token');
+    axios
+      .patch(
+        `https://secret-sauce.azurewebsites.net/portal/projects/${id}`,
+        newProject,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res =>
+        this.setState({
+          title: this.state.titleNew,
+          description: this.state.descriptionNew,
+          cover: this.state.coverNew,
+          editable: false,
+          success: true
+        })
+      );
   }
 
   handleCloseSnackbar(event) {
     this.setState({
       success: false
     });
+  }
+
+  componentDidMount() {
+    const id = this.props.projectId;
+    // FETCH & SET STATE
+    let token = localStorage.getItem('token');
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/projects/${id}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(data =>
+        this.setState({
+          id: id,
+          titleNew: data.data.title,
+          descriptionNew: data.data.description,
+          title: data.data.title,
+          description: data.data.description,
+          project: data.data
+        })
+      );
   }
 
   render() {

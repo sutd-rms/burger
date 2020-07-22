@@ -51,6 +51,7 @@ export default function ProjectCard(props) {
             display={display}
             frontstyle={classes.media}
             backstyle={classes.cardtext}
+            project={props.project}
           />
         </CardActionArea>
       </Card>

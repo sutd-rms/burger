@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ProjectCard from './ProjectCard';
@@ -15,6 +15,7 @@ import {
 import FloatingAddButton from '../FloatingAddButton';
 import ProjectCreationForm from './ProjectCreationForm';
 import ProjectDetails from './ProjectDetails';
+import axios from 'axios';
 import DatasetVisualisation from './../DatasetVisualisation';
 
 const useStyles = makeStyles(theme => ({
@@ -31,9 +32,25 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function AllProjectPage() {
-  const [projectIdList, setProjectIdList] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
+  const [projectIdList, setProjectIdList] = useState([]);
   const [displayCreationForm, setDisplayCreationForm] = useState(false);
   let match = useRouteMatch();
+
+  useEffect(() => {
+    let token = localStorage.getItem('token');
+    // console.log(match)
+    axios
+      .get('https://secret-sauce.azurewebsites.net/portal/projects/', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(data => {
+        setProjectIdList(data.data);
+      });
+  }, []);
 
   const handleOpen = () => {
     setDisplayCreationForm(true);
@@ -66,8 +83,8 @@ export default function AllProjectPage() {
             <Grid item xs={12}>
               <Grid container justify="flex-start" spacing={7}>
                 {projectIdList.map(value => (
-                  <Grid key={value} item>
-                    <ProjectCard projectId={value} />
+                  <Grid key={value.id} item>
+                    <ProjectCard project={value} projectId={value.id} />
                   </Grid>
                 ))}
               </Grid>
