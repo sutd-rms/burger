@@ -20,7 +20,6 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import BoxplotChart from './Boxplot';
 import LinegraphChart from './Linegraph';
 import axios from 'axios';
-import FormData from 'form-data';
 
 const token = localStorage.getItem('token');
 
@@ -144,20 +143,17 @@ class DatasetVisualisation extends React.Component {
     }
 
     if (this.state.selected == 'boxplot') {
-      var form = new FormData();
-      form.append('query', 'price');
-      this.state.items.forEach(item => form.append('items', item));
+      var data = { query: 'price', items: this.state.items.join() };
 
       axios
-        .post(
-          `http://localhost:8000/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
-          form,
-          // `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
+        .get(
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
               Authorization: `Token ${token}`
-            }
+            },
+            params: data
           }
         )
         .then(res => {
@@ -166,20 +162,17 @@ class DatasetVisualisation extends React.Component {
         });
     }
     if (this.state.selected == 'linegraph') {
-      var form = new FormData();
-      form.append('query', 'quantity');
-      this.state.items.forEach(item => form.append('items', item));
+      var data = { query: 'quantity', items: this.state.items.join() };
 
       axios
-        .post(
-          `http://localhost:8000/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
-          form,
-          // `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
+        .get(
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
               Authorization: `Token ${token}`
-            }
+            },
+            params: data
           }
         )
         .then(res => {
@@ -225,7 +218,7 @@ class DatasetVisualisation extends React.Component {
   componentDidMount() {
     axios
       .get(
-        `http://localhost:8000/portal/datablocks/${this.props.match.params.datasetId}`,
+        `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}`,
         // `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
         {
           headers: {

@@ -228,10 +228,9 @@ class DatasetsTab extends React.Component {
               icon: () => <GetAppRoundedIcon />,
               tooltip: 'Download data file',
               onClick: (event, rowData) => {
-                alert('You are downloading the dataset of ' + rowData.name);
-                window.open(
-                  `https://secret-sauce.azurewebsites.net/portal/datablocks/${rowData.id}`
-                );
+                const rowIndex = rowData.tableData.id;
+                const downloadLink = this.state.datasetsList[rowIndex].upload;
+                window.open(downloadLink);
               }
             },
             {
