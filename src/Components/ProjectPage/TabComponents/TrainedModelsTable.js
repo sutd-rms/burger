@@ -1,9 +1,7 @@
 import React from 'react';
 import { forwardRef } from 'react';
 import MaterialTable from 'material-table';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-
+import { withStyles } from '@material-ui/core/styles';
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -19,6 +17,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import axios from 'axios';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -44,91 +43,93 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
+const styles = theme => ({
+  root: {}
+});
 
-export default function TrainedModelsTable() {
-  const [selectedRow, setSelectedRow] = React.useState(null);
-  const [success, setSuccess] = React.useState(false);
-
-  const handleCloseSnackbar = e => {
-    setSuccess(false);
-  };
-
-  const [state, setState] = React.useState({
-    columns: [
-      { title: 'Name', field: 'name' },
-      { title: 'Dataset', field: 'datasetName' },
-      { title: 'Model', field: 'model' },
-      {
-        title: 'Date Trained',
-        field: 'dateTrained',
-        type: 'datetime',
-        filtering: false
-      }
-    ],
-    data: [
-      {
-        name: 'Test Model',
-        datasetName: 'random_csv_file.csv',
-        model: 'Default Model 1',
-        dateTrained: '2019-12-20 08:30:45.687'
-      },
-      {
-        name: 'Test Model 2',
-        datasetName: 'random_csv_file.csv',
-        model: 'Neural Network Model',
-        dateTrained: '2020-02-20 10:20:46.657'
-      },
-      {
-        name: 'Test Model2',
-        datasetName: 'iloverms.csv',
-        model: 'Default Model 1',
-        dateTrained: '2020-05-20 20:30:46.657'
-      },
-      {
-        name: 'ABC Test',
-        datasetName: 'test.csv',
-        model: 'Random Forest',
-        dateTrained: '2020-06-01 20:46:46.657'
-      }
-    ]
-  });
-
-  return (
-    <div>
-      <MaterialTable
-        title="Trained Models"
-        columns={state.columns}
-        data={state.data}
-        icons={tableIcons}
-        onRowClick={(evt, selectedRow) =>
-          setSelectedRow(selectedRow.tableData.id)
+class TrainedModelsTable extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      selectedRowId: '',
+      columns: [
+        { title: 'Name', field: 'name' },
+        { title: 'Dataset', field: 'datasetName' },
+        { title: 'Model', field: 'model' },
+        { title: 'Status', field: 'available' },
+        {
+          title: 'Date Trained',
+          field: 'created',
+          type: 'datetime',
+          filtering: false
         }
-        options={{
-          filtering: true,
-          exportButton: true,
-          actionsColumnIndex: -1,
-          rowStyle: rowData => ({
-            backgroundColor:
-              selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
-          }),
-          headerStyle: {
-            backgroundColor: '#F5A705',
-            color: '#FFF'
+      ],
+      data: []
+    };
+  }
+
+  componentDidMount() {
+    let token = localStorage.getItem('token');
+
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        var tableData = [];
+
+        res.data.forEach(trainedModel => {
+          tableData.push({
+            name: trainedModel.name,
+            datasetName: trainedModel.data_block.name,
+            model: trainedModel.prediction_model.name,
+            available: trainedModel.available ? 'Ready' : 'Pending',
+            created: trainedModel.created
+          });
+        });
+        this.setState({
+          data: tableData
+        });
+      });
+  }
+
+  render() {
+    const { classes } = this.props;
+
+    return (
+      <div>
+        <MaterialTable
+          title="Trained Models"
+          columns={this.state.columns}
+          data={this.state.data}
+          icons={tableIcons}
+          onRowClick={(evt, selectedRow) =>
+            this.setState({ selectedRowId: selectedRow.tableData.id })
           }
-        }}
-      />
-      <Snackbar
-        open={success}
-        autoHideDuration={6000}
-        onClose={handleCloseSnackbar}
-      >
-        <Alert onClose={handleCloseSnackbar} severity="success">
-          New User created! An invite will be sent out shortly!
-        </Alert>
-      </Snackbar>
-    </div>
-  );
+          options={{
+            filtering: true,
+            exportButton: true,
+            actionsColumnIndex: -1,
+            rowStyle: rowData => ({
+              backgroundColor:
+                this.state.selectedRowId === rowData.tableData.id
+                  ? '#EEE'
+                  : '#FFF'
+            }),
+            headerStyle: {
+              backgroundColor: '#F5A705',
+              color: '#FFF'
+            }
+          }}
+        />
+      </div>
+    );
+  }
 }
+
+export default withStyles(styles, { withTheme: true })(TrainedModelsTable);
