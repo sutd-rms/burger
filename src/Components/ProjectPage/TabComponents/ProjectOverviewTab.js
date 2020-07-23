@@ -107,10 +107,11 @@ class ProjectOverviewTab extends React.Component {
       id: '',
       title: this.props.projectName,
       description: this.props.projectDescription,
-      cover: 'https://source.unsplash.com/random',
+      cover: '',
       titleNew: this.props.projectName,
       descriptionNew: this.props.projectDescription,
-      coverNew: 'https://source.unsplash.com/random',
+      coverNew: '',
+      coverNewFile: '',
       editable: false,
       success: false,
       project: {}
@@ -123,7 +124,8 @@ class ProjectOverviewTab extends React.Component {
         })
       );
       this.setState({
-        coverNew: acceptedFiles[0].preview
+        coverNew: acceptedFiles[0].preview,
+        coverNewFile: acceptedFiles[0]
       });
     };
 
@@ -162,20 +164,23 @@ class ProjectOverviewTab extends React.Component {
 
   handleSubmit(event) {
     //Make POST request here
-    let newProject = {
-      title: this.state.titleNew,
-      description: this.state.descriptionNew
-    };
+    var formData = new FormData();
+    if (this.state.coverNew != this.state.cover) {
+      formData.append('cover', this.state.coverNewFile);
+    }
+    formData.append('title', this.state.titleNew);
+    formData.append('description', this.state.descriptionNew);
+
     const id = this.props.projectId;
     // FETCH & SET STATE
     let token = localStorage.getItem('token');
     axios
       .patch(
         `https://secret-sauce.azurewebsites.net/portal/projects/${id}`,
-        newProject,
+        formData,
         {
           headers: {
-            'Content-Type': 'application/json',
+            'Content-Type': 'multipart/form-data',
             Accept: 'application/json',
             Authorization: `Token ${token}`
           }
@@ -217,7 +222,9 @@ class ProjectOverviewTab extends React.Component {
           descriptionNew: data.data.description,
           title: data.data.title,
           description: data.data.description,
-          project: data.data
+          project: data.data,
+          cover: data.data.cover,
+          coverNew: data.data.cover
         })
       );
   }
