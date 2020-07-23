@@ -76,7 +76,7 @@ function UserControlTab(props) {
           onChange={onEmailSelect}
           value={email}
           options={allUsers}
-          getCompanyName={getCompanyName}
+          // getCompanyName={getCompanyName}
         />
       )
     },
@@ -89,14 +89,6 @@ function UserControlTab(props) {
       )
     }
   ];
-
-  const getCompanyName = id => {
-    for (let i = 0; i < companyList.length; i++) {
-      if (companyList[i].id === id) {
-        return companyList[i].name;
-      }
-    }
-  };
 
   useEffect(() => {
     let token = localStorage.getItem('token');
@@ -111,8 +103,8 @@ function UserControlTab(props) {
       .then(data => {
         setCompanyList(data.data);
       });
-    
-      const id = props.projectId;
+
+    const id = props.projectId;
     // FETCH & SET STATE
     axios
       .get(`https://secret-sauce.azurewebsites.net/portal/projects/${id}`, {
@@ -125,7 +117,7 @@ function UserControlTab(props) {
       .then(res => {
         setUidList(res.data.owners);
       });
-  }, []);
+  }, [props.projectId]);
 
   useEffect(() => {
     // FETCH & SET STATE
@@ -141,14 +133,13 @@ function UserControlTab(props) {
       })
       .then(res => {
         setAllUsers(res.data);
-        // console.log(allUsers)
         let userList = [];
         for (let i = 0; i < uidList.length; i++) {
           res.data.map(user => {
             if (user.id === uidList[i]) {
               let newUser = {
                 id: user.id,
-                company: getCompanyName(user.company),
+                company: user.company.name,
                 email: user.email
               };
               userList.push(newUser);
@@ -161,9 +152,9 @@ function UserControlTab(props) {
 
   const onEmailSelect = opt => {
     if (opt != null) {
-      console.log("parent, ", opt)
+      console.log('parent, ', opt);
       setEmail(opt.email);
-      setOrganization(getCompanyName(opt.company));
+      setOrganization(opt.company.name);
       setUid(opt.id);
     } else {
       setEmail('');

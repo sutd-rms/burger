@@ -68,6 +68,7 @@ export default function ProjectCreationForm(props) {
   const [fail, setFail] = useState(false);
   const [empty, setEmpty] = useState(false);
   const [displayCompany, setDisplayCompany] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const onFormSubmission = e => {
     e.preventDefault();
@@ -103,6 +104,16 @@ export default function ProjectCreationForm(props) {
           } else {
             setFail(true);
           }
+        })
+        .catch(err => {
+          let errMsg = '';
+          for (var item in err.response.data) {
+            if (item != 'status') {
+              errMsg = errMsg + err.response.data[item][0];
+            }
+          }
+          setErrorMsg(errMsg);
+          setFail(true);
         });
     }
   };
@@ -125,7 +136,7 @@ export default function ProjectCreationForm(props) {
     } else {
       setOrganization(userCompany);
     }
-  }, [userCompany]);
+  }, [userCompany, userIsStaff]);
 
   const handleNameChange = e => {
     setName(e.target.value);
@@ -238,7 +249,7 @@ export default function ProjectCreationForm(props) {
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="error">
-          Error! Please try again!
+          {errorMsg}
         </Alert>
       </Snackbar>
       <Snackbar

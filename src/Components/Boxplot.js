@@ -26,40 +26,6 @@ class Boxplot extends React.Component {
   boxRef = React.createRef();
 
   makeBoxPlot() {
-    // FOR CREATING MOCK DATA
-
-    // function randomValues(count, min, max) {
-    //   const delta = max - min;
-    //   return Array.from({ length: count }).map(
-    //     () => Math.random() * delta + min
-    //   );
-    // }
-
-    // const boxplotData = {
-    //   // define label tree
-    //   labels: ['16019', '16020', '18001', '18024', '19025', '20032', '20056'],
-    //   datasets: [
-    //     {
-    //       label: 'Dataset 1',
-    //       backgroundColor: 'rgba(255,0,0,0.5)',
-    //       borderColor: 'red',
-    //       borderWidth: 1,
-    //       outlierColor: '#999999',
-    //       padding: 10,
-    //       itemRadius: 0,
-    //       data: [
-    //         randomValues(100, 3, 4),
-    //         randomValues(100, 12, 13),
-    //         randomValues(100, 4, 5),
-    //         randomValues(100, 6, 7),
-    //         randomValues(40, 8, 10),
-    //         randomValues(100, 6, 12),
-    //         randomValues(100, 8, 10)
-    //       ]
-    //     }
-    //   ]
-    // };
-
     const boxplotData = {
       labels: this.state.data.items,
       datasets: [
@@ -96,8 +62,6 @@ class Boxplot extends React.Component {
   }
 
   componentDidMount() {
-    // FOR CREATING MOCK DATA
-    // d3.csv('http://localhost:3000/data.csv').then(this.makeBoxPlot);
     this.makeBoxPlot();
   }
 

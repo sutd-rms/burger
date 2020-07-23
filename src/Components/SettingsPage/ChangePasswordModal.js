@@ -55,7 +55,7 @@ const FormInput = withStyles(theme => ({
 const ErrorList = ({ list }) => (
   <ul>
     {list.map(item => (
-      <li style={{ color: 'white', width:'240px' }} key={item}>
+      <li style={{ color: 'white', width: '240px' }} key={item}>
         {item}
       </li>
     ))}
@@ -74,7 +74,7 @@ class ChangePasswordModal extends React.Component {
       newPassword: '',
       reNewPassword: '',
       errorMessage: [],
-      error: false,
+      error: false
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -87,8 +87,6 @@ class ChangePasswordModal extends React.Component {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    // console.log(name);
-    // console.log(value);
 
     this.setState({
       [name]: value
@@ -108,13 +106,6 @@ class ChangePasswordModal extends React.Component {
     this.handleReset();
     this.props.handleClose();
   }
-
-  // handleCloseErrorSnackbar = event => {
-  //   event.preventDefault();
-  //   this.setState({
-  //     error: false
-  //   });
-  // };
 
   handleSubmit(event) {
     //Make POST request here
@@ -147,7 +138,7 @@ class ChangePasswordModal extends React.Component {
         console.log(err.response.data);
         let errorList = [];
         for (var item in err.response.data) {
-          if(item!='status_code'){
+          if (item != 'status_code') {
             errorList = [...errorList, ...err.response.data[item]];
           }
         }
@@ -161,16 +152,6 @@ class ChangePasswordModal extends React.Component {
         });
         this.props.resetFail(errorList);
       });
-
-    // if (this.state.newPassword != this.state.reNewPassword) {
-    //   this.setState({
-    //     errorMessage: ['New Passwords given do not match!'],
-    //     currentPassword: '',
-    //     newPassword: '',
-    //     reNewPassword: ''
-    //   });
-    //   return;
-    // }
   }
 
   render() {
@@ -178,94 +159,93 @@ class ChangePasswordModal extends React.Component {
 
     return (
       <div>
-      <React.Fragment>
-        <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          className={classes.modal}
-          open={this.props.open}
-          onClose={this.closeModal}
-          closeAfterTransition
-          BackdropComponent={Backdrop}
-          BackdropProps={{
-            timeout: 500
-          }}
-        >
-          <Fade in={this.props.open}>
-            <div className={classes.paper}>
-              <Typography variant="h5" className={classes.title}>
-                Change Password
-              </Typography>
-              <Box mt={2}>
-                <ErrorList list={this.state.errorMessage} />
-              </Box>
-              <div className={classes.root}>
-                <div>
-                  <FormControl className={classes.root}>
-                    <InputLabel
-                      shrink
-                      htmlFor="title-input"
-                      className={classes.label}
-                    >
-                      Current Password
-                    </InputLabel>
-                    <FormInput
-                      name="currentPassword"
-                      type="password"
-                      value={this.state.currentPassword}
-                      onChange={this.handleInputChange}
-                    />
-                  </FormControl>
-                </div>
-                <div>
-                  <FormControl className={classes.root}>
-                    <InputLabel
-                      shrink
-                      htmlFor="title-input"
-                      className={classes.label}
-                    >
-                      New Password
-                    </InputLabel>
-                    <FormInput
-                      name="newPassword"
-                      type="password"
-                      value={this.state.newPassword}
-                      onChange={this.handleInputChange}
-                    />
-                  </FormControl>
-                </div>
-                <div>
-                  <FormControl className={classes.root}>
-                    <InputLabel
-                      shrink
-                      htmlFor="title-input"
-                      className={classes.label}
-                    >
-                      Confirm New Password
-                    </InputLabel>
-                    <FormInput
-                      name="reNewPassword"
-                      type="password"
-                      value={this.state.reNewPassword}
-                      onChange={this.handleInputChange}
-                    />
-                  </FormControl>
-                </div>
-                <Box mt={2} display="flex" justifyContent="flex-end">
-                  <Button
-                    variant="contained"
-                    className={classes.submitButton}
-                    onClick={this.handleSubmit}
-                  >
-                    SUBMIT
-                  </Button>
+        <React.Fragment>
+          <Modal
+            aria-labelledby="transition-modal-title"
+            aria-describedby="transition-modal-description"
+            className={classes.modal}
+            open={this.props.open}
+            onClose={this.closeModal}
+            closeAfterTransition
+            BackdropComponent={Backdrop}
+            BackdropProps={{
+              timeout: 500
+            }}
+          >
+            <Fade in={this.props.open}>
+              <div className={classes.paper}>
+                <Typography variant="h5" className={classes.title}>
+                  Change Password
+                </Typography>
+                <Box mt={2}>
+                  <ErrorList list={this.state.errorMessage} />
                 </Box>
+                <div className={classes.root}>
+                  <div>
+                    <FormControl className={classes.root}>
+                      <InputLabel
+                        shrink
+                        htmlFor="title-input"
+                        className={classes.label}
+                      >
+                        Current Password
+                      </InputLabel>
+                      <FormInput
+                        name="currentPassword"
+                        type="password"
+                        value={this.state.currentPassword}
+                        onChange={this.handleInputChange}
+                      />
+                    </FormControl>
+                  </div>
+                  <div>
+                    <FormControl className={classes.root}>
+                      <InputLabel
+                        shrink
+                        htmlFor="title-input"
+                        className={classes.label}
+                      >
+                        New Password
+                      </InputLabel>
+                      <FormInput
+                        name="newPassword"
+                        type="password"
+                        value={this.state.newPassword}
+                        onChange={this.handleInputChange}
+                      />
+                    </FormControl>
+                  </div>
+                  <div>
+                    <FormControl className={classes.root}>
+                      <InputLabel
+                        shrink
+                        htmlFor="title-input"
+                        className={classes.label}
+                      >
+                        Confirm New Password
+                      </InputLabel>
+                      <FormInput
+                        name="reNewPassword"
+                        type="password"
+                        value={this.state.reNewPassword}
+                        onChange={this.handleInputChange}
+                      />
+                    </FormControl>
+                  </div>
+                  <Box mt={2} display="flex" justifyContent="flex-end">
+                    <Button
+                      variant="contained"
+                      className={classes.submitButton}
+                      onClick={this.handleSubmit}
+                    >
+                      SUBMIT
+                    </Button>
+                  </Box>
+                </div>
               </div>
-            </div>
-          </Fade>
-        </Modal>
-      </React.Fragment>
-      
+            </Fade>
+          </Modal>
+        </React.Fragment>
       </div>
     );
   }

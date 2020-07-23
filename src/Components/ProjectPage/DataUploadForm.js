@@ -6,11 +6,9 @@ import AttachmentIcon from '@material-ui/icons/Attachment';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { withStyles } from '@material-ui/core/styles';
 import MuiAlert from '@material-ui/lab/Alert';
-import Snackbar from '@material-ui/core/Snackbar';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
-import Typography from '@material-ui/core/Typography';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -69,7 +67,6 @@ class DataUploadForm extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
-    // console.log(this.state.files);
 
     var formData = new FormData();
     formData.append('upload', this.state.files[0]);
@@ -98,11 +95,11 @@ class DataUploadForm extends React.Component {
           }
         )
         .then(res => {
-          console.log(res);
+          console.log(res.data);
           this.setState({
             success: true
           });
-          this.props.successUpload(this.state.datasetName);
+          this.props.successUpload(res.data);
           this.props.handleCloseDataUploadForm();
         })
         .catch(error => {

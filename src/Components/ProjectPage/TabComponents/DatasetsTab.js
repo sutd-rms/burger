@@ -135,10 +135,11 @@ class DatasetsTab extends React.Component {
     });
   };
 
-  handleUploadSuccess = name => {
+  handleUploadSuccess = form => {
+    // console.log
     this.setState({ uploadSuccess: true });
     let datasets = this.state.datasetsList;
-    datasets.push({ name: name });
+    datasets.push(form);
     this.setState({ datasetsList: datasets });
   };
   handleUploadFail = () => {

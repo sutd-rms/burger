@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import CardMedia from '@material-ui/core/CardMedia';
 import CardContent from '@material-ui/core/CardContent';
-import McLogo from '../../static/images/McDonaldLogo.png';
 import { Typography } from '@material-ui/core';
-import ModelIcon from '../../static/images/model_icon.png';
+import FolderIcon from '../../static/images/folder.png';
 
 export default class ProjectCardContent extends Component {
   constructor(props) {
@@ -22,8 +21,8 @@ export default class ProjectCardContent extends Component {
     ) : (
       <CardMedia
         component="img"
-        alt="Contemplative Reptile"
-        image={McLogo}
+        alt="Project Image"
+        image={this.props.project.cover || FolderIcon}
         className={this.props.frontstyle}
       />
     );
