@@ -118,7 +118,7 @@ class ProfileForm extends React.Component {
     this.state = {
       id: '',
       email: store.getState().currentUser.email,
-      organisation: store.getState().currentUser.company,
+      organisation: store.getState().currentUser.company.name,
       firstName: store.getState().currentUser.first_name,
       lastName: store.getState().currentUser.last_name,
       phone: store.getState().currentUser.phone,
@@ -296,7 +296,7 @@ class ProfileForm extends React.Component {
             profile: res.data,
             phone: res.data.phone,
             email: res.data.email,
-            organisation: res.data.company,
+            organisation: res.data.company.name,
             lastNameNew: res.data.last_name,
             firstNameNew: res.data.firstNameNew,
             phoneNew: res.data.phone
@@ -318,7 +318,7 @@ class ProfileForm extends React.Component {
             profile: res.data[0],
             phone: res.data[0].phone,
             email: res.data[0].email,
-            organisation: res.data[0].company,
+            organisation: res.data[0].company.name,
             lastNameNew: res.data.last_name,
             firstNameNew: res.data.firstNameNew,
             phoneNew: res.data.phone

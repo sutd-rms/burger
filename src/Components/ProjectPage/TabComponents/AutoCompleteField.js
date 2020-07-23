@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { set } from 'd3';
 
 export default function AutoCompleteField(props) {
   const [inputValue, setInputValue] = useState('');
@@ -25,14 +24,14 @@ export default function AutoCompleteField(props) {
       onInputChange={onInputChange}
       inputValue={inputValue}
       options={props.options.sort(
-        (a, b) => -b.company.localeCompare(a.company)
+        (a, b) => -b.company.id.localeCompare(a.company.id)
       )}
       getOptionLabel={option => option.email}
-      groupBy={option => props.getCompanyName(option.company)}
+      groupBy={option => option.company.name}
       renderOption={option => (
         <React.Fragment>
           <span style={{ fontWeight: 'bold' }}>{option.email}</span>
-          --{props.getCompanyName(option.company)}
+          --{option.company.name}
         </React.Fragment>
       )}
       renderInput={params => (
