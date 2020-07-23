@@ -15,6 +15,8 @@ import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import PersonIcon from '@material-ui/icons/Person';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Typography } from '@material-ui/core';
+import UserIcon from './../static/images/person.png';
+import { store } from './../redux/store';
 
 const StyledSideNav = styled.div`
   position: fixed; /* Fixed Sidebar (stay in place on scroll and position relative to viewport) */
@@ -38,9 +40,10 @@ const StyledSideNav = styled.div`
   }
 
   .currentUserImage {
-    width: 100%;
-    height: auto;
+    width: 60px;
+    height: 60px;
     margin-left: 20px;
+    background-color: white;
   }
 `;
 
@@ -48,7 +51,11 @@ class Sidebar extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      username: 'Meng Siong',
+      username:
+        store.getState().currentUser.first_name +
+        ' ' +
+        store.getState().currentUser.last_name,
+      cover: store.getState().currentUser.cover,
       activePath: props.location.pathname,
       items: [
         {
@@ -92,14 +99,14 @@ class Sidebar extends React.Component {
       <StyledSideNav>
         <div>
           <Figure className="navImage">
-            <Figure.Image alt="Nav Logo" src="/logoNav.jpg" />
+            <Figure.Image alt="Nav Logo" src={'/logoNav.jpg'} />
           </Figure>
         </div>
         <Row className="currentUser">
           <Col md={4} className="my-auto">
             <Image
               className="currentUserImage"
-              src="/hamburglar.jpg"
+              src={this.state.cover || UserIcon}
               roundedCircle
             />
           </Col>

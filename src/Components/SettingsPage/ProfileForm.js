@@ -122,11 +122,12 @@ class ProfileForm extends React.Component {
       firstName: store.getState().currentUser.first_name,
       lastName: store.getState().currentUser.last_name,
       phone: store.getState().currentUser.phone,
-      profile: 'https://source.unsplash.com/random',
+      profile: '',
       firstNameNew: store.getState().currentUser.first_name,
       lastNameNew: store.getState().currentUser.last_name,
       phoneNew: store.getState().currentUser.phone,
-      profileNew: 'https://source.unsplash.com/random',
+      profileNew: '',
+      profileNewFile: '',
       editable: false,
       profileSuccess: false,
       passwordSuccess: false,
@@ -140,7 +141,8 @@ class ProfileForm extends React.Component {
         })
       );
       this.setState({
-        profileNew: acceptedFiles[0].preview
+        profileNew: acceptedFiles[0].preview,
+        profileNewFile: acceptedFiles[0]
       });
     };
 
@@ -186,18 +188,27 @@ class ProfileForm extends React.Component {
   }
 
   handleSubmit(event) {
-    let newUser = {
-      first_name: this.state.firstNameNew,
-      last_name: this.state.lastNameNew,
-      phone: this.state.phoneNew
-    };
+    // let newUser = {
+    //   first_name: this.state.firstNameNew,
+    //   last_name: this.state.lastNameNew,
+    //   phone: this.state.phoneNew
+    // };
+
+    var formData = new FormData();
+    if (this.state.profileNew != this.state.profile) {
+      formData.append('cover', this.state.profileNewFile);
+    }
+    formData.append('first_name', this.state.firstNameNew);
+    formData.append('last_name', this.state.lastNameNew);
+    formData.append('phone', this.state.phoneNew);
+
     const id = this.props.projectId;
     // FETCH & SET STATE
     let token = localStorage.getItem('token');
     axios
       .patch(
         `https://secret-sauce.azurewebsites.net/auth/editprofile/`,
-        newUser,
+        formData,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -219,10 +230,43 @@ class ProfileForm extends React.Component {
             errorMsg: '',
             fail: false
           });
-        } else {
-          console.log('edit profile error');
+          if (store.getState().currentUser.is_staff) {
+            return axios.get(
+              `https://secret-sauce.azurewebsites.net/auth/users/me/`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                  Authorization: `Token ${token}`
+                }
+              }
+            );
+          } else {
+            return axios.get(
+              `https://secret-sauce.azurewebsites.net/auth/users/`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                  Authorization: `Token ${token}`
+                }
+              }
+            );
+          }
         }
-      });
+      })
+      .then(res => {
+        const loginUser = userObj => ({
+          type: 'LOGIN_USER',
+          payload: userObj
+        });
+        var newInput = res.data;
+        if (Array.isArray(newInput)) {
+          newInput = newInput[0];
+        }
+        store.dispatch(loginUser(newInput));
+      })
+      .catch(err => console.log(err));
   }
 
   handleCloseProfileSnackbar(event) {
@@ -293,12 +337,13 @@ class ProfileForm extends React.Component {
           this.setState({
             firstName: res.data.first_name,
             lastName: res.data.last_name,
-            profile: res.data,
+            profile: res.data.cover,
+            profileNew: res.data.cover,
             phone: res.data.phone,
             email: res.data.email,
             organisation: res.data.company,
             lastNameNew: res.data.last_name,
-            firstNameNew: res.data.firstNameNew,
+            firstNameNew: res.data.first_name,
             phoneNew: res.data.phone
           });
         });
@@ -315,13 +360,14 @@ class ProfileForm extends React.Component {
           this.setState({
             firstName: res.data[0].first_name,
             lastName: res.data[0].last_name,
-            profile: res.data[0],
+            profile: res.data[0].cover,
+            profileNew: res.data[0].cover,
             phone: res.data[0].phone,
             email: res.data[0].email,
             organisation: res.data[0].company,
-            lastNameNew: res.data.last_name,
-            firstNameNew: res.data.firstNameNew,
-            phoneNew: res.data.phone
+            lastNameNew: res.data[0].last_name,
+            firstNameNew: res.data[0].first_name,
+            phoneNew: res.data[0].phone
           });
         });
     }
