@@ -141,14 +141,13 @@ function UserControlTab(props) {
       })
       .then(res => {
         setAllUsers(res.data);
-        // console.log(allUsers)
         let userList = [];
         for (let i = 0; i < uidList.length; i++) {
           res.data.map(user => {
             if (user.id === uidList[i]) {
               let newUser = {
                 id: user.id,
-                company: getCompanyName(user.company),
+                company: user.company.name,
                 email: user.email
               };
               userList.push(newUser);
@@ -163,7 +162,7 @@ function UserControlTab(props) {
     if (opt != null) {
       console.log("parent, ", opt)
       setEmail(opt.email);
-      setOrganization(getCompanyName(opt.company));
+      setOrganization(opt.company.name);
       setUid(opt.id);
     } else {
       setEmail('');

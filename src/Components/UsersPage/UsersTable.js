@@ -107,7 +107,7 @@ export default function UsersTable(props) {
           <AutoCompleteField
             onChange={onCompanySelect}
             options={companyList}
-            getCompanyName={getCompanyName}
+            // getCompanyName={getCompanyName}
           />
         )
       },
@@ -133,13 +133,13 @@ export default function UsersTable(props) {
   const [error, setError] = useState(false);
   const [successEdit, setSuccessEdit] = useState(false);
 
-  const getCompanyName = id => {
-    for (let i = 0; i < companyList.length; i++) {
-      if (companyList[i].id === id) {
-        return companyList[i].name;
-      }
-    }
-  };
+  // const getCompanyName = id => {
+  //   for (let i = 0; i < companyList.length; i++) {
+  //     if (companyList[i].id === id) {
+  //       return companyList[i].name;
+  //     }
+  //   }
+  // };
 
   const onCompanySelect = opt => {
     if (opt) {
@@ -179,7 +179,7 @@ export default function UsersTable(props) {
             <AutoCompleteField
               onChange={onCompanySelect}
               options={companyList}
-              getCompanyName={getCompanyName}
+              // getCompanyName={getCompanyName}
             />
           )
         },
@@ -196,7 +196,6 @@ export default function UsersTable(props) {
           title: 'Active Status',
           field: 'is_active',
           type: 'boolean',
-          editable: false
         }
       ],
       data: props.data
@@ -213,7 +212,7 @@ export default function UsersTable(props) {
       .then(res => {
         let convertedUsersList = [];
         res.data.map(user => {
-          user.company = getCompanyName(user.company);
+          user.company = user.company.name;
           convertedUsersList.push(user);
         });
         setState(prevState => {
@@ -256,7 +255,9 @@ export default function UsersTable(props) {
                   last_name: newData.last_name,
                   phone: newData.phone,
                   is_staff: newData.is_staff,
+                  is_superuser: newData.is_staff,
                   email: newData.email,
+                  is_active: newData.is_active,
                 };
                 axios
                   .patch(
