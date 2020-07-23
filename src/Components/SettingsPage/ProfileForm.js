@@ -118,7 +118,7 @@ class ProfileForm extends React.Component {
     this.state = {
       id: '',
       email: store.getState().currentUser.email,
-      organisation: store.getState().currentUser.company,
+      organisation: store.getState().currentUser.company.name,
       firstName: store.getState().currentUser.first_name,
       lastName: store.getState().currentUser.last_name,
       phone: store.getState().currentUser.phone,
@@ -314,13 +314,6 @@ class ProfileForm extends React.Component {
     });
   };
 
-  // getCompanyName = id => {
-  //   for (let i = 0; i < this.props.companyList.length; i++) {
-  //     if (this.props.companyList[i].id === id) {
-  //       return this.props.companyList[i].name;
-  //     }
-  //   }
-  // };
 
   componentDidMount() {
     let token = localStorage.getItem('token');
@@ -341,7 +334,7 @@ class ProfileForm extends React.Component {
             profileNew: res.data.cover,
             phone: res.data.phone,
             email: res.data.email,
-            organisation: res.data.company,
+            organisation: res.data.company.name,
             lastNameNew: res.data.last_name,
             firstNameNew: res.data.first_name,
             phoneNew: res.data.phone
@@ -364,7 +357,7 @@ class ProfileForm extends React.Component {
             profileNew: res.data[0].cover,
             phone: res.data[0].phone,
             email: res.data[0].email,
-            organisation: res.data[0].company,
+            organisation: res.data[0].company.name,
             lastNameNew: res.data[0].last_name,
             firstNameNew: res.data[0].first_name,
             phoneNew: res.data[0].phone
