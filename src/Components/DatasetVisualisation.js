@@ -19,6 +19,9 @@ import Linegraph from './../static/images/growth.svg';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BoxplotChart from './Boxplot';
 import LinegraphChart from './Linegraph';
+import axios from 'axios';
+
+const token = localStorage.getItem('token');
 
 const styles = theme => ({
   modal: {
@@ -27,7 +30,7 @@ const styles = theme => ({
     justifyContent: 'center'
   },
   paper: {
-    padding: theme.spacing(8, 15),
+    padding: theme.spacing(8, 0),
     marginTop: theme.spacing(5)
   },
   root: {
@@ -83,28 +86,11 @@ class DatasetVisualisation extends React.Component {
       dataset: 'random_csv_file.csv',
       constraints: '',
       items: [],
-      allitems: [
-        '1102',
-        '1103',
-        '1104',
-        '1105',
-        '1106',
-        '1107',
-        '1108',
-        '3102',
-        '3106',
-        '3109',
-        '4102',
-        '5102',
-        '5602',
-        '5802',
-        '6102',
-        '7102',
-        '8102',
-        '9102',
-        '9202'
-      ],
-      selected: ''
+      allitems: [],
+      selected: '',
+      boxplotData: '',
+      linegraphData: '',
+      hasFetched: false
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -116,6 +102,7 @@ class DatasetVisualisation extends React.Component {
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.generateGraph = this.generateGraph.bind(this);
+    this.renderGraphs = this.renderGraphs.bind(this);
   }
 
   setBoxplot(event) {
@@ -154,6 +141,46 @@ class DatasetVisualisation extends React.Component {
     if (this.state.items.length < 1) {
       return;
     }
+
+    if (this.state.selected == 'boxplot') {
+      var data = { query: 'price', items: this.state.items.join() };
+
+      axios
+        .get(
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Token ${token}`
+            },
+            params: data
+          }
+        )
+        .then(res => {
+          this.setState({ boxplotData: res.data });
+          this.setState({ hasFetched: true });
+        });
+    }
+    if (this.state.selected == 'linegraph') {
+      var data = { query: 'quantity', items: this.state.items.join() };
+
+      axios
+        .get(
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+              Authorization: `Token ${token}`
+            },
+            params: data
+          }
+        )
+        .then(res => {
+          this.setState({ linegraphData: res.data });
+          this.setState({ hasFetched: true });
+        });
+    }
+
     this.setState({
       activeStep: this.state.activeStep + 1
     });
@@ -169,13 +196,42 @@ class DatasetVisualisation extends React.Component {
     this.setState({
       activeStep: 0,
       selected: '',
-      items: []
+      items: [],
+      hasFetched: false
     });
   }
 
   handleSubmit(event) {
     //Make POST request here
     this.handleReset();
+    console.log(this.props.match.params.datasetId);
+  }
+
+  renderGraphs() {
+    if (this.state.selected == 'boxplot') {
+      return <BoxplotChart data={this.state.boxplotData} />;
+    } else {
+      return <LinegraphChart data={this.state.linegraphData} />;
+    }
+  }
+
+  componentDidMount() {
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}`,
+        // `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        const mappedItems = res.data.schema.map(item => item.item_id);
+        this.setState({ allitems: mappedItems });
+      });
   }
 
   getStepContent(stepIndex) {
@@ -267,7 +323,7 @@ class DatasetVisualisation extends React.Component {
                 <Autocomplete
                   multiple
                   options={this.state.allitems}
-                  getOptionLabel={option => option}
+                  getOptionLabel={option => option.toString()}
                   onChange={this.handleChange}
                   value={this.state.items}
                   renderInput={params => (
@@ -288,11 +344,7 @@ class DatasetVisualisation extends React.Component {
       case 2:
         return (
           <Box display="flex" justifyContent="center">
-            {this.state.selected == 'boxplot' ? (
-              <BoxplotChart />
-            ) : (
-              <LinegraphChart />
-            )}
+            <Box>{this.state.hasFetched ? this.renderGraphs : null}</Box>
           </Box>
         );
       default:

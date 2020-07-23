@@ -108,14 +108,11 @@ class DatasetsTab extends React.Component {
         params: data
       })
       .then(res => {
-        console.log(res.data); // id, name, upload, project
         this.setState({ datasetsList: res.data });
-        console.log(this.state.datasetsList);
       });
   }
 
   onClick = e => {
-    console.log('upload');
     this.setState({ displayUploadForm: true });
   };
 
@@ -138,10 +135,11 @@ class DatasetsTab extends React.Component {
     });
   };
 
-  handleUploadSuccess = name => {
+  handleUploadSuccess = form => {
+    // console.log
     this.setState({ uploadSuccess: true });
     let datasets = this.state.datasetsList;
-    datasets.push({ name: name });
+    datasets.push(form);
     this.setState({ datasetsList: datasets });
   };
   handleUploadFail = () => {
@@ -212,26 +210,13 @@ class DatasetsTab extends React.Component {
             }
           }}
           actions={[
-            // {
-            //   icon: () => <BackupOutlinedIcon />,
-            //   tooltip: 'Upload new data file',
-            //   onClick: (event, rowData) => {
-            //     console.log('upload');
-            //     this.setState({
-            //       displayUploadForm: true,
-            //       selectedDataset: rowData.name
-            //     });
-            //     alert('You are uploading to ' + rowData.name)
-            //   }
-            // },
             {
               icon: () => <GetAppRoundedIcon />,
               tooltip: 'Download data file',
               onClick: (event, rowData) => {
-                alert('You are downloading the dataset of ' + rowData.name);
-                window.open(
-                  `https://secret-sauce.azurewebsites.net/portal/datablocks/${rowData.id}`
-                );
+                const rowIndex = rowData.tableData.id;
+                const downloadLink = this.state.datasetsList[rowIndex].upload;
+                window.open(downloadLink);
               }
             },
             {
@@ -240,7 +225,7 @@ class DatasetsTab extends React.Component {
               onClick: (event, rowData) => {
                 const rowIndex = rowData.tableData.id;
                 const datasetId = this.state.datasetsList[rowIndex].id;
-                history.push(`dataset/${datasetId}/`);
+                window.open(`dataset/${datasetId}`);
               }
             }
           ]}

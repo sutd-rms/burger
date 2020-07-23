@@ -79,26 +79,6 @@ class ProjectDetails extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  componentDidMount() {
-    // console.log(this.props.match.params);
-    // const id = this.state.projectId;
-    // // FETCH & SET STATE
-    // let token = localStorage.getItem('token');
-    // axios
-    //   .get(`https://secret-sauce.azurewebsites.net/portal/projects/${id}`, {
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       Accept: 'application/json',
-    //       Authorization: `Token ${token}`
-    //     }
-    //   })
-    //   .then(res => {
-    //     this.setState({
-    //       projectUserList: res.data.owners
-    //     });
-    //   });
-  }
-
   handleChange = (event, newValue) => {
     this.setState({
       value: newValue

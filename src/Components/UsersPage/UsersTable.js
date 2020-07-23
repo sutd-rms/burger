@@ -89,7 +89,6 @@ export default function UsersTable(props) {
   const token = localStorage.getItem('token');
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
-  // const []
 
   const handleCloseSnackbar = e => {
     setError(false);
@@ -104,11 +103,7 @@ export default function UsersTable(props) {
         title: 'Organization',
         field: 'company',
         editComponent: props => (
-          <AutoCompleteField
-            onChange={onCompanySelect}
-            options={companyList}
-            // getCompanyName={getCompanyName}
-          />
+          <AutoCompleteField onChange={onCompanySelect} options={companyList} />
         )
       },
       { title: 'Phone Number', field: 'phone', type: 'numeric' },
@@ -133,14 +128,6 @@ export default function UsersTable(props) {
   const [error, setError] = useState(false);
   const [successEdit, setSuccessEdit] = useState(false);
 
-  // const getCompanyName = id => {
-  //   for (let i = 0; i < companyList.length; i++) {
-  //     if (companyList[i].id === id) {
-  //       return companyList[i].name;
-  //     }
-  //   }
-  // };
-
   const onCompanySelect = opt => {
     if (opt) {
       setSelectedCompanyId(opt.id);
@@ -163,7 +150,7 @@ export default function UsersTable(props) {
         }
       })
       .then(data => setCompanyList(data.data));
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     setState({
@@ -179,7 +166,6 @@ export default function UsersTable(props) {
             <AutoCompleteField
               onChange={onCompanySelect}
               options={companyList}
-              // getCompanyName={getCompanyName}
             />
           )
         },
@@ -195,7 +181,7 @@ export default function UsersTable(props) {
         {
           title: 'Active Status',
           field: 'is_active',
-          type: 'boolean',
+          type: 'boolean'
         }
       ],
       data: props.data
@@ -220,7 +206,7 @@ export default function UsersTable(props) {
           return { ...prevState, data };
         });
       });
-  }, [companyList]);
+  }, [companyList, props.data, token]);
 
   return (
     <div>
@@ -257,7 +243,7 @@ export default function UsersTable(props) {
                   is_staff: newData.is_staff,
                   is_superuser: newData.is_staff,
                   email: newData.email,
-                  is_active: newData.is_active,
+                  is_active: newData.is_active
                 };
                 axios
                   .patch(

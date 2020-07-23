@@ -188,12 +188,6 @@ class ProfileForm extends React.Component {
   }
 
   handleSubmit(event) {
-    // let newUser = {
-    //   first_name: this.state.firstNameNew,
-    //   last_name: this.state.lastNameNew,
-    //   phone: this.state.phoneNew
-    // };
-
     var formData = new FormData();
     if (this.state.profileNew != this.state.profile) {
       formData.append('cover', this.state.profileNewFile);
@@ -313,7 +307,6 @@ class ProfileForm extends React.Component {
       errorMsg: errorList
     });
   };
-
 
   componentDidMount() {
     let token = localStorage.getItem('token');
