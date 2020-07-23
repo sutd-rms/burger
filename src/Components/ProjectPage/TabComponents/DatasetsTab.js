@@ -108,14 +108,11 @@ class DatasetsTab extends React.Component {
         params: data
       })
       .then(res => {
-        console.log(res.data); // id, name, upload, project
         this.setState({ datasetsList: res.data });
-        console.log(this.state.datasetsList);
       });
   }
 
   onClick = e => {
-    console.log('upload');
     this.setState({ displayUploadForm: true });
   };
 
@@ -212,18 +209,6 @@ class DatasetsTab extends React.Component {
             }
           }}
           actions={[
-            // {
-            //   icon: () => <BackupOutlinedIcon />,
-            //   tooltip: 'Upload new data file',
-            //   onClick: (event, rowData) => {
-            //     console.log('upload');
-            //     this.setState({
-            //       displayUploadForm: true,
-            //       selectedDataset: rowData.name
-            //     });
-            //     alert('You are uploading to ' + rowData.name)
-            //   }
-            // },
             {
               icon: () => <GetAppRoundedIcon />,
               tooltip: 'Download data file',
