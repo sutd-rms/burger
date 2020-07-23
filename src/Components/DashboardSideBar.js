@@ -43,6 +43,7 @@ const StyledSideNav = styled.div`
     width: 60px;
     height: 60px;
     margin-left: 20px;
+    background-color: white;
   }
 `;
 

@@ -230,10 +230,43 @@ class ProfileForm extends React.Component {
             errorMsg: '',
             fail: false
           });
-        } else {
-          console.log('edit profile error');
+          if (store.getState().currentUser.is_staff) {
+            return axios.get(
+              `https://secret-sauce.azurewebsites.net/auth/users/me/`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                  Authorization: `Token ${token}`
+                }
+              }
+            );
+          } else {
+            return axios.get(
+              `https://secret-sauce.azurewebsites.net/auth/users/`,
+              {
+                headers: {
+                  'Content-Type': 'application/json',
+                  Accept: 'application/json',
+                  Authorization: `Token ${token}`
+                }
+              }
+            );
+          }
         }
-      });
+      })
+      .then(res => {
+        const loginUser = userObj => ({
+          type: 'LOGIN_USER',
+          payload: userObj
+        });
+        var newInput = res.data;
+        if (Array.isArray(newInput)) {
+          newInput = newInput[0];
+        }
+        store.dispatch(loginUser(newInput));
+      })
+      .catch(err => console.log(err));
   }
 
   handleCloseProfileSnackbar(event) {
@@ -328,12 +361,13 @@ class ProfileForm extends React.Component {
             firstName: res.data[0].first_name,
             lastName: res.data[0].last_name,
             profile: res.data[0].cover,
+            profileNew: res.data[0].cover,
             phone: res.data[0].phone,
             email: res.data[0].email,
             organisation: res.data[0].company,
-            lastNameNew: res.data.last_name,
-            firstNameNew: res.data.firstNameNew,
-            phoneNew: res.data.phone
+            lastNameNew: res.data[0].last_name,
+            firstNameNew: res.data[0].first_name,
+            phoneNew: res.data[0].phone
           });
         });
     }
