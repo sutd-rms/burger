@@ -5,7 +5,6 @@ import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import AttachmentIcon from '@material-ui/icons/Attachment';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import { withStyles } from '@material-ui/core/styles';
-import MuiAlert from '@material-ui/lab/Alert';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
@@ -43,10 +42,6 @@ const styles = theme => ({
     color: '#3176D2'
   }
 });
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 class DataUploadForm extends React.Component {
   constructor(props) {
@@ -106,7 +101,6 @@ class DataUploadForm extends React.Component {
           this.props.handleUploadFail();
           this.props.handleCloseDataUploadForm();
         });
-      // this.props.handleWrongType();
     }
   };
 
@@ -138,25 +132,19 @@ class DataUploadForm extends React.Component {
           id="customized-dialog-title"
           onClose={this.props.handleCloseDataUploadForm}
         >
-          {this.props.createNew
-            ? 'Create a New Dataset'
-            : 'Upload new data for: ' + this.props.datasetName}
+          Create a New Dataset
         </MuiDialogTitle>
         <br />
         <div className={classes.root}>
-          {this.props.createNew ? (
-            <Box p={2} m={2}>
-              <TextField
-                id="standard-basic"
-                label="Dataset Name"
-                onChange={this.handleNameChange}
-                value={this.state.datasetName}
-                fullWidth
-              />
-            </Box>
-          ) : (
-            ''
-          )}
+          <Box p={2} m={2}>
+            <TextField
+              id="standard-basic"
+              label="Dataset Name"
+              onChange={this.handleNameChange}
+              value={this.state.datasetName}
+              fullWidth
+            />
+          </Box>
           <Dropzone
             onDrop={this.onDrop}
             disabled={this.state.disableUpload}
