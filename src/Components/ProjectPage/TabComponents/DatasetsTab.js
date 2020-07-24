@@ -86,8 +86,8 @@ class DatasetsTab extends React.Component {
       success: false,
       displayUploadForm: false,
       uploadSuccess: false,
-      selectedDataset: '',
-      createNew: false,
+      // selectedDataset: '',
+      // createNew: false,
       noFileError: false,
       wrongTypeError: false,
       error: false,
@@ -119,7 +119,6 @@ class DatasetsTab extends React.Component {
   handleCloseSnackbar = () => {
     this.setState({
       success: false,
-      createNew: false,
       uploadSuccess: false,
       noFileError: false,
       wrongTypeError: false,
@@ -130,13 +129,11 @@ class DatasetsTab extends React.Component {
   handleCloseDataUploadForm = () => {
     this.setState({
       displayUploadForm: false,
-      selectedDataset: '',
       waitFoUpload: false
     });
   };
 
   handleUploadSuccess = form => {
-    // console.log
     this.setState({ uploadSuccess: true });
     let datasets = this.state.datasetsList;
     datasets.push(form);
@@ -157,7 +154,6 @@ class DatasetsTab extends React.Component {
   handleOpenModal = () => {
     this.setState({
       displayUploadForm: true,
-      createNew: true
     });
   };
 
@@ -233,13 +229,10 @@ class DatasetsTab extends React.Component {
         <DataUploadForm
           handleCloseDataUploadForm={this.handleCloseDataUploadForm}
           displayDataUploadForm={this.state.displayUploadForm}
-          createNew={this.state.createNew}
           successUpload={this.handleUploadSuccess}
-          selectedDataset={this.state.selectedDataset}
           noFileSelected={this.handleNoFile}
           handleWrongType={this.handleWrongType}
           projectId={this.props.projectId}
-          // datasetName={this.state.selectedDataset}
           handleUploadFail={this.handleUploadFail}
         />
         <Snackbar
@@ -248,9 +241,7 @@ class DatasetsTab extends React.Component {
           onClose={this.handleCloseSnackbar}
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
-            {this.state.createNew
-              ? 'Data validation passed! New dataset created successfully!'
-              : 'Data validation passed! Data source file uploaded successfully!'}
+          Data validation passed! New dataset created successfully!
           </Alert>
         </Snackbar>
         <Snackbar
