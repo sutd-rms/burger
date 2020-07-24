@@ -19,7 +19,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import DataUploadForm from '../DataUploadForm';
-import CostSetUploadForm from '../DataUploadForm';
+import CostSetUploadForm from '../CostSetUploadForm';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -333,7 +333,7 @@ class DatasetsTab extends React.Component {
                 </Button>
               ) : (
                 <Button
-                  // onClick={this.handleBack}
+                  onClick={this.handleOpenCostModal}
                   variant="contained"
                   color="primary"
                 >
