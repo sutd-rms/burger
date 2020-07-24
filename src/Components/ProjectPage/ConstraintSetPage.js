@@ -5,6 +5,7 @@ import Box from '@material-ui/core/Box';
 import DashboardTopNav from './../DashboardTopNav';
 import ConstraintSetDetailsTable from './ConstraintSetDetailsTable';
 import AddConstraintModal from './AddConstraintModal';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {},
@@ -12,6 +13,8 @@ const styles = theme => ({
     height: '36px'
   }
 });
+
+const token = localStorage.getItem('token');
 
 class ConstraintSetPage extends React.Component {
   constructor(props) {
@@ -29,7 +32,25 @@ class ConstraintSetPage extends React.Component {
     );
   }
 
-  componentDidMount() {}
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        this.setState({
+          datasetList: res.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
 
   handleOpenAddConstraintModal(event) {
     this.setState({
@@ -62,7 +83,9 @@ class ConstraintSetPage extends React.Component {
             Add Constraint
           </Button>
         </Box>
-        <ConstraintSetDetailsTable />
+        <ConstraintSetDetailsTable
+          constraintSetID={this.props.match.params.constraintsetId}
+        />
         <AddConstraintModal
           open={this.state.open}
           handleClose={this.handleCloseAddConstraintModal}
