@@ -19,7 +19,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import DataUploadForm from '../DataUploadForm';
-import BackupOutlinedIcon from '@material-ui/icons/BackupOutlined';
+import CostSetUploadForm from '../DataUploadForm';
 import Input from '@material-ui/core/Input';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
@@ -112,13 +112,12 @@ class DatasetsTab extends React.Component {
       selectedRowId: '',
       success: false,
       displayUploadForm: false,
+      displayCostSetUploadForm: false,
       uploadSuccess: false,
-      // selectedDataset: '',
-      // createNew: false,
+      costFileUploadSuccess: false,
       noFileError: false,
       wrongTypeError: false,
       error: false,
-      waitFoUpload: false,
       errorMessage: ''
     };
   }
@@ -152,10 +151,6 @@ class DatasetsTab extends React.Component {
       });
   }
 
-  onClick = e => {
-    this.setState({ displayUploadForm: true });
-  };
-
   handleCloseSnackbar = () => {
     this.setState({
       success: false,
@@ -168,8 +163,13 @@ class DatasetsTab extends React.Component {
 
   handleCloseDataUploadForm = () => {
     this.setState({
-      displayUploadForm: false,
-      waitFoUpload: false
+      displayUploadForm: false
+    });
+  };
+
+  handleCloseCostSetUploadForm = () => {
+    this.setState({
+      displayCostSetUploadForm: false
     });
   };
 
@@ -180,6 +180,11 @@ class DatasetsTab extends React.Component {
 
     this.setState({ datasetsList: datasets });
   };
+
+  handleCostUploadSuccess = form => {
+    this.setState({ costFileUploadSuccess: true });
+  };
+
   handleUploadFail = err => {
     if (err.data) {
       this.setState({
@@ -195,13 +200,15 @@ class DatasetsTab extends React.Component {
     this.setState({ noFileError: true });
   };
 
-  handleWrongType = () => {
-    this.setState({ wrongTypeError: true });
-  };
-
   handleOpenModal = () => {
     this.setState({
       displayUploadForm: true
+    });
+  };
+
+  handleOpenCostModal = () => {
+    this.setState({
+      displayCostSetUploadForm: true
     });
   };
 
@@ -341,7 +348,14 @@ class DatasetsTab extends React.Component {
           displayDataUploadForm={this.state.displayUploadForm}
           successUpload={this.handleUploadSuccess}
           noFileSelected={this.handleNoFile}
-          handleWrongType={this.handleWrongType}
+          projectId={this.props.projectId}
+          handleUploadFail={this.handleUploadFail}
+        />
+        <CostSetUploadForm
+          handleCloseDataUploadForm={this.handleCloseCostSetUploadForm}
+          displayDataUploadForm={this.state.displayCostSetUploadForm}
+          successUpload={this.handleCostUploadSuccess}
+          noFileSelected={this.handleNoFile}
           projectId={this.props.projectId}
           handleUploadFail={this.handleUploadFail}
         />
@@ -352,6 +366,15 @@ class DatasetsTab extends React.Component {
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
             Data validation passed! New dataset created successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.costFileUploadSuccess}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="success">
+            Data validation passed! New Cost Set uploaded successfully!
           </Alert>
         </Snackbar>
         <Snackbar
