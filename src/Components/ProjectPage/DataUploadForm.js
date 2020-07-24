@@ -98,7 +98,6 @@ class DataUploadForm extends React.Component {
         })
         .catch(error => {
           this.props.handleUploadFail(error.response);
-          this.props.handleCloseDataUploadForm();
         });
     }
   };
