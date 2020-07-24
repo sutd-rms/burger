@@ -29,6 +29,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import axios from 'axios';
 
 const styles = theme => ({
   modal: {
@@ -137,8 +138,8 @@ const InitialConstraintState = {
 const initialState = {
   name: '',
   activeStep: 0,
-  datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
-  dataset: 'random_csv_file.csv',
+  datasetList: [],
+  dataset: '',
   inequalities: ['=', '<', '<=', '>', '>='],
   inequality: '=',
   rhs: '',
@@ -171,6 +172,7 @@ const initialState = {
   ]
 };
 
+const token = localStorage.getItem('token');
 class ConstraintModal extends React.Component {
   constructor(props) {
     super(props);
@@ -192,6 +194,7 @@ class ConstraintModal extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.addAnotherConstraint = this.addAnotherConstraint.bind(this);
+    this.handleCreateConstraintSet = this.handleCreateConstraintSet.bind(this);
   }
 
   handleInputChange(event) {
@@ -243,7 +246,7 @@ class ConstraintModal extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 1 && this.state.name == '') {
+    if (this.state.activeStep == 0 && this.state.dataset == '') {
       return;
     }
     if (this.state.activeStep == 2 && this.state.items.length > 0) {
@@ -287,7 +290,41 @@ class ConstraintModal extends React.Component {
   }
 
   handleReset(event) {
-    this.setState(initialState);
+    this.setState({
+      name: '',
+      activeStep: 0,
+      dataset: '',
+      inequalities: ['=', '<', '<=', '>', '>='],
+      inequality: '=',
+      rhs: '',
+      penalty: 'hard',
+      penaltyScore: '',
+      constraintName: '',
+      constraintItems: [],
+      items: [],
+      createConstraintError: false,
+      allitems: [
+        '1102',
+        '1103',
+        '1104',
+        '1105',
+        '1106',
+        '1107',
+        '1108',
+        '3102',
+        '3106',
+        '3109',
+        '4102',
+        '5102',
+        '5602',
+        '5802',
+        '6102',
+        '7102',
+        '8102',
+        '9102',
+        '9202'
+      ]
+    });
   }
 
   addAnotherConstraint(event) {
@@ -308,6 +345,62 @@ class ConstraintModal extends React.Component {
     this.props.handleClose();
     this.props.showAlert();
     this.handleReset();
+  }
+
+  handleCreateConstraintSet(event) {
+    if (this.state.dataset == '' && this.state.name == '') {
+      return;
+    }
+
+    let form = {
+      project: this.props.projectId,
+      data_block: this.state.dataset,
+      name: this.state.name
+    };
+
+    axios
+      .post(
+        'https://secret-sauce.azurewebsites.net/portal/constraintsets/',
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 201 && res.status) {
+          console.log(res.data);
+          this.setState({
+            activeStep: this.state.activeStep + 1
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/datablocks/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        this.setState({
+          datasetList: res.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   createConstraintsItemsArray(selectedItems) {
@@ -462,9 +555,9 @@ class ConstraintModal extends React.Component {
               value={this.state.dataset}
               onChange={this.handleInputChange}
             >
-              {this.state.datasetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.datasetList.map(dataset => (
+                <MenuItem value={dataset.id} id={dataset.id} key={dataset.id}>
+                  {dataset.name}
                 </MenuItem>
               ))}
             </Select>
@@ -578,7 +671,7 @@ class ConstraintModal extends React.Component {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={this.handleNext}
+                onClick={this.handleCreateConstraintSet}
               >
                 Create Constraint Set
               </Button>
