@@ -27,6 +27,7 @@ import Button from '@material-ui/core/Button';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import axios from 'axios';
 import AssessmentIcon from '@material-ui/icons/Assessment';
+import { withStyles } from '@material-ui/core/styles';
 import history from './../../../history';
 
 const tableIcons = {
@@ -57,11 +58,35 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+const styles = theme => ({
+  root: {},
+  uploaded: {
+    color: 'green',
+    marginLeft: '10px',
+    marginRight: '50px'
+  },
+  empty: {
+    color: 'red',
+    marginLeft: '10px',
+    marginRight: '50px'
+  },
+  delete: {
+    backgroundColor: 'red',
+    color: 'white',
+    '&:hover': {
+      backgroundColor: '#c82333',
+      borderColor: '#bd2130',
+      color: 'white'
+    }
+  }
+});
+
 class DatasetsTab extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       datasetsList: [],
+      costFileUploaded: false,
       columns: [
         {
           title: 'Dataset Name',
@@ -162,10 +187,11 @@ class DatasetsTab extends React.Component {
   };
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div>
         <Box
-          mb={5}
           px={1}
           display="flex"
           alignItems="center"
@@ -230,6 +256,47 @@ class DatasetsTab extends React.Component {
             }
           ]}
         />
+        <Box mt={5} px={1}>
+          <Box>
+            <Typography variant="h6">Cost Dataset</Typography>
+            <Typography variant="subtitle1">
+              The cost dataset will be used for optimisation and mapping of item
+              codes to item names
+            </Typography>
+          </Box>
+          <Box boxShadow={3} mt={2} px={5} py={5} className={classes.root}>
+            <Box display="flex" alignItems="center">
+              <Typography variant="h6">Upload Status:</Typography>
+              <Typography
+                className={
+                  this.state.costFileUploaded ? classes.uploaded : classes.empty
+                }
+                variant="h6"
+              >
+                {this.state.costFileUploaded ? 'AVAILABLE' : 'UNAVAILABLE'}
+              </Typography>
+              {this.state.costFileUploaded ? (
+                <Button
+                  // disabled={this.state.activeStep === 0}
+                  // onClick={this.handleBack}
+                  variant="contained"
+                  className={classes.delete}
+                >
+                  Delete
+                </Button>
+              ) : (
+                <Button
+                  // disabled={this.state.activeStep === 0}
+                  // onClick={this.handleBack}
+                  variant="contained"
+                  color="primary"
+                >
+                  Upload Cost Set
+                </Button>
+              )}
+            </Box>
+          </Box>
+        </Box>
         <DataUploadForm
           handleCloseDataUploadForm={this.handleCloseDataUploadForm}
           displayDataUploadForm={this.state.displayUploadForm}
@@ -285,4 +352,4 @@ class DatasetsTab extends React.Component {
   }
 }
 
-export default DatasetsTab;
+export default withStyles(styles, { withTheme: true })(DatasetsTab);
