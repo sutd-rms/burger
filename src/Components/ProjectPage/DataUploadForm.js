@@ -53,7 +53,6 @@ class DataUploadForm extends React.Component {
     };
     this.state = {
       files: [],
-      success: false,
       datasetName: ''
     };
 
@@ -90,15 +89,15 @@ class DataUploadForm extends React.Component {
           }
         )
         .then(res => {
-          console.log(res.data);
-          this.setState({
-            success: true
-          });
           this.props.successUpload(res.data);
+          this.setState({
+            files: [],
+            datasetName: ''
+          });
           this.props.handleCloseDataUploadForm();
         })
         .catch(error => {
-          this.props.handleUploadFail();
+          this.props.handleUploadFail(error.response);
           this.props.handleCloseDataUploadForm();
         });
     }

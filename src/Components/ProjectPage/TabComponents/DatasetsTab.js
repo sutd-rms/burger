@@ -118,7 +118,8 @@ class DatasetsTab extends React.Component {
       noFileError: false,
       wrongTypeError: false,
       error: false,
-      waitFoUpload: false
+      waitFoUpload: false,
+      errorMessage: ''
     };
   }
 
@@ -176,10 +177,18 @@ class DatasetsTab extends React.Component {
     this.setState({ uploadSuccess: true });
     let datasets = this.state.datasetsList;
     datasets.push(form);
+
     this.setState({ datasetsList: datasets });
   };
-  handleUploadFail = () => {
-    this.setState({ error: true });
+  handleUploadFail = err => {
+    if (err.data) {
+      this.setState({
+        errorMessage: err.data.detail
+      });
+    }
+    this.setState({
+      error: true
+    });
   };
 
   handleNoFile = () => {
@@ -192,7 +201,7 @@ class DatasetsTab extends React.Component {
 
   handleOpenModal = () => {
     this.setState({
-      displayUploadForm: true,
+      displayUploadForm: true
     });
   };
 
@@ -342,7 +351,7 @@ class DatasetsTab extends React.Component {
           onClose={this.handleCloseSnackbar}
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
-          Data validation passed! New dataset created successfully!
+            Data validation passed! New dataset created successfully!
           </Alert>
         </Snackbar>
         <Snackbar
@@ -369,7 +378,10 @@ class DatasetsTab extends React.Component {
           onClose={this.handleCloseSnackbar}
         >
           <Alert onClose={this.handleCloseSnackbar} severity="error">
-            An error has occured! Please try again.
+            {this.state.errorMessage != ''
+              ? this.state.errorMessage + '. '
+              : 'An error has occured! '}
+            Please try again.
           </Alert>
         </Snackbar>
       </div>
