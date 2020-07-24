@@ -74,7 +74,7 @@ class ModelTrainingTab extends React.Component {
             Train New Model
           </Button>
         </Box>
-        <TrainedModelsTable />
+        <TrainedModelsTable projectId={this.props.projectId} />
         <Snackbar
           open={this.state.success}
           autoHideDuration={6000}
@@ -85,6 +85,7 @@ class ModelTrainingTab extends React.Component {
           </Alert>
         </Snackbar>
         <TrainModelModal
+          projectId={this.props.projectId}
           open={this.state.open}
           handleClose={this.handleCloseModal}
           showAlert={this.showAlert}

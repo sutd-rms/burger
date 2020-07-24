@@ -144,10 +144,10 @@ class ProjectDetails extends React.Component {
           <DatasetsTab projectId={this.state.projectId} />
         </TabPanel>
         <TabPanel value={this.state.value} index={2}>
-          <ModelTrainingTab />
+          <ModelTrainingTab projectId={this.state.projectId} />
         </TabPanel>
         <TabPanel value={this.state.value} index={3}>
-          <OptimisationTab />
+          <OptimisationTab projectId={this.state.projectId} />
         </TabPanel>
         <TabPanel value={this.state.value} index={4}>
           <UserControlTable

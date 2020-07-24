@@ -11,6 +11,7 @@ import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
+import axios from 'axios';
 
 const styles = theme => ({
   modal: {
@@ -57,16 +58,18 @@ function getSteps() {
   return ['Model Selection', 'Dataset Selection', 'Name Selection'];
 }
 
+const token = localStorage.getItem('token');
+
 class TrainModelModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       activeStep: 0,
-      modelList: ['Default Model', 'Neural Network'],
-      model: 'Default Model',
-      datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
-      dataset: 'random_csv_file.csv',
-      name: null
+      modelList: [],
+      model: '',
+      datasetList: [],
+      dataset: '',
+      name: ''
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -90,6 +93,18 @@ class TrainModelModal extends React.Component {
   }
 
   handleNext(event) {
+    if (this.state.activeStep == 0 && this.state.model == '') {
+      return;
+    }
+
+    if (this.state.activeStep == 1 && this.state.dataset == '') {
+      return;
+    }
+
+    if (this.state.activeStep == 2 && this.state.name == '') {
+      return;
+    }
+
     this.setState({
       activeStep: this.state.activeStep + 1
     });
@@ -108,10 +123,69 @@ class TrainModelModal extends React.Component {
   }
 
   handleSubmit(event) {
-    //Make POST request here
-    this.props.handleClose();
-    this.props.showAlert();
-    this.handleReset();
+    let form = {
+      prediction_model: this.state.model,
+      data_block: this.state.dataset,
+      name: this.state.name
+    };
+
+    axios
+      .post(
+        'https://secret-sauce.azurewebsites.net/portal/trainedmodels/',
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 201 && res.status) {
+          this.props.handleClose();
+          this.props.showAlert();
+          this.handleReset();
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/predictionmodels/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        this.setState({
+          modelList: res.data
+        });
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            },
+            params: { project: this.props.projectId }
+          }
+        );
+      })
+      .then(res => {
+        this.setState({
+          datasetList: res.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   getStepContent(stepIndex) {
@@ -131,9 +205,9 @@ class TrainModelModal extends React.Component {
               value={this.state.model}
               onChange={this.handleInputChange}
             >
-              {this.state.modelList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.modelList.map(model => (
+                <MenuItem value={model.id} id={model.id} key={model.id}>
+                  {model.name}
                 </MenuItem>
               ))}
             </Select>
@@ -154,9 +228,9 @@ class TrainModelModal extends React.Component {
               value={this.state.dataset}
               onChange={this.handleInputChange}
             >
-              {this.state.datasetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.datasetList.map(dataset => (
+                <MenuItem value={dataset.id} id={dataset.id} key={dataset.id}>
+                  {dataset.name}
                 </MenuItem>
               ))}
             </Select>
