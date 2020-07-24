@@ -219,7 +219,6 @@ class DatasetVisualisation extends React.Component {
     axios
       .get(
         `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}`,
-        // `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
         {
           headers: {
             'Content-Type': 'application/json',

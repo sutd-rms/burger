@@ -97,26 +97,18 @@ class ProjectDetails extends React.Component {
                 className={classes.disableFocus}
                 {...a11yProps(1)}
               />
-              {this.state.is_staff ? (
                 <Tab
                   label="Train Models"
                   disableRipple="true"
                   className={classes.disableFocus}
                   {...a11yProps(2)}
                 />
-              ) : (
-                ''
-              )}
-              {this.state.is_staff ? (
                 <Tab
                   label="Price Optimisation"
                   disableRipple="true"
                   className={classes.disableFocus}
                   {...a11yProps(3)}
                 />
-              ) : (
-                ''
-              )}
               {this.state.is_staff ? (
                 <Tab
                   label="Users"
