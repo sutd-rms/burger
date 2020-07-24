@@ -25,9 +25,9 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import Button from '@material-ui/core/Button';
 import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
-import axios from 'axios';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import { withStyles } from '@material-ui/core/styles';
+import axios from 'axios';
 import history from './../../../history';
 
 const tableIcons = {
@@ -58,6 +58,8 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+const token = localStorage.getItem('token');
+
 const styles = theme => ({
   root: {},
   uploaded: {
@@ -86,7 +88,7 @@ class DatasetsTab extends React.Component {
     super(props);
     this.state = {
       datasetsList: [],
-      costFileUploaded: false,
+      costFileUploaded: null,
       columns: [
         {
           title: 'Dataset Name',
@@ -121,7 +123,6 @@ class DatasetsTab extends React.Component {
   }
 
   componentDidMount() {
-    let token = localStorage.getItem('token');
     let data = { project: this.props.projectId };
     axios
       .get('https://secret-sauce.azurewebsites.net/portal/datablocks', {
@@ -134,6 +135,19 @@ class DatasetsTab extends React.Component {
       })
       .then(res => {
         this.setState({ datasetsList: res.data });
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        );
+      })
+      .then(res => {
+        this.setState({ costFileUploaded: res.data.cost_sheet });
       });
   }
 
@@ -184,6 +198,28 @@ class DatasetsTab extends React.Component {
       displayUploadForm: true,
       createNew: true
     });
+  };
+
+  deleteCostFile = () => {
+    axios
+      .delete(
+        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}/items/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        this.setState({
+          success: true
+        });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   render() {
@@ -277,8 +313,7 @@ class DatasetsTab extends React.Component {
               </Typography>
               {this.state.costFileUploaded ? (
                 <Button
-                  // disabled={this.state.activeStep === 0}
-                  // onClick={this.handleBack}
+                  onClick={this.deleteCostFile}
                   variant="contained"
                   className={classes.delete}
                 >
@@ -286,7 +321,6 @@ class DatasetsTab extends React.Component {
                 </Button>
               ) : (
                 <Button
-                  // disabled={this.state.activeStep === 0}
                   // onClick={this.handleBack}
                   variant="contained"
                   color="primary"
