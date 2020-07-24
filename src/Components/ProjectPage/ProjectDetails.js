@@ -13,27 +13,7 @@ import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 import OptimisationTab from './TabComponents/OptimisationTab';
 import UserControlTable from './TabComponents/UserControlTab';
 import axios from 'axios';
-
-const datasetsList = [
-  {
-    name: 'First Dataset',
-    id: 1,
-    date: 'Nov 2018',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text'
-  },
-  {
-    name: 'Second Dataset',
-    id: 2,
-    date: 'Feb 2019',
-    description:
-      'This is a wider card with supporting text below as a natural lead-in to additional content.',
-    image: 'https://source.unsplash.com/random',
-    imageText: 'Image Text'
-  }
-];
+import { store } from '../../redux/store';
 
 const styles = theme => ({
   root: {
@@ -70,10 +50,11 @@ class ProjectDetails extends React.Component {
     super(props);
     this.state = {
       id: '',
-      datasetList: datasetsList,
+      datasetList: [],
       projectId: this.props.match.params.projectId,
       value: 0,
-      projectUserList: []
+      projectUserList: [],
+      is_staff: store.getState().currentUser.is_staff
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -116,24 +97,28 @@ class ProjectDetails extends React.Component {
                 className={classes.disableFocus}
                 {...a11yProps(1)}
               />
-              <Tab
-                label="Train Models"
-                disableRipple="true"
-                className={classes.disableFocus}
-                {...a11yProps(2)}
-              />
-              <Tab
-                label="Price Optimisation"
-                disableRipple="true"
-                className={classes.disableFocus}
-                {...a11yProps(3)}
-              />
-              <Tab
-                label="Users"
-                disableRipple="true"
-                className={classes.disableFocus}
-                {...a11yProps(4)}
-              />
+                <Tab
+                  label="Train Models"
+                  disableRipple="true"
+                  className={classes.disableFocus}
+                  {...a11yProps(2)}
+                />
+                <Tab
+                  label="Price Optimisation"
+                  disableRipple="true"
+                  className={classes.disableFocus}
+                  {...a11yProps(3)}
+                />
+              {this.state.is_staff ? (
+                <Tab
+                  label="Users"
+                  disableRipple="true"
+                  className={classes.disableFocus}
+                  {...a11yProps(4)}
+                />
+              ) : (
+                ''
+              )}
             </Tabs>
           </Box>
         </AppBar>
