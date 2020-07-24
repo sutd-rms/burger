@@ -1,9 +1,6 @@
 import React from 'react';
 import { forwardRef } from 'react';
 import MaterialTable from 'material-table';
-import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
-
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -20,7 +17,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import PageviewIcon from '@material-ui/icons/Pageview';
-import ConstraintModal from './TabComponents/ConstraintModal';
+import axios from 'axios';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -46,6 +43,7 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+const token = localStorage.getItem('token');
 class ConstraintSetDetailsTable extends React.Component {
   constructor(props) {
     super(props);
@@ -75,6 +73,29 @@ class ConstraintSetDetailsTable extends React.Component {
         }
       ]
     };
+  }
+
+  componentDidMount() {
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/constraintsets/${this.props.constraintSetID}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          },
+          params: { project: this.props.projectId }
+        }
+      )
+      .then(res => {
+        this.setState({
+          datasetList: res.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {

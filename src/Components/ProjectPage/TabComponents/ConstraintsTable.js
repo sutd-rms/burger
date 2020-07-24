@@ -20,7 +20,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import PageviewIcon from '@material-ui/icons/Pageview';
-import ConstraintModal from './ConstraintModal';
+import axios from 'axios';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -45,6 +45,8 @@ const tableIcons = {
   ThirdStateCheck: forwardRef((props, ref) => <Remove {...props} ref={ref} />),
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
+
+const token = localStorage.getItem('token');
 
 class ConstraintsTable extends React.Component {
   constructor(props) {
@@ -83,6 +85,26 @@ class ConstraintsTable extends React.Component {
         }
       ]
     };
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        this.setState({
+          datasetList: res.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
