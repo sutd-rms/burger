@@ -179,6 +179,23 @@ class DatasetsTab extends React.Component {
     datasets.push(form);
 
     this.setState({ datasetsList: datasets });
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        this.setState({ costFileUploaded: res.data.cost_sheet });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   handleCostUploadSuccess = form => {
@@ -225,9 +242,19 @@ class DatasetsTab extends React.Component {
         }
       )
       .then(res => {
-        this.setState({
-          success: true
-        });
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        );
+      })
+      .then(res => {
+        this.setState({ costFileUploaded: res.data.cost_sheet });
       })
       .catch(error => {
         console.log(error);
