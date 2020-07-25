@@ -252,9 +252,14 @@ class AddConstraintModal extends React.Component {
   }
 
   submitConstraint(event) {
+    let constraintItems = [];
+    this.state.constraintItems.forEach(item => {
+      constraintItems.push({ id: item.item, coefficient: item.coefficient });
+    });
+
     let form = {
       constraint_block: this.props.constraintSetID,
-      constraint_relationships: this.state.constraintItems,
+      constraint_relationships: constraintItems,
       name: this.state.constraintName,
       in_equality: this.state.inequality,
       rhs_constant: this.state.rhs,

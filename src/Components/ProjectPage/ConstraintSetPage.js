@@ -34,13 +34,13 @@ class ConstraintSetPage extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraints/`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
           Authorization: `Token ${token}`
         },
-        params: { project: this.props.projectId }
+        params: { constraint_block: this.props.match.params.constraintsetId }
       })
       .then(res => {
         this.setState({
@@ -90,6 +90,7 @@ class ConstraintSetPage extends React.Component {
           open={this.state.open}
           handleClose={this.handleCloseAddConstraintModal}
           showAlert={this.showConstraintAlert}
+          constraintSetID={this.props.match.params.constraintsetId}
         />
       </div>
     );
