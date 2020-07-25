@@ -126,7 +126,7 @@ const ItemsFormInput = withStyles(theme => ({
 }))(InputBase);
 
 const InitialConstraintState = {
-  inequality: '=',
+  inequality: 'LT',
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
@@ -140,8 +140,8 @@ const initialState = {
   activeStep: 0,
   datasetList: [],
   dataset: '',
-  inequalities: ['=', '<', '<=', '>', '>='],
-  inequality: '=',
+  inequalities: { '<': 'LT', '>': 'GT', '<=': 'LEQ', '>=': 'GEQ', '=': 'EQ' },
+  inequality: 'LT',
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
@@ -149,27 +149,8 @@ const initialState = {
   constraintItems: [],
   items: [],
   createConstraintError: false,
-  allitems: [
-    '1102',
-    '1103',
-    '1104',
-    '1105',
-    '1106',
-    '1107',
-    '1108',
-    '3102',
-    '3106',
-    '3109',
-    '4102',
-    '5102',
-    '5602',
-    '5802',
-    '6102',
-    '7102',
-    '8102',
-    '9102',
-    '9202'
-  ]
+  allitems: [],
+  itemMappings: {}
 };
 
 const token = localStorage.getItem('token');
@@ -195,6 +176,7 @@ class ConstraintModal extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.addAnotherConstraint = this.addAnotherConstraint.bind(this);
     this.handleCreateConstraintSet = this.handleCreateConstraintSet.bind(this);
+    this.submitConstraint = this.submitConstraint.bind(this);
   }
 
   handleInputChange(event) {
@@ -255,26 +237,6 @@ class ConstraintModal extends React.Component {
     if (this.state.activeStep == 2 && this.state.items.length <= 0) {
       return;
     }
-    if (this.state.activeStep == 3) {
-      for (var constraint of this.state.constraintItems) {
-        if (constraint.coefficient == '') {
-          this.setState({
-            createConstraintError: true
-          });
-          return;
-        }
-      }
-      if (
-        this.state.rhs == '' ||
-        this.state.constraintName == '' ||
-        (this.state.penalty == 'soft' && this.state.penaltyScore == '')
-      ) {
-        this.setState({
-          createConstraintError: true
-        });
-        return;
-      }
-    }
     this.setState({
       activeStep: this.state.activeStep + 1
     });
@@ -302,28 +264,7 @@ class ConstraintModal extends React.Component {
       constraintName: '',
       constraintItems: [],
       items: [],
-      createConstraintError: false,
-      allitems: [
-        '1102',
-        '1103',
-        '1104',
-        '1105',
-        '1106',
-        '1107',
-        '1108',
-        '3102',
-        '3106',
-        '3109',
-        '4102',
-        '5102',
-        '5602',
-        '5802',
-        '6102',
-        '7102',
-        '8102',
-        '9102',
-        '9202'
-      ]
+      createConstraintError: false
     });
   }
 
@@ -372,7 +313,20 @@ class ConstraintModal extends React.Component {
       )
       .then(res => {
         if (res.status === 201 && res.status) {
-          console.log(res.data);
+          var itemDict = {};
+
+          res.data.forEach(item => {
+            if (item.item_name != null) {
+              itemDict[item.id] = item.item_id + ' - ' + item.item_name;
+            } else {
+              itemDict[item.id] = item.item_id;
+            }
+          });
+
+          this.setState({
+            allitems: res.data.map(item => item.id),
+            itemMappings: itemDict
+          });
           this.setState({
             activeStep: this.state.activeStep + 1
           });
@@ -381,6 +335,68 @@ class ConstraintModal extends React.Component {
       .catch(err => {
         console.log(err);
       });
+  }
+
+  submitConstraint(event) {
+    if (this.state.activeStep == 3) {
+      for (var constraint of this.state.constraintItems) {
+        if (constraint.coefficient == '') {
+          this.setState({
+            createConstraintError: true
+          });
+          return;
+        }
+      }
+      if (
+        this.state.rhs == '' ||
+        this.state.constraintName == '' ||
+        (this.state.penalty == 'soft' && this.state.penaltyScore == '')
+      ) {
+        this.setState({
+          createConstraintError: true
+        });
+        return;
+      }
+    }
+    let constraintItems = [];
+    this.state.constraintItems.forEach(item => {
+      constraintItems.push({ id: item.item, coefficient: item.coefficient });
+    });
+
+    let form = {
+      constraint_block: this.props.constraintSetID,
+      constraint_relationships: constraintItems,
+      name: this.state.constraintName,
+      in_equality: this.state.inequality,
+      rhs_constant: this.state.rhs,
+      penalty: this.state.penalty == 'hard' ? -1 : this.state.penaltyScore,
+      category: this.state.category
+    };
+
+    axios
+      .post(
+        'https://secret-sauce.azurewebsites.net/portal/constraints/',
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 201 && res.status) {
+          this.props.handleClose();
+          this.props.showAlert();
+          this.handleReset();
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    this.handleNext(event);
   }
 
   componentDidMount() {
@@ -417,7 +433,7 @@ class ConstraintModal extends React.Component {
   createConstraintsForm() {
     const { classes } = this.props;
     const listItems = this.state.constraintItems.map((constraint, idx) => [
-      constraint.item,
+      this.state.itemMappings[constraint.item],
       <ItemsFormInput
         name="coefficient"
         type="number"
@@ -480,8 +496,8 @@ class ConstraintModal extends React.Component {
                   input={<FormInput />}
                   onChange={this.handleInputChange}
                 >
-                  {this.state.inequalities.map(value => (
-                    <option value={value}>{value}</option>
+                  {Object.keys(this.state.inequalities).map(key => (
+                    <option value={this.state.inequalities[key]}>{key}</option>
                   ))}
                 </NativeSelect>
               </FormControl>
@@ -603,7 +619,9 @@ class ConstraintModal extends React.Component {
                 <Autocomplete
                   multiple
                   options={this.state.allitems}
-                  getOptionLabel={option => option}
+                  getOptionLabel={option =>
+                    this.state.itemMappings[option].toString()
+                  }
                   onChange={this.handleItemsChange}
                   value={this.state.items}
                   renderInput={params => (

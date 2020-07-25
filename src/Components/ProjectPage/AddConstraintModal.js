@@ -123,7 +123,7 @@ const ItemsFormInput = withStyles(theme => ({
 }))(InputBase);
 
 const InitialConstraintState = {
-  inequality: '=',
+  inequality: 'LT',
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
@@ -165,7 +165,6 @@ class AddConstraintModal extends React.Component {
     this.handleBack = this.handleBack.bind(this);
     this.handleReset = this.handleReset.bind(this);
     this.getStepContent = this.getStepContent.bind(this);
-    this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.addAnotherConstraint = this.addAnotherConstraint.bind(this);
     this.submitConstraint = this.submitConstraint.bind(this);
@@ -226,6 +225,12 @@ class AddConstraintModal extends React.Component {
     if (this.state.activeStep == 0 && this.state.items.length <= 0) {
       return;
     }
+    this.setState({
+      activeStep: this.state.activeStep + 1
+    });
+  }
+
+  submitConstraint(event) {
     if (this.state.activeStep == 1) {
       for (var constraint of this.state.constraintItems) {
         if (constraint.coefficient == '') {
@@ -246,12 +251,7 @@ class AddConstraintModal extends React.Component {
         return;
       }
     }
-    this.setState({
-      activeStep: this.state.activeStep + 1
-    });
-  }
 
-  submitConstraint(event) {
     let constraintItems = [];
     this.state.constraintItems.forEach(item => {
       constraintItems.push({ id: item.item, coefficient: item.coefficient });
@@ -303,7 +303,24 @@ class AddConstraintModal extends React.Component {
   }
 
   handleReset(event) {
-    this.setState(initialState);
+    this.setState({
+      activeStep: 0,
+      inequalities: {
+        '<': 'LT',
+        '>': 'GT',
+        '<=': 'LEQ',
+        '>=': 'GEQ',
+        '=': 'EQ'
+      },
+      inequality: 'LT',
+      rhs: '',
+      penalty: 'hard',
+      penaltyScore: '',
+      constraintName: '',
+      constraintItems: [],
+      items: [],
+      createConstraintError: false
+    });
   }
 
   addAnotherConstraint(event) {
@@ -317,13 +334,6 @@ class AddConstraintModal extends React.Component {
   handleClose(event) {
     this.handleReset();
     this.props.handleClose();
-  }
-
-  handleSubmit(event) {
-    //Make POST request here
-    this.props.handleClose();
-    this.props.showAlert();
-    this.handleReset();
   }
 
   componentDidMount() {
@@ -342,7 +352,11 @@ class AddConstraintModal extends React.Component {
         var itemDict = {};
 
         res.data.forEach(item => {
-          itemDict[item.id] = item.item_id;
+          if (item.item_name != null) {
+            itemDict[item.id] = item.item_id + ' - ' + item.item_name;
+          } else {
+            itemDict[item.id] = item.item_id;
+          }
         });
 
         this.setState({
