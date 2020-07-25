@@ -17,6 +17,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import ShowChartIcon from '@material-ui/icons/ShowChart';
+import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import axios from 'axios';
 
 const tableIcons = {
@@ -126,6 +128,26 @@ class TrainedModelsTable extends React.Component {
               color: '#FFF'
             }
           }}
+          actions={[
+            {
+              icon: () => <ShowChartIcon />,
+              tooltip: 'Download Elasticities',
+              onClick: (event, rowData) => {
+                const rowIndex = rowData.tableData.id;
+                const downloadLink = this.state.datasetsList[rowIndex].upload;
+                // window.open(downloadLink);
+              }
+            },
+            {
+              icon: () => <GraphicEqIcon />,
+              tooltip: 'Download Feature Importance Sheet',
+              onClick: (event, rowData) => {
+                const rowIndex = rowData.tableData.id;
+                const datasetId = this.state.datasetsList[rowIndex].id;
+                // window.open(`dataset/${datasetId}`);
+              }
+            }
+          ]}
         />
       </div>
     );
