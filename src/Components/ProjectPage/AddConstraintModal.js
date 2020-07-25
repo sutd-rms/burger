@@ -29,6 +29,9 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import axios from 'axios';
+
+const token = localStorage.getItem('token');
 
 const styles = theme => ({
   modal: {
@@ -131,8 +134,8 @@ const InitialConstraintState = {
 
 const initialState = {
   activeStep: 0,
-  inequalities: ['=', '<', '<=', '>', '>='],
-  inequality: '=',
+  inequalities: { '<': 'LT', '>': 'GT', '<=': 'LEQ', '>=': 'GEQ', '=': 'EQ' },
+  inequality: 'LT',
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
@@ -140,27 +143,8 @@ const initialState = {
   constraintItems: [],
   items: [],
   createConstraintError: false,
-  allitems: [
-    '1102',
-    '1103',
-    '1104',
-    '1105',
-    '1106',
-    '1107',
-    '1108',
-    '3102',
-    '3106',
-    '3109',
-    '4102',
-    '5102',
-    '5602',
-    '5802',
-    '6102',
-    '7102',
-    '8102',
-    '9102',
-    '9202'
-  ]
+  allitems: [],
+  itemMappings: {}
 };
 
 class AddConstraintModal extends React.Component {
@@ -184,6 +168,7 @@ class AddConstraintModal extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.addAnotherConstraint = this.addAnotherConstraint.bind(this);
+    this.submitConstraint = this.submitConstraint.bind(this);
   }
 
   handleInputChange(event) {
@@ -266,6 +251,43 @@ class AddConstraintModal extends React.Component {
     });
   }
 
+  submitConstraint(event) {
+    let form = {
+      constraint_block: this.props.constraintSetID,
+      constraint_relationships: this.state.constraintItems,
+      name: this.state.constraintName,
+      in_equality: this.state.inequality,
+      rhs_constant: this.state.rhs,
+      penalty: this.state.penalty == 'hard' ? -1 : this.state.penaltyScore,
+      category: this.state.category
+    };
+
+    axios
+      .post(
+        'https://secret-sauce.azurewebsites.net/portal/constraints/',
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 201 && res.status) {
+          this.props.handleClose();
+          this.props.showAlert();
+          this.handleReset();
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+
+    this.handleNext(event);
+  }
+
   handleBack(event) {
     if (this.state.activeStep == 1) {
       this.setState(InitialConstraintState);
@@ -299,10 +321,40 @@ class AddConstraintModal extends React.Component {
     this.handleReset();
   }
 
+  componentDidMount() {
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/constraintsets/${this.props.constraintSetID}/parameters/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        var itemDict = {};
+
+        res.data.forEach(item => {
+          itemDict[item.id] = item.item_id;
+        });
+
+        this.setState({
+          allitems: res.data.map(item => item.id),
+          itemMappings: itemDict
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   createConstraintsItemsArray(selectedItems) {
     this.state.constraintItems = [];
     selectedItems.forEach((selectedItem, idx) =>
       this.state.constraintItems.push({
+        //Need id to allow for handling of constraints input change
         id: idx,
         item: selectedItem,
         coefficient: ''
@@ -313,7 +365,7 @@ class AddConstraintModal extends React.Component {
   createConstraintsForm() {
     const { classes } = this.props;
     const listItems = this.state.constraintItems.map((constraint, idx) => [
-      constraint.item,
+      this.state.itemMappings[constraint.item],
       <ItemsFormInput
         name="coefficient"
         type="number"
@@ -376,8 +428,8 @@ class AddConstraintModal extends React.Component {
                   input={<FormInput />}
                   onChange={this.handleInputChange}
                 >
-                  {this.state.inequalities.map(value => (
-                    <option value={value}>{value}</option>
+                  {Object.keys(this.state.inequalities).map(key => (
+                    <option value={this.state.inequalities[key]}>{key}</option>
                   ))}
                 </NativeSelect>
               </FormControl>
@@ -457,7 +509,9 @@ class AddConstraintModal extends React.Component {
                 <Autocomplete
                   multiple
                   options={this.state.allitems}
-                  getOptionLabel={option => option}
+                  getOptionLabel={option =>
+                    this.state.itemMappings[option].toString()
+                  }
                   onChange={this.handleItemsChange}
                   value={this.state.items}
                   renderInput={params => (
@@ -543,7 +597,7 @@ class AddConstraintModal extends React.Component {
               <Button
                 variant="contained"
                 style={{ backgroundColor: 'green', color: 'white' }}
-                onClick={this.handleNext}
+                onClick={this.submitConstraint}
               >
                 Add Constraint
               </Button>
