@@ -43,7 +43,7 @@ const styles = theme => ({
   }
 });
 
-class DataUploadForm extends React.Component {
+class CostSetUploadForm extends React.Component {
   constructor(props) {
     super(props);
     this.onDrop = files => {
@@ -52,8 +52,7 @@ class DataUploadForm extends React.Component {
       });
     };
     this.state = {
-      files: [],
-      datasetName: ''
+      files: []
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -63,22 +62,15 @@ class DataUploadForm extends React.Component {
     event.preventDefault();
 
     var formData = new FormData();
-    formData.append('upload', this.state.files[0]);
-    formData.append('project', this.props.projectId);
-    formData.append('name', this.state.datasetName);
+    formData.append('file', this.state.files[0]);
 
-    // for (let i = 0; i < this.state.files.length; i++) {
-    //   if (this.state.files[i].type !== '.csv') {
-    //     alert('File type not accepted, please upload a CSV file');
-    //   }
-    // }
     if (this.state.files.length < 1) {
       this.props.noFileSelected();
     } else {
       let token = localStorage.getItem('token');
       axios
         .post(
-          'https://secret-sauce.azurewebsites.net/portal/datablocks/',
+          `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}/items/`,
           formData,
           {
             headers: {
@@ -91,8 +83,7 @@ class DataUploadForm extends React.Component {
         .then(res => {
           this.props.successUpload(res.data);
           this.setState({
-            files: [],
-            datasetName: ''
+            files: []
           });
           this.props.handleCloseDataUploadForm();
         })
@@ -100,10 +91,6 @@ class DataUploadForm extends React.Component {
           this.props.handleUploadFail(error.response);
         });
     }
-  };
-
-  handleNameChange = evt => {
-    this.setState({ datasetName: evt.target.value });
   };
 
   render() {
@@ -130,19 +117,9 @@ class DataUploadForm extends React.Component {
           id="customized-dialog-title"
           onClose={this.props.handleCloseDataUploadForm}
         >
-          Create a New Dataset
+          Upload a Cost Set File
         </MuiDialogTitle>
-        <br />
         <div className={classes.root}>
-          <Box p={2} m={2}>
-            <TextField
-              id="standard-basic"
-              label="Dataset Name"
-              onChange={this.handleNameChange}
-              value={this.state.datasetName}
-              fullWidth
-            />
-          </Box>
           <Dropzone
             onDrop={this.onDrop}
             disabled={this.state.disableUpload}
@@ -185,4 +162,4 @@ class DataUploadForm extends React.Component {
   }
 }
 
-export default withStyles(styles, { withTheme: true })(DataUploadForm);
+export default withStyles(styles, { withTheme: true })(CostSetUploadForm);
