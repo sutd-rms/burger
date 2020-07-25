@@ -143,11 +143,11 @@ class DatasetVisualisation extends React.Component {
     }
 
     if (this.state.selected == 'boxplot') {
-      var data = { query: 'price', items: this.state.items.join() };
+      var data = { items: this.state.items.join() };
 
       axios
         .get(
-          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/price/`,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
@@ -162,11 +162,11 @@ class DatasetVisualisation extends React.Component {
         });
     }
     if (this.state.selected == 'linegraph') {
-      var data = { query: 'quantity', items: this.state.items.join() };
+      var data = { items: this.state.items.join() };
 
       axios
         .get(
-          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/`,
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/qty/`,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
@@ -219,7 +219,6 @@ class DatasetVisualisation extends React.Component {
     axios
       .get(
         `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}`,
-        // `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/getitems/`,
         {
           headers: {
             'Content-Type': 'application/json',
