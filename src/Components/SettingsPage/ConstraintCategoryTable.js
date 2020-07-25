@@ -16,6 +16,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
 const tableIcons = {
@@ -42,37 +44,72 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const token = localStorage.getItem('token');
 
-class ConstraintsTable extends React.Component {
+class ConstraintCategoryTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedRowId: '',
+      successAdd: false,
+      successEdit: false,
+      successDelete: false,
+      error: false,
       columns: [{ title: 'Name', field: 'name' }],
-      data: [
-        {
-          id: '1',
-          name: 'Sample Constraint 1',
-          dateCreated: '2019-12-20 08:30:45.687'
-        },
-        {
-          id: '2',
-          name: 'Testing Constraints',
-          dateCreated: '2020-02-20 10:20:46.657'
-        },
-        {
-          id: '3',
-          name: 'McDonalds Aussie',
-          dateCreated: '2020-05-20 20:30:46.657'
-        },
-        {
-          id: '4',
-          name: 'Sample Constraint 2',
-          dateCreated: '2020-06-01 20:46:46.657'
-        }
-      ]
+      data: []
     };
+
+    this.handleCloseAddSnackbar = this.handleCloseAddSnackbar.bind(this);
+    this.handleCloseEditSnackbar = this.handleCloseEditSnackbar.bind(this);
+    this.handleCloseDeleteSnackbar = this.handleCloseDeleteSnackbar.bind(this);
+    this.handleCloseErrorSnackbar = this.handleCloseErrorSnackbar.bind(this);
+  }
+
+  handleCloseAddSnackbar(event) {
+    this.setState({
+      successAdd: false
+    });
+  }
+
+  handleCloseEditSnackbar(event) {
+    this.setState({
+      successEdit: false
+    });
+  }
+
+  handleCloseDeleteSnackbar(event) {
+    this.setState({
+      successDelete: false
+    });
+  }
+
+  handleCloseErrorSnackbar(event) {
+    this.setState({
+      error: false
+    });
+  }
+
+  componentDidMount() {
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        this.setState({
+          data: res.data
+        });
+      });
   }
 
   render() {
@@ -105,19 +142,13 @@ class ConstraintsTable extends React.Component {
             onRowUpdate: (newData, oldData) =>
               new Promise(resolve => {
                 setTimeout(() => {
-                  let newPatchData = {
-                    first_name: newData.first_name,
-                    last_name: newData.last_name,
-                    phone: newData.phone,
-                    is_staff: newData.is_staff,
-                    is_superuser: newData.is_staff,
-                    email: newData.email,
-                    is_active: newData.is_active
+                  let form = {
+                    name: newData.name
                   };
                   axios
                     .patch(
-                      `https://secret-sauce.azurewebsites.net/auth/users/${oldData.id}/`,
-                      newPatchData,
+                      `https://secret-sauce.azurewebsites.net/portal/constraintcategories/${newData.id}`,
+                      form,
                       {
                         headers: {
                           'Content-Type': 'application/json',
@@ -128,37 +159,158 @@ class ConstraintsTable extends React.Component {
                     )
                     .then(res => {
                       if (res.status === 200) {
+                        return axios
+                          .get(
+                            `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                            {
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json',
+                                Authorization: `Token ${token}`
+                              }
+                            }
+                          )
+                          .then(res => {
+                            this.setState({
+                              data: res.data,
+                              successEdit: true
+                            });
+                          });
                       }
+                    })
+                    .catch(err => {
+                      this.setState({ error: true });
                     });
-                }, 600);
+                  resolve();
+                }, 2000);
               }),
             onRowAdd: (newData, oldData) =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  // const dataUpdate = [...data];
-                  // const index = oldData.tableData.id;
-                  // dataUpdate[index] = newData;
-                  // setData([...dataUpdate]);
-
+                  let form = {
+                    name: newData.name
+                  };
+                  axios
+                    .post(
+                      `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                      form,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Accept: 'application/json',
+                          Authorization: `Token ${token}`
+                        }
+                      }
+                    )
+                    .then(res => {
+                      if (res.status === 201) {
+                        return axios
+                          .get(
+                            `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                            {
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json',
+                                Authorization: `Token ${token}`
+                              }
+                            }
+                          )
+                          .then(res => {
+                            this.setState({
+                              data: res.data,
+                              successAdd: true
+                            });
+                          });
+                      }
+                    })
+                    .catch(err => {
+                      this.setState({ error: true });
+                    });
                   resolve();
-                }, 1000);
+                }, 2000);
               }),
             onRowDelete: oldData =>
-              new Promise((resolve, reject) => {
+              new Promise(resolve => {
                 setTimeout(() => {
-                  // const dataDelete = [...data];
-                  // const index = oldData.tableData.id;
-                  // dataDelete.splice(index, 1);
-                  // setData([...dataDelete]);
-
+                  axios
+                    .delete(
+                      `https://secret-sauce.azurewebsites.net/portal/constraintcategories/${oldData.id}`,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Accept: 'application/json',
+                          Authorization: `Token ${token}`
+                        }
+                      }
+                    )
+                    .then(res => {
+                      if (res.status === 204) {
+                        return axios
+                          .get(
+                            `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                            {
+                              headers: {
+                                'Content-Type': 'application/json',
+                                Accept: 'application/json',
+                                Authorization: `Token ${token}`
+                              }
+                            }
+                          )
+                          .then(res => {
+                            this.setState({
+                              data: res.data,
+                              successDelete: true
+                            });
+                          });
+                      }
+                    })
+                    .catch(err => {
+                      this.setState({ error: true });
+                    });
                   resolve();
-                }, 1000);
+                }, 2000);
               })
           }}
         />
+        <Snackbar
+          open={this.state.successAdd}
+          autoHideDuration={6000}
+          onClose={this.handleCloseAddSnackbar}
+        >
+          <Alert onClose={this.handleCloseAddSnackbar} severity="success">
+            Constraint Category added successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.successEdit}
+          autoHideDuration={6000}
+          onClose={this.handleCloseEditSnackbar}
+        >
+          <Alert onClose={this.handleCloseEditSnackbar} severity="success">
+            Constraint Category edited successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.successDelete}
+          autoHideDuration={6000}
+          onClose={this.handleCloseDeleteSnackbar}
+        >
+          <Alert onClose={this.handleCloseDeleteSnackbar} severity="success">
+            Constraint Category deleted successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          autoHideDuration={6000}
+          onClose={this.handleCloseErrorSnackbar}
+        >
+          <Alert onClose={this.handleCloseErrorSnackbar} severity="error">
+            An error occured! Please try again!
+          </Alert>
+        </Snackbar>
       </div>
     );
   }
 }
 
-export default ConstraintsTable;
+export default ConstraintCategoryTable;
