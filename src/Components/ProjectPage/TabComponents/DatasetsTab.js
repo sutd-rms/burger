@@ -28,7 +28,11 @@ import GetAppRoundedIcon from '@material-ui/icons/GetAppRounded';
 import AssessmentIcon from '@material-ui/icons/Assessment';
 import { withStyles } from '@material-ui/core/styles';
 import axios from 'axios';
-import history from './../../../history';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -88,6 +92,7 @@ class DatasetsTab extends React.Component {
     super(props);
     this.state = {
       datasetsList: [],
+      costFileStatusLoaded: false,
       costFileUploaded: null,
       columns: [
         {
@@ -147,7 +152,10 @@ class DatasetsTab extends React.Component {
         );
       })
       .then(res => {
-        this.setState({ costFileUploaded: res.data.cost_sheet });
+        this.setState({
+          costFileStatusLoaded: true,
+          costFileUploaded: res.data.cost_sheet
+        });
       });
   }
 
@@ -155,6 +163,7 @@ class DatasetsTab extends React.Component {
     this.setState({
       success: false,
       uploadSuccess: false,
+      costFileUploadSuccess: false,
       noFileError: false,
       wrongTypeError: false,
       error: false
@@ -200,10 +209,28 @@ class DatasetsTab extends React.Component {
 
   handleCostUploadSuccess = form => {
     this.setState({ costFileUploadSuccess: true });
+
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        this.setState({ costFileUploaded: res.data.cost_sheet });
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   handleUploadFail = err => {
-    if (err.data) {
+    if (typeof err.data.detail != 'undefined') {
       this.setState({
         errorMessage: err.data.detail
       });
@@ -229,6 +256,14 @@ class DatasetsTab extends React.Component {
     });
   };
 
+  handleDeleteOpen = () => {
+    this.setState({ deleteOpen: true });
+  };
+
+  handleDeleteClose = () => {
+    this.setState({ deleteOpen: false });
+  };
+
   deleteCostFile = () => {
     axios
       .delete(
@@ -242,6 +277,7 @@ class DatasetsTab extends React.Component {
         }
       )
       .then(res => {
+        this.handleDeleteClose();
         return axios.get(
           `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
           {
@@ -254,11 +290,50 @@ class DatasetsTab extends React.Component {
         );
       })
       .then(res => {
-        this.setState({ costFileUploaded: res.data.cost_sheet });
+        this.setState({
+          costFileUploaded: res.data.cost_sheet
+        });
       })
       .catch(error => {
         console.log(error);
       });
+  };
+
+  renderCostButtons = () => {
+    const { classes } = this.props;
+
+    if (this.state.costFileStatusLoaded) {
+      return (
+        <Box display="flex" alignItems="center">
+          <Typography variant="h6">Upload Status:</Typography>
+          <Typography
+            className={
+              this.state.costFileUploaded ? classes.uploaded : classes.empty
+            }
+            variant="h6"
+          >
+            {this.state.costFileUploaded ? 'AVAILABLE' : 'UNAVAILABLE'}
+          </Typography>
+          {this.state.costFileUploaded ? (
+            <Button
+              onClick={this.handleDeleteOpen}
+              variant="contained"
+              className={classes.delete}
+            >
+              Delete
+            </Button>
+          ) : (
+            <Button
+              onClick={this.handleOpenCostModal}
+              variant="contained"
+              color="primary"
+            >
+              Upload Cost Set
+            </Button>
+          )}
+        </Box>
+      );
+    }
   };
 
   render() {
@@ -340,34 +415,7 @@ class DatasetsTab extends React.Component {
             </Typography>
           </Box>
           <Box boxShadow={3} mt={2} px={5} py={5} className={classes.root}>
-            <Box display="flex" alignItems="center">
-              <Typography variant="h6">Upload Status:</Typography>
-              <Typography
-                className={
-                  this.state.costFileUploaded ? classes.uploaded : classes.empty
-                }
-                variant="h6"
-              >
-                {this.state.costFileUploaded ? 'AVAILABLE' : 'UNAVAILABLE'}
-              </Typography>
-              {this.state.costFileUploaded ? (
-                <Button
-                  onClick={this.deleteCostFile}
-                  variant="contained"
-                  className={classes.delete}
-                >
-                  Delete
-                </Button>
-              ) : (
-                <Button
-                  onClick={this.handleOpenCostModal}
-                  variant="contained"
-                  color="primary"
-                >
-                  Upload Cost Set
-                </Button>
-              )}
-            </Box>
+            {this.renderCostButtons()}
           </Box>
         </Box>
         <DataUploadForm
@@ -386,6 +434,25 @@ class DatasetsTab extends React.Component {
           projectId={this.props.projectId}
           handleUploadFail={this.handleUploadFail}
         />
+        <Dialog open={this.state.deleteOpen} onClose={this.handleDeleteClose}>
+          <DialogTitle>
+            {'Are you sure you want to delete this cost file?'}
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              The cost file and its associated item mappings will be permanently
+              deleted
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleDeleteClose} color="primary">
+              No
+            </Button>
+            <Button onClick={this.deleteCostFile} color="primary" autoFocus>
+              Yes
+            </Button>
+          </DialogActions>
+        </Dialog>
         <Snackbar
           open={this.state.uploadSuccess}
           autoHideDuration={6000}
