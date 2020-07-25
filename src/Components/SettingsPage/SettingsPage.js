@@ -1,13 +1,10 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
-import AppBar from '@material-ui/core/AppBar';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
 import DashboardTopNav from './../DashboardTopNav';
 import ProfileForm from './ProfileForm';
+import ConstraintCategoryTable from './ConstraintCategoryTable';
+import { store } from './../../redux/store';
 
 const styles = theme => ({
   root: {}
@@ -25,7 +22,8 @@ class SettingsPage extends React.Component {
     const id = this.props.match.params.projectId;
     // FETCH & SET STATE
     this.setState({
-      id: id
+      id: id,
+      is_staff: store.getState().currentUser.is_staff
     });
   }
 
@@ -36,6 +34,9 @@ class SettingsPage extends React.Component {
       <div>
         <DashboardTopNav title="general settings" />
         <ProfileForm />
+        <Box mt={5}>
+          {this.state.is_staff ? <ConstraintCategoryTable /> : null}
+        </Box>
       </div>
     );
   }
