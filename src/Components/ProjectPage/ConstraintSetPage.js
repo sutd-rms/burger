@@ -46,22 +46,20 @@ class ConstraintSetPage extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Token ${token}`
-        },
-        params: { project: this.props.match.params.projectId }
-      })
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/constraintsets/${this.props.match.params.constraintsetId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
       .then(res => {
-        var constraintSetList = {};
-        res.data.forEach(constraintSet => {
-          console.log(constraintSet);
-          constraintSetList[constraintSet.id] = constraintSet.name;
-        });
+        console.log(res.data);
         this.setState({
-          title: constraintSetList[this.props.match.params.constraintsetId]
+          title: res.data.name
         });
       })
       .catch(err => {

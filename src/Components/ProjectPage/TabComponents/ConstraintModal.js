@@ -420,12 +420,10 @@ class ConstraintModal extends React.Component {
         this.setState({
           createConstraintError: false,
           createConstraintErrorMessage: sentenceCase(
-            err.response.data.name.toString()
+            err.response.data.non_field_errors[0].toString()
           )
         });
       });
-
-    this.handleNext(event);
   }
 
   componentDidMount() {

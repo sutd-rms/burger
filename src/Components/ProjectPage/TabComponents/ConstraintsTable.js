@@ -3,7 +3,6 @@ import { forwardRef } from 'react';
 import MaterialTable from 'material-table';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -46,6 +45,10 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const token = localStorage.getItem('token');
 
 class ConstraintsTable extends React.Component {
@@ -54,7 +57,9 @@ class ConstraintsTable extends React.Component {
     this.state = {
       selectedRowId: '',
       columns: [{ title: 'Name', field: 'name' }],
-      data: []
+      data: [],
+      successDelete: false,
+      error: false
     };
   }
 
@@ -115,7 +120,58 @@ class ConstraintsTable extends React.Component {
               }
             }
           ]}
+          editable={{
+            onRowDelete: oldData =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  axios
+                    .delete(
+                      `https://secret-sauce.azurewebsites.net/portal/constraintsets/${oldData.id}`,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Accept: 'application/json',
+                          Authorization: `Token ${token}`
+                        }
+                      }
+                    )
+                    .then(res => {
+                      if (res.status === 204) {
+                        const dataDelete = [...this.state.data];
+                        const index = oldData.tableData.id;
+                        dataDelete.splice(index, 1);
+                        this.setState({
+                          data: [...dataDelete],
+                          successDelete: true
+                        });
+                      }
+                    })
+                    .catch(err => {
+                      this.setState({ error: true });
+                    });
+                  resolve();
+                }, 1000);
+              })
+          }}
         />
+        <Snackbar
+          open={this.state.successDelete}
+          autoHideDuration={6000}
+          onClose={this.handleCloseDeleteSnackbar}
+        >
+          <Alert onClose={this.handleCloseDeleteSnackbar} severity="success">
+            Constraint deleted successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          autoHideDuration={6000}
+          onClose={this.handleCloseErrorSnackbar}
+        >
+          <Alert onClose={this.handleCloseErrorSnackbar} severity="error">
+            An error occured! Please try again!
+          </Alert>
+        </Snackbar>
       </div>
     );
   }
