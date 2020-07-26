@@ -21,7 +21,7 @@ class ConstraintSetPage extends React.Component {
     super(props);
     this.state = {
       id: '',
-      title: 'Constraint Set ' + this.props.match.params.constraintsetId,
+      title: '',
       open: false
     };
     this.handleOpenAddConstraintModal = this.handleOpenAddConstraintModal.bind(
@@ -30,26 +30,6 @@ class ConstraintSetPage extends React.Component {
     this.handleCloseAddConstraintModal = this.handleCloseAddConstraintModal.bind(
       this
     );
-  }
-
-  componentDidMount() {
-    axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/constraints/`, {
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          Authorization: `Token ${token}`
-        },
-        params: { constraint_block: this.props.match.params.constraintsetId }
-      })
-      .then(res => {
-        this.setState({
-          datasetList: res.data
-        });
-      })
-      .catch(err => {
-        console.log(err);
-      });
   }
 
   handleOpenAddConstraintModal(event) {
@@ -62,6 +42,31 @@ class ConstraintSetPage extends React.Component {
     this.setState({
       open: false
     });
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.match.params.projectId }
+      })
+      .then(res => {
+        var constraintSetList = {};
+        res.data.forEach(constraintSet => {
+          console.log(constraintSet);
+          constraintSetList[constraintSet.id] = constraintSet.name;
+        });
+        this.setState({
+          title: constraintSetList[this.props.match.params.constraintsetId]
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
@@ -89,7 +94,6 @@ class ConstraintSetPage extends React.Component {
         <AddConstraintModal
           open={this.state.open}
           handleClose={this.handleCloseAddConstraintModal}
-          showAlert={this.showConstraintAlert}
           constraintSetID={this.props.match.params.constraintsetId}
         />
       </div>

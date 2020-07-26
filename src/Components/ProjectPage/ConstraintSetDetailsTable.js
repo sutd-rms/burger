@@ -16,7 +16,8 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
-import PageviewIcon from '@material-ui/icons/Pageview';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
 const tableIcons = {
@@ -43,54 +44,88 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 const token = localStorage.getItem('token');
 class ConstraintSetDetailsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedRowId: '',
-      columns: [{ title: 'Constraint', field: 'name' }],
-      data: [
-        {
-          id: '1',
-          name: '2*[1901] + 3*[2780] <= 2',
-          dateCreated: '2019-12-20 08:30:45.687'
-        },
-        {
-          id: '2',
-          name: '[2780] = 3.79',
-          dateCreated: '2020-02-20 10:20:46.657'
-        },
-        {
-          id: '3',
-          name: '[1190] = 2.8',
-          dateCreated: '2020-05-20 20:30:46.657'
-        },
-        {
-          id: '4',
-          name: '3*[1089] - 2*[1190] > 3',
-          dateCreated: '2020-06-01 20:46:46.657'
-        }
-      ]
+      columns: [
+        { title: 'Constraint', field: 'name' },
+        { title: 'Category', field: 'category' },
+        { title: 'Item No. Equation', field: 'equation' },
+        { title: 'Item Name Equation', field: 'equation_name' },
+        { title: 'Type', field: 'type' },
+        { title: 'Penalty', field: 'penalty' }
+      ],
+      unprocessedData: [],
+      data: [],
+      successDelete: false,
+      error: false
     };
+
+    this.handleCloseDeleteSnackbar = this.handleCloseDeleteSnackbar.bind(this);
+    this.handleCloseErrorSnackbar = this.handleCloseErrorSnackbar.bind(this);
+  }
+
+  handleCloseDeleteSnackbar(event) {
+    this.setState({
+      successDelete: false
+    });
+  }
+
+  handleCloseErrorSnackbar(event) {
+    this.setState({
+      error: false
+    });
   }
 
   componentDidMount() {
     axios
-      .get(
-        `https://secret-sauce.azurewebsites.net/portal/constraintsets/${this.props.constraintSetID}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          },
-          params: { project: this.props.projectId }
-        }
-      )
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraints/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { constraint_block: this.props.constraintSetID }
+      })
       .then(res => {
         this.setState({
-          datasetList: res.data
+          unprocessedData: res.data
+        });
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        );
+      })
+      .then(res => {
+        var categories = {};
+        res.data.forEach(categorydict => {
+          categories[categorydict.id] = categorydict.name;
+        });
+        var processedData = this.state.unprocessedData;
+        processedData.forEach(constraint => {
+          constraint.category = categories[constraint.category];
+          if (constraint.penalty == '-1') {
+            constraint.type = 'Hard';
+            constraint.penalty = 'NA';
+          } else {
+            constraint.type = 'Soft';
+          }
+        });
+        this.setState({
+          data: processedData
         });
       })
       .catch(err => {
@@ -128,17 +163,54 @@ class ConstraintSetDetailsTable extends React.Component {
             onRowDelete: oldData =>
               new Promise((resolve, reject) => {
                 setTimeout(() => {
-                  const dataDelete = [...this.state.data];
-                  const index = oldData.tableData.id;
-                  dataDelete.splice(index, 1);
-                  this.setState({
-                    data: [...dataDelete]
-                  });
+                  axios
+                    .delete(
+                      `https://secret-sauce.azurewebsites.net/portal/constraints/${oldData.id}`,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Accept: 'application/json',
+                          Authorization: `Token ${token}`
+                        }
+                      }
+                    )
+                    .then(res => {
+                      if (res.status === 204) {
+                        const dataDelete = [...this.state.data];
+                        const index = oldData.tableData.id;
+                        dataDelete.splice(index, 1);
+                        this.setState({
+                          data: [...dataDelete],
+                          successDelete: true
+                        });
+                      }
+                    })
+                    .catch(err => {
+                      this.setState({ error: true });
+                    });
                   resolve();
                 }, 1000);
               })
           }}
         />
+        <Snackbar
+          open={this.state.successDelete}
+          autoHideDuration={6000}
+          onClose={this.handleCloseDeleteSnackbar}
+        >
+          <Alert onClose={this.handleCloseDeleteSnackbar} severity="success">
+            Constraint deleted successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          autoHideDuration={6000}
+          onClose={this.handleCloseErrorSnackbar}
+        >
+          <Alert onClose={this.handleCloseErrorSnackbar} severity="error">
+            An error occured! Please try again!
+          </Alert>
+        </Snackbar>
       </div>
     );
   }
