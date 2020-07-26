@@ -59,7 +59,7 @@ export default function AllModelsPage() {
       })
       .then(data => {
         setModelsList(data.data);
-        console.log(data.data);
+        // console.log(data.data);
       });
   }, []);
 
