@@ -1,10 +1,10 @@
-import React from "react";
-import { useRouteMatch } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import Card from "@material-ui/core/Card";
-import CardActionArea from "@material-ui/core/CardActionArea";
-import CardMedia from "@material-ui/core/CardMedia";
-import ModelCardContent from "./ModelCardContent";
+import React from 'react';
+import { useRouteMatch } from 'react-router-dom';
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardMedia from '@material-ui/core/CardMedia';
+import ModelCardContent from './ModelCardContent';
 
 // import ProjectCardContent from "./ProjectCardContent";
 
@@ -12,19 +12,19 @@ const useStyles = makeStyles(theme => ({
   root: {
     maxWidth: 175,
     maxHeight: 175,
-    justifyContent: "center"
+    justifyContent: 'center'
   },
   media: {
     height: 130,
     width: 130,
-    justifySelf: "center",
-    justifyContent: "center",
+    justifySelf: 'center',
+    justifyContent: 'center',
     padding: 20
   },
   cardtext: {
     width: 130,
     height: 130,
-    justifySelf: "center"
+    justifySelf: 'center'
   }
 }));
 
@@ -43,7 +43,7 @@ export default function ModelCard(props) {
   };
 
   const handelClick = () => {
-    window.location.href = `${match.path}/${props.projectId}`;
+    // window.location.href = `${match.path}/${props.model.id}`;
   };
 
   return (
@@ -51,6 +51,7 @@ export default function ModelCard(props) {
       <Card className={classes.root}>
         <CardActionArea onClick={handelClick}>
           <ModelCardContent
+            model={props.model}
             display={display}
             frontstyle={classes.media}
             backstyle={classes.cardtext}

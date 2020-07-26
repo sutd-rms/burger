@@ -16,8 +16,8 @@ export default class ModelCardContent extends Component {
   render() {
     return this.props.display ? (
       <CardContent className={this.props.backstyle}>
-        <Typography variant="body1">{this.state.title}</Typography>
-        <Typography variant="body2">{this.state.discription}</Typography>
+        <Typography variant="body1">{this.props.model.name}</Typography>
+        <Typography variant="body2">{this.props.model.description}</Typography>
       </CardContent>
     ) : (
       <CardMedia
