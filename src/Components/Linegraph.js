@@ -41,6 +41,24 @@ class Linegraph extends React.Component {
           },
           legend: {
             display: false
+          },
+          scales: {
+            yAxes: [
+              {
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Qty'
+                }
+              }
+            ],
+            xAxes: [
+              {
+                scaleLabel: {
+                  display: true,
+                  labelString: 'Weeks'
+                }
+              }
+            ]
           }
         }
       });
@@ -48,7 +66,6 @@ class Linegraph extends React.Component {
   }
 
   componentDidMount() {
-
     const weeks = this.state.data.weeks;
     const processedData = [];
 
