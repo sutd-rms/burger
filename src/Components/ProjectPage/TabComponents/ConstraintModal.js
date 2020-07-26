@@ -150,7 +150,9 @@ const initialState = {
   items: [],
   createConstraintError: false,
   allitems: [],
-  itemMappings: {}
+  itemMappings: {},
+  categories: [],
+  category: ''
 };
 
 const token = localStorage.getItem('token');
@@ -264,6 +266,7 @@ class ConstraintModal extends React.Component {
       constraintName: '',
       constraintItems: [],
       items: [],
+      category: this.state.categories[0].id,
       createConstraintError: false
     });
   }
@@ -387,9 +390,25 @@ class ConstraintModal extends React.Component {
       )
       .then(res => {
         if (res.status === 201 && res.status) {
-          this.props.handleClose();
-          this.props.showAlert();
-          this.handleReset();
+          this.setState({
+            activeStep: this.state.activeStep + 1,
+            inequalities: {
+              '<': 'LT',
+              '>': 'GT',
+              '<=': 'LEQ',
+              '>=': 'GEQ',
+              '=': 'EQ'
+            },
+            inequality: 'LT',
+            rhs: '',
+            penalty: 'hard',
+            penaltyScore: '',
+            constraintName: '',
+            constraintItems: [],
+            items: [],
+            category: this.state.categories[0].id,
+            createConstraintError: false
+          });
         }
       })
       .catch(err => {
@@ -412,6 +431,23 @@ class ConstraintModal extends React.Component {
       .then(res => {
         this.setState({
           datasetList: res.data
+        });
+
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        );
+      })
+      .then(res => {
+        this.setState({
+          categories: res.data,
+          category: res.data[0].id
         });
       })
       .catch(err => {
@@ -487,6 +523,24 @@ class ConstraintModal extends React.Component {
             <Box mt={5}>
               <FormControl required>
                 <InputLabel shrink htmlFor="title-input">
+                  Category
+                </InputLabel>
+                <NativeSelect
+                  name="category"
+                  defaultValue="="
+                  value={this.state.category}
+                  input={<FormInput />}
+                  onChange={this.handleInputChange}
+                >
+                  {this.state.categories.map(category => (
+                    <option value={category.id}>{category.name}</option>
+                  ))}
+                </NativeSelect>
+              </FormControl>
+            </Box>
+            <Box mt={5}>
+              <FormControl required>
+                <InputLabel shrink htmlFor="title-input">
                   Inequality
                 </InputLabel>
                 <NativeSelect
@@ -502,36 +556,38 @@ class ConstraintModal extends React.Component {
                 </NativeSelect>
               </FormControl>
             </Box>
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  RHS
-                </InputLabel>
-                <FormInput
-                  id="title-input"
-                  name="rhs"
-                  type="number"
-                  value={this.state.rhs}
-                  onChange={this.handleInputChange}
-                />
-              </FormControl>
-            </Box>
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  Penalty
-                </InputLabel>
-                <NativeSelect
-                  name="penalty"
-                  defaultValue="hard"
-                  value={this.state.penalty}
-                  input={<FormInput />}
-                  onChange={this.handleInputChange}
-                >
-                  <option value="hard">Hard</option>
-                  <option value="soft">Soft</option>
-                </NativeSelect>
-              </FormControl>
+            <Box mt={5} display="flex">
+              <Box>
+                <FormControl required>
+                  <InputLabel shrink htmlFor="title-input">
+                    RHS
+                  </InputLabel>
+                  <FormInput
+                    id="title-input"
+                    name="rhs"
+                    type="number"
+                    value={this.state.rhs}
+                    onChange={this.handleInputChange}
+                  />
+                </FormControl>
+              </Box>
+              <Box ml={5}>
+                <FormControl required>
+                  <InputLabel shrink htmlFor="title-input">
+                    Penalty
+                  </InputLabel>
+                  <NativeSelect
+                    name="penalty"
+                    defaultValue="hard"
+                    value={this.state.penalty}
+                    input={<FormInput />}
+                    onChange={this.handleInputChange}
+                  >
+                    <option value="hard">Hard</option>
+                    <option value="soft">Soft</option>
+                  </NativeSelect>
+                </FormControl>
+              </Box>
             </Box>
             <Box mt={5}>
               <FormControl>
@@ -742,7 +798,7 @@ class ConstraintModal extends React.Component {
               <Button
                 variant="contained"
                 style={{ backgroundColor: 'green', color: 'white' }}
-                onClick={this.handleNext}
+                onClick={this.submitConstraint}
               >
                 Add Constraint
               </Button>

@@ -144,7 +144,9 @@ const initialState = {
   items: [],
   createConstraintError: false,
   allitems: [],
-  itemMappings: {}
+  itemMappings: {},
+  categories: [],
+  category: ''
 };
 
 class AddConstraintModal extends React.Component {
@@ -319,6 +321,7 @@ class AddConstraintModal extends React.Component {
       constraintName: '',
       constraintItems: [],
       items: [],
+      category: this.state.categories[0].id,
       createConstraintError: false
     });
   }
@@ -362,6 +365,23 @@ class AddConstraintModal extends React.Component {
         this.setState({
           allitems: res.data.map(item => item.id),
           itemMappings: itemDict
+        });
+
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        );
+      })
+      .then(res => {
+        this.setState({
+          categories: res.data,
+          category: res.data[0].id
         });
       })
       .catch(err => {
@@ -438,6 +458,24 @@ class AddConstraintModal extends React.Component {
             <Box mt={5}>
               <FormControl required>
                 <InputLabel shrink htmlFor="title-input">
+                  Category
+                </InputLabel>
+                <NativeSelect
+                  name="category"
+                  defaultValue="="
+                  value={this.state.category}
+                  input={<FormInput />}
+                  onChange={this.handleInputChange}
+                >
+                  {this.state.categories.map(category => (
+                    <option value={category.id}>{category.name}</option>
+                  ))}
+                </NativeSelect>
+              </FormControl>
+            </Box>
+            <Box mt={5}>
+              <FormControl required>
+                <InputLabel shrink htmlFor="title-input">
                   Inequality
                 </InputLabel>
                 <NativeSelect
@@ -467,37 +505,39 @@ class AddConstraintModal extends React.Component {
                 />
               </FormControl>
             </Box>
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  Penalty
-                </InputLabel>
-                <NativeSelect
-                  name="penalty"
-                  defaultValue="hard"
-                  value={this.state.penalty}
-                  input={<FormInput />}
-                  onChange={this.handleInputChange}
-                >
-                  <option value="hard">Hard</option>
-                  <option value="soft">Soft</option>
-                </NativeSelect>
-              </FormControl>
-            </Box>
-            <Box mt={5}>
-              <FormControl>
-                <InputLabel shrink htmlFor="title-input">
-                  Score
-                </InputLabel>
-                <FormInput
-                  id="title-input"
-                  name="penaltyScore"
-                  type="number"
-                  disabled={this.state.penalty == 'soft' ? false : true}
-                  value={this.state.penaltyScore}
-                  onChange={this.handleInputChange}
-                />
-              </FormControl>
+            <Box mt={5} display="flex">
+              <Box>
+                <FormControl required>
+                  <InputLabel shrink htmlFor="title-input">
+                    Penalty
+                  </InputLabel>
+                  <NativeSelect
+                    name="penalty"
+                    defaultValue="hard"
+                    value={this.state.penalty}
+                    input={<FormInput />}
+                    onChange={this.handleInputChange}
+                  >
+                    <option value="hard">Hard</option>
+                    <option value="soft">Soft</option>
+                  </NativeSelect>
+                </FormControl>
+              </Box>
+              <Box ml={5}>
+                <FormControl>
+                  <InputLabel shrink htmlFor="title-input">
+                    Score
+                  </InputLabel>
+                  <FormInput
+                    id="title-input"
+                    name="penaltyScore"
+                    type="number"
+                    disabled={this.state.penalty == 'soft' ? false : true}
+                    value={this.state.penaltyScore}
+                    onChange={this.handleInputChange}
+                  />
+                </FormControl>
+              </Box>
             </Box>
           </Box>
         </Box>
