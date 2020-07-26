@@ -283,8 +283,6 @@ class AddConstraintModal extends React.Component {
       )
       .then(res => {
         if (res.status === 201 && res.status) {
-          this.props.handleClose();
-          this.props.showAlert();
           this.handleReset();
         }
       })
@@ -306,7 +304,6 @@ class AddConstraintModal extends React.Component {
 
   handleReset(event) {
     this.setState({
-      activeStep: 0,
       inequalities: {
         '<': 'LT',
         '>': 'GT',
@@ -462,7 +459,6 @@ class AddConstraintModal extends React.Component {
                 </InputLabel>
                 <NativeSelect
                   name="category"
-                  defaultValue="="
                   value={this.state.category}
                   input={<FormInput />}
                   onChange={this.handleInputChange}
@@ -480,7 +476,6 @@ class AddConstraintModal extends React.Component {
                 </InputLabel>
                 <NativeSelect
                   name="inequality"
-                  defaultValue="="
                   value={this.state.inequality}
                   input={<FormInput />}
                   onChange={this.handleInputChange}

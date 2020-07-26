@@ -152,7 +152,8 @@ const initialState = {
   allitems: [],
   itemMappings: {},
   categories: [],
-  category: ''
+  category: '',
+  currentConstraintSet: ''
 };
 
 const token = localStorage.getItem('token');
@@ -267,7 +268,8 @@ class ConstraintModal extends React.Component {
       constraintItems: [],
       items: [],
       category: this.state.categories[0].id,
-      createConstraintError: false
+      createConstraintError: false,
+      currentConstraintSet: ''
     });
   }
 
@@ -315,10 +317,10 @@ class ConstraintModal extends React.Component {
         }
       )
       .then(res => {
-        if (res.status === 201 && res.status) {
+        if (res.status === 201) {
           var itemDict = {};
 
-          res.data.forEach(item => {
+          res.data.params.forEach(item => {
             if (item.item_name != null) {
               itemDict[item.id] = item.item_id + ' - ' + item.item_name;
             } else {
@@ -327,8 +329,9 @@ class ConstraintModal extends React.Component {
           });
 
           this.setState({
-            allitems: res.data.map(item => item.id),
-            itemMappings: itemDict
+            allitems: res.data.params.map(item => item.id),
+            itemMappings: itemDict,
+            currentConstraintSet: res.data.id
           });
           this.setState({
             activeStep: this.state.activeStep + 1
@@ -367,7 +370,7 @@ class ConstraintModal extends React.Component {
     });
 
     let form = {
-      constraint_block: this.props.constraintSetID,
+      constraint_block: this.state.currentConstraintSet,
       constraint_relationships: constraintItems,
       name: this.state.constraintName,
       in_equality: this.state.inequality,
@@ -391,7 +394,6 @@ class ConstraintModal extends React.Component {
       .then(res => {
         if (res.status === 201 && res.status) {
           this.setState({
-            activeStep: this.state.activeStep + 1,
             inequalities: {
               '<': 'LT',
               '>': 'GT',
@@ -527,7 +529,6 @@ class ConstraintModal extends React.Component {
                 </InputLabel>
                 <NativeSelect
                   name="category"
-                  defaultValue="="
                   value={this.state.category}
                   input={<FormInput />}
                   onChange={this.handleInputChange}
@@ -545,7 +546,6 @@ class ConstraintModal extends React.Component {
                 </InputLabel>
                 <NativeSelect
                   name="inequality"
-                  defaultValue="="
                   value={this.state.inequality}
                   input={<FormInput />}
                   onChange={this.handleInputChange}
@@ -556,22 +556,22 @@ class ConstraintModal extends React.Component {
                 </NativeSelect>
               </FormControl>
             </Box>
+            <Box mt={5}>
+              <FormControl required>
+                <InputLabel shrink htmlFor="title-input">
+                  RHS
+                </InputLabel>
+                <FormInput
+                  id="title-input"
+                  name="rhs"
+                  type="number"
+                  value={this.state.rhs}
+                  onChange={this.handleInputChange}
+                />
+              </FormControl>
+            </Box>
             <Box mt={5} display="flex">
               <Box>
-                <FormControl required>
-                  <InputLabel shrink htmlFor="title-input">
-                    RHS
-                  </InputLabel>
-                  <FormInput
-                    id="title-input"
-                    name="rhs"
-                    type="number"
-                    value={this.state.rhs}
-                    onChange={this.handleInputChange}
-                  />
-                </FormControl>
-              </Box>
-              <Box ml={5}>
                 <FormControl required>
                   <InputLabel shrink htmlFor="title-input">
                     Penalty
@@ -588,21 +588,21 @@ class ConstraintModal extends React.Component {
                   </NativeSelect>
                 </FormControl>
               </Box>
-            </Box>
-            <Box mt={5}>
-              <FormControl>
-                <InputLabel shrink htmlFor="title-input">
-                  Score
-                </InputLabel>
-                <FormInput
-                  id="title-input"
-                  name="penaltyScore"
-                  type="number"
-                  disabled={this.state.penalty == 'soft' ? false : true}
-                  value={this.state.penaltyScore}
-                  onChange={this.handleInputChange}
-                />
-              </FormControl>
+              <Box ml={5}>
+                <FormControl>
+                  <InputLabel shrink htmlFor="title-input">
+                    Score
+                  </InputLabel>
+                  <FormInput
+                    id="title-input"
+                    name="penaltyScore"
+                    type="number"
+                    disabled={this.state.penalty == 'soft' ? false : true}
+                    value={this.state.penaltyScore}
+                    onChange={this.handleInputChange}
+                  />
+                </FormControl>
+              </Box>
             </Box>
           </Box>
         </Box>
