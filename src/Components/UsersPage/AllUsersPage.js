@@ -59,7 +59,6 @@ export default function AllUsersPage(props) {
   //   console.log('company');
   // };
 
-
   return (
     <div>
       <Switch>
@@ -94,8 +93,9 @@ export default function AllUsersPage(props) {
             </Box>
           </Box>
           <UsersTable data={allUsers} />
-          <br />
-          <CompanyTable/>
+          <Box mt={5}>
+            <CompanyTable />
+          </Box>
         </Route>
       </Switch>
       <UserInvitationModal
