@@ -29,6 +29,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { sentenceCase } from 'change-case';
 import axios from 'axios';
 
 const token = localStorage.getItem('token');
@@ -284,13 +285,17 @@ class AddConstraintModal extends React.Component {
       .then(res => {
         if (res.status === 201 && res.status) {
           this.handleReset();
+          this.handleNext(event);
         }
       })
       .catch(err => {
-        console.log(err);
+        this.setState({
+          createConstraintError: false,
+          createConstraintErrorMessage: sentenceCase(
+            err.response.data.name.toString()
+          )
+        });
       });
-
-    this.handleNext(event);
   }
 
   handleBack(event) {
@@ -319,7 +324,8 @@ class AddConstraintModal extends React.Component {
       constraintItems: [],
       items: [],
       category: this.state.categories[0].id,
-      createConstraintError: false
+      createConstraintError: false,
+      createConstraintErrorMessage: ''
     });
   }
 
@@ -592,6 +598,11 @@ class AddConstraintModal extends React.Component {
             {this.state.createConstraintError == false ? null : (
               <Typography variant="subtitle" color="error">
                 Please fill up all required fields
+              </Typography>
+            )}
+            {this.state.createConstraintErrorMessage == '' ? null : (
+              <Typography variant="subtitle" color="error">
+                {this.state.createConstraintErrorMessage}
               </Typography>
             )}
             {this.createConstraintsForm()}

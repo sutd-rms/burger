@@ -29,6 +29,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { sentenceCase } from 'change-case';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -269,6 +270,7 @@ class ConstraintModal extends React.Component {
       items: [],
       category: this.state.categories[0].id,
       createConstraintError: false,
+      createConstraintErrorMessage: '',
       currentConstraintSet: ''
     });
   }
@@ -411,10 +413,16 @@ class ConstraintModal extends React.Component {
             category: this.state.categories[0].id,
             createConstraintError: false
           });
+          this.handleNext(event);
         }
       })
       .catch(err => {
-        console.log(err);
+        this.setState({
+          createConstraintError: false,
+          createConstraintErrorMessage: sentenceCase(
+            err.response.data.name.toString()
+          )
+        });
       });
 
     this.handleNext(event);
@@ -704,6 +712,11 @@ class ConstraintModal extends React.Component {
             {this.state.createConstraintError == false ? null : (
               <Typography variant="subtitle" color="error">
                 Please fill up all required fields
+              </Typography>
+            )}
+            {this.state.createConstraintErrorMessage == '' ? null : (
+              <Typography variant="subtitle" color="error">
+                {this.state.createConstraintErrorMessage}
               </Typography>
             )}
             {this.createConstraintsForm()}
