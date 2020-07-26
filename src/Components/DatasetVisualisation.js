@@ -87,6 +87,7 @@ class DatasetVisualisation extends React.Component {
       constraints: '',
       items: [],
       allitems: [],
+      itemMappings: {},
       selected: '',
       boxplotData: '',
       linegraphData: '',
@@ -157,7 +158,13 @@ class DatasetVisualisation extends React.Component {
           }
         )
         .then(res => {
-          this.setState({ boxplotData: res.data });
+          var processedData = {};
+          processedData.items = [];
+          processedData.datasets = res.data.datasets;
+          res.data.items.forEach(itemNumber => {
+            processedData.items.push([this.state.itemMappings[itemNumber]]);
+          });
+          this.setState({ boxplotData: processedData });
           this.setState({ hasFetched: true });
         });
     }
@@ -176,7 +183,14 @@ class DatasetVisualisation extends React.Component {
           }
         )
         .then(res => {
-          this.setState({ linegraphData: res.data });
+          var processedData = {};
+          processedData.weeks = res.data.weeks;
+          processedData.datasets = {};
+          Object.keys(res.data.datasets).forEach(itemkey => {
+            processedData.datasets[this.state.itemMappings[itemkey]] =
+              res.data.datasets[itemkey];
+          });
+          this.setState({ linegraphData: processedData });
           this.setState({ hasFetched: true });
         });
     }
@@ -228,8 +242,20 @@ class DatasetVisualisation extends React.Component {
         }
       )
       .then(res => {
-        const mappedItems = res.data.schema.map(item => item.item_id);
-        this.setState({ allitems: mappedItems });
+        var itemDict = {};
+
+        res.data.schema.forEach(item => {
+          if (item.item_name != null) {
+            itemDict[item.item_id] = item.item_id + ' - ' + item.item_name;
+          } else {
+            itemDict[item.item_id] = item.item_id;
+          }
+        });
+
+        this.setState({
+          allitems: res.data.schema.map(item => item.item_id),
+          itemMappings: itemDict
+        });
       });
   }
 
@@ -322,7 +348,9 @@ class DatasetVisualisation extends React.Component {
                 <Autocomplete
                   multiple
                   options={this.state.allitems}
-                  getOptionLabel={option => option.toString()}
+                  getOptionLabel={option =>
+                    this.state.itemMappings[option].toString()
+                  }
                   onChange={this.handleChange}
                   value={this.state.items}
                   renderInput={params => (

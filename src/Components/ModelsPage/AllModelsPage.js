@@ -8,11 +8,11 @@ import {
   Link,
   useRouteMatch,
   useParams
-} from "react-router-dom";
-import ModelCard from "./ModelCard";
-import FloatingAddButton from "../FloatingAddButton";
-import ModelCreationForm from "./ModelCreationForm";
-import DashboardTopNav from "./../DashboardTopNav";
+} from 'react-router-dom';
+import ModelCard from './ModelCard';
+import FloatingAddButton from '../FloatingAddButton';
+import ModelCreationForm from './ModelCreationForm';
+import DashboardTopNav from './../DashboardTopNav';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -59,16 +59,16 @@ export default function AllModelsPage() {
       })
       .then(data => {
         setModelsList(data.data);
-        console.log(data.data)
+        // console.log(data.data);
       });
   }, []);
 
   return (
     <div>
       <Switch>
-        <Route path={`${match.path}/:modelId`}>
+        {/* <Route path={`${match.path}/:modelId`}>
           <Model />
-        </Route>
+        </Route> */}
         <Route path={match.path}>
           <DashboardTopNav title="models" />
           <FloatingAddButton onClick={handleOpen} />
