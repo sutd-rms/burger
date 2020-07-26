@@ -30,7 +30,7 @@ class Boxplot extends React.Component {
       labels: this.state.data.items,
       datasets: [
         {
-          label: 'Dataset 1',
+          label: 'Dataset',
           backgroundColor: 'rgba(255,0,0,0.5)',
           borderColor: 'red',
           borderWidth: 1,
@@ -56,7 +56,17 @@ class Boxplot extends React.Component {
           display: true,
           text: 'Prices across items'
         },
-        tooltipDecimals: 2
+        tooltipDecimals: 2,
+        scales: {
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: 'Price'
+              }
+            }
+          ]
+        }
       }
     });
   }
