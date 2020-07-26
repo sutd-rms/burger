@@ -7,6 +7,7 @@ import MuiAlert from '@material-ui/lab/Alert';
 import { Typography } from '@material-ui/core';
 import TrainedModelsTable from './TrainedModelsTable';
 import TrainModelModal from './TrainModelModal';
+import { store } from '../../../redux/store';
 
 const styles = theme => ({
   root: {}
@@ -21,7 +22,8 @@ class ModelTrainingTab extends React.Component {
     super(props);
     this.state = {
       open: false,
-      success: false
+      success: false,
+      is_staff: store.getState().currentUser.is_staff
     };
 
     this.handleOpenModal = this.handleOpenModal.bind(this);
@@ -67,14 +69,16 @@ class ModelTrainingTab extends React.Component {
               Model Training
             </Typography>
             <Typography variant="subtitle1">
-              Use your datasets and start training models now!
+              {this.state.is_staff
+                ? 'Use your datasets and start training models now!'
+                : 'You can view the models that are trained on the uploaded datasets!'}
             </Typography>
           </Box>
-          <Button variant="outlined" onClick={this.handleOpenModal}>
+          <Button variant="outlined" onClick={this.handleOpenModal} hidden={!this.state.is_staff}>
             Train New Model
           </Button>
         </Box>
-        <TrainedModelsTable />
+        <TrainedModelsTable projectId={this.props.projectId} />
         <Snackbar
           open={this.state.success}
           autoHideDuration={6000}
@@ -85,6 +89,7 @@ class ModelTrainingTab extends React.Component {
           </Alert>
         </Snackbar>
         <TrainModelModal
+          projectId={this.props.projectId}
           open={this.state.open}
           handleClose={this.handleCloseModal}
           showAlert={this.showAlert}

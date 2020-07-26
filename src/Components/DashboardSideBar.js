@@ -79,10 +79,11 @@ class Sidebar extends React.Component {
         {
           path: '/Dashboard/settings',
           name: 'Settings',
-          key: 2,
+          key: 3,
           icon: <SettingsIcon />
         }
-      ]
+      ],
+      is_staff: store.getState().currentUser.is_staff
     };
   }
 
@@ -118,17 +119,31 @@ class Sidebar extends React.Component {
         </Row>
         {/* items = just array AND map() loops thru that array AND item is param of that loop */
         items.map(item => {
+          let return_item =
+            !this.state.is_staff &&
+            (item.name === 'Users' || item.name === 'Models') ? (
+              ''
+            ) : (
+              <NavItem
+                path={item.path}
+                name={item.name}
+                icon={item.icon}
+                onItemClick={this.onItemClick}
+                active={item.path === activePath}
+                key={item.key}
+              />
+            );
           /* Return however many NavItems in array to be rendered */
-          return (
-            <NavItem
-              path={item.path}
-              name={item.name}
-              icon={item.icon}
-              onItemClick={this.onItemClick}
-              active={item.path === activePath}
-              key={item.key}
-            />
-          );
+          return return_item;
+          // <NavItem
+          //   path={item.path}
+          //   name={item.name}
+          //   icon={item.icon}
+          //   onItemClick={this.onItemClick}
+          //   active={item.path === activePath}
+          //   key={item.key}
+
+          // />
         })}
         <LogoutContainer />
       </StyledSideNav>

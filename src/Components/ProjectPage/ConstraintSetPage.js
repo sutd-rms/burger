@@ -5,6 +5,7 @@ import Box from '@material-ui/core/Box';
 import DashboardTopNav from './../DashboardTopNav';
 import ConstraintSetDetailsTable from './ConstraintSetDetailsTable';
 import AddConstraintModal from './AddConstraintModal';
+import axios from 'axios';
 
 const styles = theme => ({
   root: {},
@@ -13,12 +14,14 @@ const styles = theme => ({
   }
 });
 
+const token = localStorage.getItem('token');
+
 class ConstraintSetPage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       id: '',
-      title: 'Constraint Set ' + this.props.match.params.constraintsetId,
+      title: '',
       open: false
     };
     this.handleOpenAddConstraintModal = this.handleOpenAddConstraintModal.bind(
@@ -28,8 +31,6 @@ class ConstraintSetPage extends React.Component {
       this
     );
   }
-
-  componentDidMount() {}
 
   handleOpenAddConstraintModal(event) {
     this.setState({
@@ -41,6 +42,29 @@ class ConstraintSetPage extends React.Component {
     this.setState({
       open: false
     });
+  }
+
+  componentDidMount() {
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/constraintsets/${this.props.match.params.constraintsetId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        console.log(res.data);
+        this.setState({
+          title: res.data.name
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
@@ -62,11 +86,13 @@ class ConstraintSetPage extends React.Component {
             Add Constraint
           </Button>
         </Box>
-        <ConstraintSetDetailsTable />
+        <ConstraintSetDetailsTable
+          constraintSetID={this.props.match.params.constraintsetId}
+        />
         <AddConstraintModal
           open={this.state.open}
           handleClose={this.handleCloseAddConstraintModal}
-          showAlert={this.showConstraintAlert}
+          constraintSetID={this.props.match.params.constraintsetId}
         />
       </div>
     );

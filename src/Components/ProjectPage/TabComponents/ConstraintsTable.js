@@ -3,7 +3,6 @@ import { forwardRef } from 'react';
 import MaterialTable from 'material-table';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
-
 import AddBox from '@material-ui/icons/AddBox';
 import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import Check from '@material-ui/icons/Check';
@@ -20,7 +19,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import PageviewIcon from '@material-ui/icons/Pageview';
-import ConstraintModal from './ConstraintModal';
+import axios from 'axios';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -46,43 +45,42 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
+const token = localStorage.getItem('token');
+
 class ConstraintsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedRowId: '',
-      columns: [
-        { title: 'Name', field: 'name' },
-        {
-          title: 'Date Created',
-          field: 'dateCreated',
-          type: 'datetime',
-          filtering: false
-        }
-      ],
-      data: [
-        {
-          id: '1',
-          name: 'Sample Constraint 1',
-          dateCreated: '2019-12-20 08:30:45.687'
-        },
-        {
-          id: '2',
-          name: 'Testing Constraints',
-          dateCreated: '2020-02-20 10:20:46.657'
-        },
-        {
-          id: '3',
-          name: 'McDonalds Aussie',
-          dateCreated: '2020-05-20 20:30:46.657'
-        },
-        {
-          id: '4',
-          name: 'Sample Constraint 2',
-          dateCreated: '2020-06-01 20:46:46.657'
-        }
-      ]
+      columns: [{ title: 'Name', field: 'name' }],
+      data: [],
+      successDelete: false,
+      error: false
     };
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        this.setState({
+          data: res.data
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   render() {
@@ -122,7 +120,58 @@ class ConstraintsTable extends React.Component {
               }
             }
           ]}
+          editable={{
+            onRowDelete: oldData =>
+              new Promise((resolve, reject) => {
+                setTimeout(() => {
+                  axios
+                    .delete(
+                      `https://secret-sauce.azurewebsites.net/portal/constraintsets/${oldData.id}`,
+                      {
+                        headers: {
+                          'Content-Type': 'application/json',
+                          Accept: 'application/json',
+                          Authorization: `Token ${token}`
+                        }
+                      }
+                    )
+                    .then(res => {
+                      if (res.status === 204) {
+                        const dataDelete = [...this.state.data];
+                        const index = oldData.tableData.id;
+                        dataDelete.splice(index, 1);
+                        this.setState({
+                          data: [...dataDelete],
+                          successDelete: true
+                        });
+                      }
+                    })
+                    .catch(err => {
+                      this.setState({ error: true });
+                    });
+                  resolve();
+                }, 1000);
+              })
+          }}
         />
+        <Snackbar
+          open={this.state.successDelete}
+          autoHideDuration={6000}
+          onClose={this.handleCloseDeleteSnackbar}
+        >
+          <Alert onClose={this.handleCloseDeleteSnackbar} severity="success">
+            Constraint deleted successfully!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          autoHideDuration={6000}
+          onClose={this.handleCloseErrorSnackbar}
+        >
+          <Alert onClose={this.handleCloseErrorSnackbar} severity="error">
+            An error occured! Please try again!
+          </Alert>
+        </Snackbar>
       </div>
     );
   }

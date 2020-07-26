@@ -9,6 +9,7 @@ import OptimisationTable from './OptimisationTable';
 import ConstraintsTable from './ConstraintsTable';
 import OptimisationModal from './OptimisationModal';
 import ConstraintModal from './ConstraintModal';
+import { store } from '../../../redux/store';
 
 const styles = theme => ({
   root: {},
@@ -28,7 +29,8 @@ class OptimisationTab extends React.Component {
       openOptimisation: false,
       openConstraint: false,
       optimisationSuccess: false,
-      constraintSuccess: false
+      constraintSuccess: false,
+      is_staff: store.getState().currentUser.is_staff
     };
 
     this.handleOpenOptimisationModal = this.handleOpenOptimisationModal.bind(
@@ -120,14 +122,16 @@ class OptimisationTab extends React.Component {
               Optimisation
             </Typography>
             <Typography variant="subtitle1">
-              Create constraints or run optimisations to power up your pricing
-              analytics
+              {this.state.is_staff
+                ? 'Create constraints or run optimisations to power up your pricing analytics'
+                : 'Create constraints or view the optimisations results to power up your pricing analytics'}
             </Typography>
           </Box>
           <Box>
             <Button
               variant="outlined"
               onClick={this.handleOpenOptimisationModal}
+              hidden={!this.state.is_staff}
             >
               Run Optimisation
             </Button>
@@ -142,7 +146,7 @@ class OptimisationTab extends React.Component {
         </Box>
         <OptimisationTable />
         <Box mt={5}>
-          <ConstraintsTable />
+          <ConstraintsTable projectId={this.props.projectId} />
         </Box>
         <Snackbar
           open={this.state.optimisationSuccess}
@@ -177,6 +181,7 @@ class OptimisationTab extends React.Component {
           open={this.state.openConstraint}
           handleClose={this.handleCloseConstraintModal}
           showAlert={this.showConstraintAlert}
+          projectId={this.props.projectId}
         />
       </Box>
     );
