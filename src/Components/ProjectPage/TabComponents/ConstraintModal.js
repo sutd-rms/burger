@@ -29,6 +29,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import { sentenceCase } from 'change-case';
+import axios from 'axios';
 
 const styles = theme => ({
   modal: {
@@ -125,7 +127,7 @@ const ItemsFormInput = withStyles(theme => ({
 }))(InputBase);
 
 const InitialConstraintState = {
-  inequality: '=',
+  inequality: 'LT',
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
@@ -137,10 +139,10 @@ const InitialConstraintState = {
 const initialState = {
   name: '',
   activeStep: 0,
-  datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
-  dataset: 'random_csv_file.csv',
-  inequalities: ['=', '<', '<=', '>', '>='],
-  inequality: '=',
+  datasetList: [],
+  dataset: '',
+  inequalities: { '<': 'LT', '>': 'GT', '<=': 'LEQ', '>=': 'GEQ', '=': 'EQ' },
+  inequality: 'LT',
   rhs: '',
   penalty: 'hard',
   penaltyScore: '',
@@ -148,29 +150,14 @@ const initialState = {
   constraintItems: [],
   items: [],
   createConstraintError: false,
-  allitems: [
-    '1102',
-    '1103',
-    '1104',
-    '1105',
-    '1106',
-    '1107',
-    '1108',
-    '3102',
-    '3106',
-    '3109',
-    '4102',
-    '5102',
-    '5602',
-    '5802',
-    '6102',
-    '7102',
-    '8102',
-    '9102',
-    '9202'
-  ]
+  allitems: [],
+  itemMappings: {},
+  categories: [],
+  category: '',
+  currentConstraintSet: ''
 };
 
+const token = localStorage.getItem('token');
 class ConstraintModal extends React.Component {
   constructor(props) {
     super(props);
@@ -192,6 +179,8 @@ class ConstraintModal extends React.Component {
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.addAnotherConstraint = this.addAnotherConstraint.bind(this);
+    this.handleCreateConstraintSet = this.handleCreateConstraintSet.bind(this);
+    this.submitConstraint = this.submitConstraint.bind(this);
   }
 
   handleInputChange(event) {
@@ -243,7 +232,7 @@ class ConstraintModal extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 1 && this.state.name == '') {
+    if (this.state.activeStep == 0 && this.state.dataset == '') {
       return;
     }
     if (this.state.activeStep == 2 && this.state.items.length > 0) {
@@ -251,26 +240,6 @@ class ConstraintModal extends React.Component {
     }
     if (this.state.activeStep == 2 && this.state.items.length <= 0) {
       return;
-    }
-    if (this.state.activeStep == 3) {
-      for (var constraint of this.state.constraintItems) {
-        if (constraint.coefficient == '') {
-          this.setState({
-            createConstraintError: true
-          });
-          return;
-        }
-      }
-      if (
-        this.state.rhs == '' ||
-        this.state.constraintName == '' ||
-        (this.state.penalty == 'soft' && this.state.penaltyScore == '')
-      ) {
-        this.setState({
-          createConstraintError: true
-        });
-        return;
-      }
     }
     this.setState({
       activeStep: this.state.activeStep + 1
@@ -287,7 +256,23 @@ class ConstraintModal extends React.Component {
   }
 
   handleReset(event) {
-    this.setState(initialState);
+    this.setState({
+      name: '',
+      activeStep: 0,
+      dataset: '',
+      inequalities: ['=', '<', '<=', '>', '>='],
+      inequality: '=',
+      rhs: '',
+      penalty: 'hard',
+      penaltyScore: '',
+      constraintName: '',
+      constraintItems: [],
+      items: [],
+      category: this.state.categories[0].id,
+      createConstraintError: false,
+      createConstraintErrorMessage: '',
+      currentConstraintSet: ''
+    });
   }
 
   addAnotherConstraint(event) {
@@ -310,6 +295,174 @@ class ConstraintModal extends React.Component {
     this.handleReset();
   }
 
+  handleCreateConstraintSet(event) {
+    if (this.state.dataset == '' && this.state.name == '') {
+      return;
+    }
+
+    let form = {
+      project: this.props.projectId,
+      data_block: this.state.dataset,
+      name: this.state.name
+    };
+
+    axios
+      .post(
+        'https://secret-sauce.azurewebsites.net/portal/constraintsets/',
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 201) {
+          var itemDict = {};
+
+          res.data.params.forEach(item => {
+            if (item.item_name != null) {
+              itemDict[item.id] = item.item_id + ' - ' + item.item_name;
+            } else {
+              itemDict[item.id] = item.item_id;
+            }
+          });
+
+          this.setState({
+            allitems: res.data.params.map(item => item.id),
+            itemMappings: itemDict,
+            currentConstraintSet: res.data.id
+          });
+          this.setState({
+            activeStep: this.state.activeStep + 1
+          });
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  submitConstraint(event) {
+    if (this.state.activeStep == 3) {
+      for (var constraint of this.state.constraintItems) {
+        if (constraint.coefficient == '') {
+          this.setState({
+            createConstraintError: true
+          });
+          return;
+        }
+      }
+      if (
+        this.state.rhs == '' ||
+        this.state.constraintName == '' ||
+        (this.state.penalty == 'soft' && this.state.penaltyScore == '')
+      ) {
+        this.setState({
+          createConstraintError: true
+        });
+        return;
+      }
+    }
+    let constraintItems = [];
+    this.state.constraintItems.forEach(item => {
+      constraintItems.push({ id: item.item, coefficient: item.coefficient });
+    });
+
+    let form = {
+      constraint_block: this.state.currentConstraintSet,
+      constraint_relationships: constraintItems,
+      name: this.state.constraintName,
+      in_equality: this.state.inequality,
+      rhs_constant: this.state.rhs,
+      penalty: this.state.penalty == 'hard' ? -1 : this.state.penaltyScore,
+      category: this.state.category
+    };
+
+    axios
+      .post(
+        'https://secret-sauce.azurewebsites.net/portal/constraints/',
+        form,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        if (res.status === 201 && res.status) {
+          this.setState({
+            inequalities: {
+              '<': 'LT',
+              '>': 'GT',
+              '<=': 'LEQ',
+              '>=': 'GEQ',
+              '=': 'EQ'
+            },
+            inequality: 'LT',
+            rhs: '',
+            penalty: 'hard',
+            penaltyScore: '',
+            constraintName: '',
+            constraintItems: [],
+            items: [],
+            category: this.state.categories[0].id,
+            createConstraintError: false
+          });
+          this.handleNext(event);
+        }
+      })
+      .catch(err => {
+        this.setState({
+          createConstraintError: false,
+          createConstraintErrorMessage: sentenceCase(
+            err.response.data.non_field_errors[0].toString()
+          )
+        });
+      });
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/datablocks/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        this.setState({
+          datasetList: res.data
+        });
+
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        );
+      })
+      .then(res => {
+        this.setState({
+          categories: res.data,
+          category: res.data[0].id
+        });
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   createConstraintsItemsArray(selectedItems) {
     this.state.constraintItems = [];
     selectedItems.forEach((selectedItem, idx) =>
@@ -324,7 +477,7 @@ class ConstraintModal extends React.Component {
   createConstraintsForm() {
     const { classes } = this.props;
     const listItems = this.state.constraintItems.map((constraint, idx) => [
-      constraint.item,
+      this.state.itemMappings[constraint.item],
       <ItemsFormInput
         name="coefficient"
         type="number"
@@ -378,17 +531,33 @@ class ConstraintModal extends React.Component {
             <Box mt={5}>
               <FormControl required>
                 <InputLabel shrink htmlFor="title-input">
+                  Category
+                </InputLabel>
+                <NativeSelect
+                  name="category"
+                  value={this.state.category}
+                  input={<FormInput />}
+                  onChange={this.handleInputChange}
+                >
+                  {this.state.categories.map(category => (
+                    <option value={category.id}>{category.name}</option>
+                  ))}
+                </NativeSelect>
+              </FormControl>
+            </Box>
+            <Box mt={5}>
+              <FormControl required>
+                <InputLabel shrink htmlFor="title-input">
                   Inequality
                 </InputLabel>
                 <NativeSelect
                   name="inequality"
-                  defaultValue="="
                   value={this.state.inequality}
                   input={<FormInput />}
                   onChange={this.handleInputChange}
                 >
-                  {this.state.inequalities.map(value => (
-                    <option value={value}>{value}</option>
+                  {Object.keys(this.state.inequalities).map(key => (
+                    <option value={this.state.inequalities[key]}>{key}</option>
                   ))}
                 </NativeSelect>
               </FormControl>
@@ -407,37 +576,39 @@ class ConstraintModal extends React.Component {
                 />
               </FormControl>
             </Box>
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  Penalty
-                </InputLabel>
-                <NativeSelect
-                  name="penalty"
-                  defaultValue="hard"
-                  value={this.state.penalty}
-                  input={<FormInput />}
-                  onChange={this.handleInputChange}
-                >
-                  <option value="hard">Hard</option>
-                  <option value="soft">Soft</option>
-                </NativeSelect>
-              </FormControl>
-            </Box>
-            <Box mt={5}>
-              <FormControl>
-                <InputLabel shrink htmlFor="title-input">
-                  Score
-                </InputLabel>
-                <FormInput
-                  id="title-input"
-                  name="penaltyScore"
-                  type="number"
-                  disabled={this.state.penalty == 'soft' ? false : true}
-                  value={this.state.penaltyScore}
-                  onChange={this.handleInputChange}
-                />
-              </FormControl>
+            <Box mt={5} display="flex">
+              <Box>
+                <FormControl required>
+                  <InputLabel shrink htmlFor="title-input">
+                    Penalty
+                  </InputLabel>
+                  <NativeSelect
+                    name="penalty"
+                    defaultValue="hard"
+                    value={this.state.penalty}
+                    input={<FormInput />}
+                    onChange={this.handleInputChange}
+                  >
+                    <option value="hard">Hard</option>
+                    <option value="soft">Soft</option>
+                  </NativeSelect>
+                </FormControl>
+              </Box>
+              <Box ml={5}>
+                <FormControl>
+                  <InputLabel shrink htmlFor="title-input">
+                    Score
+                  </InputLabel>
+                  <FormInput
+                    id="title-input"
+                    name="penaltyScore"
+                    type="number"
+                    disabled={this.state.penalty == 'soft' ? false : true}
+                    value={this.state.penaltyScore}
+                    onChange={this.handleInputChange}
+                  />
+                </FormControl>
+              </Box>
             </Box>
           </Box>
         </Box>
@@ -462,9 +633,9 @@ class ConstraintModal extends React.Component {
               value={this.state.dataset}
               onChange={this.handleInputChange}
             >
-              {this.state.datasetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.datasetList.map(dataset => (
+                <MenuItem value={dataset.id} id={dataset.id} key={dataset.id}>
+                  {dataset.name}
                 </MenuItem>
               ))}
             </Select>
@@ -510,7 +681,9 @@ class ConstraintModal extends React.Component {
                 <Autocomplete
                   multiple
                   options={this.state.allitems}
-                  getOptionLabel={option => option}
+                  getOptionLabel={option =>
+                    this.state.itemMappings[option].toString()
+                  }
                   onChange={this.handleItemsChange}
                   value={this.state.items}
                   renderInput={params => (
@@ -537,6 +710,11 @@ class ConstraintModal extends React.Component {
             {this.state.createConstraintError == false ? null : (
               <Typography variant="subtitle" color="error">
                 Please fill up all required fields
+              </Typography>
+            )}
+            {this.state.createConstraintErrorMessage == '' ? null : (
+              <Typography variant="subtitle" color="error">
+                {this.state.createConstraintErrorMessage}
               </Typography>
             )}
             {this.createConstraintsForm()}
@@ -578,7 +756,7 @@ class ConstraintModal extends React.Component {
               <Button
                 variant="contained"
                 color="primary"
-                onClick={this.handleNext}
+                onClick={this.handleCreateConstraintSet}
               >
                 Create Constraint Set
               </Button>
@@ -631,7 +809,7 @@ class ConstraintModal extends React.Component {
               <Button
                 variant="contained"
                 style={{ backgroundColor: 'green', color: 'white' }}
-                onClick={this.handleNext}
+                onClick={this.submitConstraint}
               >
                 Add Constraint
               </Button>

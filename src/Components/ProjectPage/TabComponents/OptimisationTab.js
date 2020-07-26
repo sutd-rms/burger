@@ -146,7 +146,7 @@ class OptimisationTab extends React.Component {
         </Box>
         <OptimisationTable />
         <Box mt={5}>
-          <ConstraintsTable />
+          <ConstraintsTable projectId={this.props.projectId} />
         </Box>
         <Snackbar
           open={this.state.optimisationSuccess}
@@ -181,6 +181,7 @@ class OptimisationTab extends React.Component {
           open={this.state.openConstraint}
           handleClose={this.handleCloseConstraintModal}
           showAlert={this.showConstraintAlert}
+          projectId={this.props.projectId}
         />
       </Box>
     );

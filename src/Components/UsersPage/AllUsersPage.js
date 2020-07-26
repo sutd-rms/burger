@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardTopNav from './../DashboardTopNav';
 import UsersTable from './UsersTable';
@@ -9,32 +9,56 @@ import Typography from '@material-ui/core/Typography';
 import UserInvitationModal from './UserInvitationModal';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import CompanyTable from './CompanyTable';
+import CompanyCreationModal from './CompanyCreationModal';
+import axios from 'axios';
 
-const useStyles = makeStyles(theme => ({}));
+const useStyles = makeStyles(theme => ({
+  CompanyButton: {
+    marginLeft: 15
+  }
+}));
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
 export default function AllUsersPage(props) {
-  // const classes = useStyles();
+  const classes = useStyles();
+  const token = localStorage.getItem('token');
   const [allUsers, setAllUsers] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openCompany, setOpenCompany] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [successCompany, setSuccessCompany] = useState(false);
 
   let match = useRouteMatch();
 
   const handleCloseSnackbar = e => {
     setSuccess(false);
+    setSuccessCompany(false);
   };
 
   let handleOpenModal = () => {
     setOpen(true);
   };
 
+  let handleOpenCompanyModal = () => {
+    setOpenCompany(true);
+  };
+
   let handleClose = () => {
     setOpen(false);
   };
+
+  let handleCloseCompany = () => {
+    setOpenCompany(false);
+  };
+
+  // let handleOpenCompanyModal = () => {
+  //   console.log('company');
+  // };
+
 
   return (
     <div>
@@ -60,15 +84,29 @@ export default function AllUsersPage(props) {
               <Button variant="outlined" onClick={handleOpenModal}>
                 Invite New User
               </Button>
+              <Button
+                variant="outlined"
+                onClick={handleOpenCompanyModal}
+                className={classes.CompanyButton}
+              >
+                Create New Company
+              </Button>
             </Box>
           </Box>
           <UsersTable data={allUsers} />
+          <br />
+          <CompanyTable/>
         </Route>
       </Switch>
       <UserInvitationModal
         open={open}
         handleClose={handleClose}
         setSuccess={setSuccess}
+      />
+      <CompanyCreationModal
+        open={openCompany}
+        handleClose={handleCloseCompany}
+        setSuccess={setSuccessCompany}
       />
       <Snackbar
         open={success}
@@ -77,6 +115,15 @@ export default function AllUsersPage(props) {
       >
         <Alert onClose={handleCloseSnackbar} severity="success">
           New User created! An invite will be sent out shortly!
+        </Alert>
+      </Snackbar>
+      <Snackbar
+        open={successCompany}
+        autoHideDuration={6000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert onClose={handleCloseSnackbar} severity="success">
+          New Company created!
         </Alert>
       </Snackbar>
     </div>
