@@ -43,7 +43,7 @@ export default function ModelCard(props) {
   };
 
   const handelClick = () => {
-    window.location.href = `${match.path}/${props.projectId}`;
+    window.location.href = `${match.path}/${props.model.id}`;
   };
 
   return (
@@ -51,6 +51,7 @@ export default function ModelCard(props) {
       <Card className={classes.root}>
         <CardActionArea onClick={handelClick}>
           <ModelCardContent
+            model={props.model}
             display={display}
             frontstyle={classes.media}
             backstyle={classes.cardtext}

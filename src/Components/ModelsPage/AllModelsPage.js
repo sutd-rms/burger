@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import {
@@ -13,6 +13,7 @@ import ModelCard from "./ModelCard";
 import FloatingAddButton from "../FloatingAddButton";
 import ModelCreationForm from "./ModelCreationForm";
 import DashboardTopNav from "./../DashboardTopNav";
+import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -33,7 +34,7 @@ function Model() {
 }
 
 export default function AllModelsPage() {
-  const [modelsIdList, setModelsIdList] = useState([0, 1, 2, 3, 4, 5, 6, 7]);
+  const [modelsList, setModelsList] = useState([]);
   const [displayCreationForm, setDisplayCreationForm] = useState(false);
   const classes = useStyles();
   let match = useRouteMatch();
@@ -45,6 +46,22 @@ export default function AllModelsPage() {
   const handleClose = () => {
     setDisplayCreationForm(false);
   };
+
+  useEffect(() => {
+    let token = localStorage.getItem('token');
+    axios
+      .get('https://secret-sauce.azurewebsites.net/portal/predictionmodels/', {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(data => {
+        setModelsList(data.data);
+        console.log(data.data)
+      });
+  }, []);
 
   return (
     <div>
@@ -62,9 +79,9 @@ export default function AllModelsPage() {
           <Grid container spacing={8}>
             <Grid item xs={12}>
               <Grid container justify="flex-start" spacing={7}>
-                {modelsIdList.map(value => (
-                  <Grid key={value} item>
-                    <ModelCard projectId={value} />
+                {modelsList.map(value => (
+                  <Grid key={value.id} item>
+                    <ModelCard model={value} />
                   </Grid>
                 ))}
               </Grid>
