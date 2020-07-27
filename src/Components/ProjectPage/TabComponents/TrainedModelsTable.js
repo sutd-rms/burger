@@ -19,6 +19,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
+import AppsIcon from '@material-ui/icons/Apps';
 import FileDownload from 'js-file-download';
 import axios from 'axios';
 
@@ -168,7 +169,31 @@ class TrainedModelsTable extends React.Component {
                     }
                   )
                   .then(res => {
-                    FileDownload(res.data, 'feature_importances.csv');
+                    FileDownload(
+                      res.data,
+                      `feature_importances_${rowData.name}.csv`
+                    );
+                  });
+              }
+            }),
+            rowData => ({
+              icon: () => <AppsIcon />,
+              tooltip: 'Download Cross Validation Scores',
+              hidden: rowData.cvStatus != 'Completed',
+              onClick: (event, rowData) => {
+                axios
+                  .get(
+                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/cv_score/`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    FileDownload(res.data, `cv_score_${rowData.name}.csv`);
                   });
               }
             })
