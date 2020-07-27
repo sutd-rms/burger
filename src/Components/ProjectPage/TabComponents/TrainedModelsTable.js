@@ -19,6 +19,7 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
+import FileDownload from 'js-file-download';
 import axios from 'axios';
 
 const tableIcons = {
@@ -49,6 +50,7 @@ const styles = theme => ({
   root: {}
 });
 
+const token = localStorage.getItem('token');
 class TrainedModelsTable extends React.Component {
   constructor(props) {
     super(props);
@@ -58,7 +60,8 @@ class TrainedModelsTable extends React.Component {
         { title: 'Name', field: 'name' },
         { title: 'Dataset', field: 'datasetName' },
         { title: 'Model', field: 'model' },
-        { title: 'Status', field: 'available' },
+        { title: 'Training Status', field: 'trainingStatus' },
+        { title: 'Cross Validation Status', field: 'cvStatus' },
         {
           title: 'Date Trained',
           field: 'created',
@@ -87,10 +90,19 @@ class TrainedModelsTable extends React.Component {
 
         res.data.forEach(trainedModel => {
           tableData.push({
+            id: trainedModel.id,
+            cvProgress: trainedModel.cv_progress,
             name: trainedModel.name,
             datasetName: trainedModel.data_block.name,
             model: trainedModel.prediction_model.name,
-            available: trainedModel.available ? 'Ready' : 'Pending',
+            trainingStatus:
+              trainedModel.pct_complete == 100
+                ? 'Completed'
+                : trainedModel.pct_complete + '%',
+            cvStatus:
+              trainedModel.cv_progress == 100
+                ? 'Completed'
+                : trainedModel.cv_progress + '%',
             created: trainedModel.created
           });
         });
@@ -129,24 +141,37 @@ class TrainedModelsTable extends React.Component {
             }
           }}
           actions={[
-            {
+            rowData => ({
               icon: () => <ShowChartIcon />,
               tooltip: 'Download Elasticities',
+              hidden: rowData.cvStatus != 'Completed',
               onClick: (event, rowData) => {
                 const rowIndex = rowData.tableData.id;
                 const downloadLink = this.state.datasetsList[rowIndex].upload;
                 // window.open(downloadLink);
               }
-            },
-            {
+            }),
+            rowData => ({
               icon: () => <GraphicEqIcon />,
               tooltip: 'Download Feature Importance Sheet',
+              hidden: rowData.cvStatus != 'Completed',
               onClick: (event, rowData) => {
-                const rowIndex = rowData.tableData.id;
-                const datasetId = this.state.datasetsList[rowIndex].id;
-                // window.open(`dataset/${datasetId}`);
+                axios
+                  .get(
+                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/feature_importance/`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    FileDownload(res.data, 'feature_importances.csv');
+                  });
               }
-            }
+            })
           ]}
         />
       </div>
