@@ -20,6 +20,8 @@ import ViewColumn from '@material-ui/icons/ViewColumn';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
 import AppsIcon from '@material-ui/icons/Apps';
+import AdjustIcon from '@material-ui/icons/Adjust';
+import WhatIfAnalysisModal from './WhatIfAnalysisModal.js';
 import FileDownload from 'js-file-download';
 import axios from 'axios';
 
@@ -57,6 +59,9 @@ class TrainedModelsTable extends React.Component {
     super(props);
     this.state = {
       selectedRowId: '',
+      whatifRow: '',
+      open: false,
+      datasetId: '',
       columns: [
         { title: 'Name', field: 'name' },
         { title: 'Dataset', field: 'datasetName' },
@@ -72,6 +77,14 @@ class TrainedModelsTable extends React.Component {
       ],
       data: []
     };
+
+    this.handleClose = this.handleClose.bind(this);
+  }
+
+  handleClose(event) {
+    this.setState({
+      open: false
+    });
   }
 
   componentDidMount() {
@@ -95,6 +108,7 @@ class TrainedModelsTable extends React.Component {
             cvProgress: trainedModel.cv_progress,
             name: trainedModel.name,
             datasetName: trainedModel.data_block.name,
+            datasetId: trainedModel.data_block.id,
             model: trainedModel.prediction_model.name,
             trainingStatus:
               trainedModel.pct_complete == 100
@@ -196,8 +210,25 @@ class TrainedModelsTable extends React.Component {
                     FileDownload(res.data, `cv_score_${rowData.name}.csv`);
                   });
               }
+            }),
+            rowData => ({
+              icon: () => <AdjustIcon />,
+              tooltip: 'What-if Analysis',
+              onClick: (event, rowData) => {
+                this.setState({
+                  open: true,
+                  whatifRow: rowData.id,
+                  datasetId: rowData.datasetId
+                });
+              }
             })
           ]}
+        />
+        <WhatIfAnalysisModal
+          row={this.state.whatifRow}
+          open={this.state.open}
+          handleClose={this.handleCloseModal}
+          datasetId={this.state.datasetId}
         />
       </div>
     );
