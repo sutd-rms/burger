@@ -114,14 +114,18 @@ class Login extends React.Component {
                     </InputGroup.Append>
                   </InputGroup>
                 </Form.Group>
-                <Form.Group>
+                {/* <Form.Group>
                   <Form.Check
                     name="isRemember"
                     label="Remember me"
                     onChange={this.handleInputChange}
                   />
-                </Form.Group>
-                <Button variant="dark" type="submit">
+                </Form.Group> */}
+                <Button
+                  variant="dark"
+                  type="submit"
+                  style={{ marginTop: '10px' }}
+                >
                   SIGN IN
                 </Button>
               </Form>
