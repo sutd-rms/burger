@@ -159,6 +159,14 @@ class OptimisationModal extends React.Component {
 
   handleSubmit(event) {
     //Make POST request here
+    if (
+      this.state.objective == '' ||
+      this.state.population == '' ||
+      this.state.maxEpoch == ''
+    ) {
+      return;
+    }
+
     this.props.handleClose();
     this.props.showAlert();
     this.handleReset();
