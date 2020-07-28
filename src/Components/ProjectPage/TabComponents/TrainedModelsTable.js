@@ -110,6 +110,8 @@ class TrainedModelsTable extends React.Component {
             datasetName: trainedModel.data_block.name,
             datasetId: trainedModel.data_block.id,
             model: trainedModel.prediction_model.name,
+            fiDone: trainedModel.fi_done,
+            eeDone: trainedModel.ee_done,
             trainingStatus:
               trainedModel.pct_complete == 100
                 ? 'Completed'
@@ -158,18 +160,33 @@ class TrainedModelsTable extends React.Component {
           actions={[
             rowData => ({
               icon: () => <ShowChartIcon />,
-              tooltip: 'Download Elasticities',
-              hidden: rowData.cvStatus != 'Completed',
+              tooltip: rowData.eeDone
+                ? 'Download Elasticities'
+                : 'Not Available',
+              disabled: !rowData.eeDone,
               onClick: (event, rowData) => {
-                const rowIndex = rowData.tableData.id;
-                const downloadLink = this.state.datasetsList[rowIndex].upload;
-                // window.open(downloadLink);
+                axios
+                  .get(
+                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/elasticity/`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    FileDownload(res.data, `elasticity_${rowData.name}.csv`);
+                  });
               }
             }),
             rowData => ({
               icon: () => <GraphicEqIcon />,
-              tooltip: 'Download Feature Importance Sheet',
-              hidden: rowData.cvStatus != 'Completed',
+              tooltip: rowData.fiDone
+                ? 'Download Feature Importance Sheet'
+                : 'Not Available',
+              disabled: !rowData.fiDone,
               onClick: (event, rowData) => {
                 axios
                   .get(
@@ -192,8 +209,11 @@ class TrainedModelsTable extends React.Component {
             }),
             rowData => ({
               icon: () => <AppsIcon />,
-              tooltip: 'Download Cross Validation Scores',
-              hidden: rowData.cvStatus != 'Completed',
+              tooltip:
+                rowData.cvStatus == 'Completed'
+                  ? 'Download Cross Validation Scores'
+                  : 'Not Available',
+              disabled: rowData.cvStatus != 'Completed',
               onClick: (event, rowData) => {
                 axios
                   .get(
@@ -213,7 +233,11 @@ class TrainedModelsTable extends React.Component {
             }),
             rowData => ({
               icon: () => <AdjustIcon />,
-              tooltip: 'What-if Analysis',
+              tooltip:
+                rowData.cvStatus == 'Completed'
+                  ? 'What-if Analysis'
+                  : 'Not Available',
+              disabled: rowData.cvStatus != 'Completed',
               onClick: (event, rowData) => {
                 this.setState({
                   open: true,
