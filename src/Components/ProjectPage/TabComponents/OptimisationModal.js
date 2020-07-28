@@ -96,8 +96,9 @@ class OptimisationModal extends React.Component {
       constraintset: '',
       population: '',
       maxEpoch: '',
-      objectiveList: ['Max Profit', 'Max Revenue'],
-      objective: 'Max Profit'
+      objectiveList: ['Max Revenue'],
+      objective: 'Max Revenue',
+      costFileUploaded: null
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -106,6 +107,7 @@ class OptimisationModal extends React.Component {
     this.handleReset = this.handleReset.bind(this);
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   handleInputChange(event) {
@@ -206,6 +208,26 @@ class OptimisationModal extends React.Component {
         this.setState({
           constraintsetList: constraintSets,
           constraintsetListMapping: constraintSetsMappings
+        });
+      });
+
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        this.setState({
+          costFileUploaded: res.data.cost_sheet ? true : false,
+          objectiveList: res.data.cost_sheet
+            ? ['Max Revenue', 'Max Profit']
+            : ['Max Revenue']
         });
       });
   }
@@ -359,21 +381,26 @@ class OptimisationModal extends React.Component {
                   ))}
                 </Stepper>
                 <div>
-                  {this.state.activeStep === steps.length ? (
-                    <div className={classes.submitSection}>
-                      <Button
-                        onClick={this.handleReset}
-                        className={classes.backButton}
-                      >
-                        Reset
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={classes.submitButton}
-                        onClick={this.handleSubmit}
-                      >
-                        Optimise
-                      </Button>
+                  {this.state.activeStep === steps.length - 1 ? (
+                    <div>
+                      <Typography className={classes.instructions}>
+                        {this.getStepContent(this.state.activeStep)}
+                      </Typography>
+                      <div className={classes.submitSection}>
+                        <Button
+                          onClick={this.handleReset}
+                          className={classes.backButton}
+                        >
+                          Reset
+                        </Button>
+                        <Button
+                          variant="contained"
+                          className={classes.submitButton}
+                          onClick={this.handleSubmit}
+                        >
+                          Optimise
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     <div>
