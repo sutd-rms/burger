@@ -235,10 +235,10 @@ class TrainedModelsTable extends React.Component {
             rowData => ({
               icon: () => <AdjustIcon />,
               tooltip:
-                rowData.cvStatus == 'Completed'
+                rowData.trainingStatus == 'Completed'
                   ? 'What-if Analysis'
                   : 'Not Available',
-              disabled: rowData.cvStatus != 'Completed',
+              disabled: rowData.trainingStatus != 'Completed',
               onClick: (event, rowData) => {
                 this.setState({
                   open: true,
