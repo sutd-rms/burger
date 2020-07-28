@@ -50,7 +50,7 @@ export default class LogoutContainer extends React.Component {
   render() {
     return (
       <StyledContainer>
-        <Link onClick={this.handleClick}>
+        <Link to="/" onClick={this.handleClick}>
           <div>
             <ExitToAppIcon />
             Sign Out

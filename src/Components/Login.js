@@ -71,7 +71,7 @@ class Login extends React.Component {
               <Figure>
                 <Figure.Image alt="171x180" src="/rms_logo.jpg" />
               </Figure>
-              <p class="text-danger">{this.state.errorMessage}</p>
+              <p className="text-danger">{this.state.errorMessage}</p>
               <Form className="my-3" onSubmit={this.handleSubmit}>
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label>EMAIL</Form.Label>
@@ -129,8 +129,8 @@ class Login extends React.Component {
                   SIGN IN
                 </Button>
               </Form>
-              <p class="mt-3">
-                <a href="/password-reset" class="text-dark">
+              <p className="mt-3">
+                <a href="/password-reset" className="text-dark">
                   Forgot Password?
                 </a>
               </p>
