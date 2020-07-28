@@ -9,7 +9,6 @@ import FormControl from '@material-ui/core/FormControl';
 import InputBase from '@material-ui/core/InputBase';
 import InputLabel from '@material-ui/core/InputLabel';
 import Box from '@material-ui/core/Box';
-import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
@@ -61,10 +60,6 @@ const ErrorList = ({ list }) => (
     ))}
   </ul>
 );
-
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
 
 class ChangePasswordModal extends React.Component {
   constructor(props) {
@@ -138,14 +133,11 @@ class ChangePasswordModal extends React.Component {
         console.log(err.response.data);
         let errorList = [];
         for (var item in err.response.data) {
-          if (item != 'status_code') {
+          if (item !== 'status_code') {
             errorList = [...errorList, ...err.response.data[item]];
           }
         }
-        // console.log(errorList)
         this.setState({
-          // errorMessage: errorList,
-          // error: true,
           currentPassword: '',
           newPassword: '',
           reNewPassword: ''
