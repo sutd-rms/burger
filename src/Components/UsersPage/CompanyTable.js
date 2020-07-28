@@ -46,7 +46,6 @@ const tableIcons = {
   ViewColumn: forwardRef((props, ref) => <ViewColumn {...props} ref={ref} />)
 };
 
-
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
@@ -56,11 +55,8 @@ export default function CompanyTable(props) {
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
 
-
   const [state, setState] = React.useState({
-    columns: [
-      { title: 'Company Name', field: 'name' },
-    ],
+    columns: [{ title: 'Company Name', field: 'name' }],
     data: props.data
   });
 
@@ -73,16 +69,18 @@ export default function CompanyTable(props) {
           Authorization: `Token ${token}`
         }
       })
-      .then(res => setState(prevState => {
-        const data = res.data;
-        return { ...prevState, data };
-      }));
-  }, []);
+      .then(res =>
+        setState(prevState => {
+          const data = res.data;
+          return { ...prevState, data };
+        })
+      );
+  }, [token]);
 
   return (
     <div>
       <MaterialTable
-        title=""
+        title="Company Table"
         columns={state.columns}
         data={state.data}
         icons={tableIcons}
@@ -99,7 +97,7 @@ export default function CompanyTable(props) {
               selectedRow === rowData.tableData.id ? '#EEE' : '#FFF'
           }),
           headerStyle: {
-            backgroundColor: '#184085',
+            backgroundColor: 'grey',
             color: '#FFF'
           }
         }}

@@ -87,32 +87,32 @@ class ProjectDetails extends React.Component {
             >
               <Tab
                 label="Overview"
-                disableRipple="true"
+                disableRipple={true}
                 className={classes.disableFocus}
                 {...a11yProps(0)}
               />
               <Tab
                 label="Datasets"
-                disableRipple="true"
+                disableRipple={true}
                 className={classes.disableFocus}
                 {...a11yProps(1)}
               />
-                <Tab
-                  label="Train Models"
-                  disableRipple="true"
-                  className={classes.disableFocus}
-                  {...a11yProps(2)}
-                />
-                <Tab
-                  label="Price Optimisation"
-                  disableRipple="true"
-                  className={classes.disableFocus}
-                  {...a11yProps(3)}
-                />
+              <Tab
+                label="Train Models"
+                disableRipple={true}
+                className={classes.disableFocus}
+                {...a11yProps(2)}
+              />
+              <Tab
+                label="Price Optimisation"
+                disableRipple={true}
+                className={classes.disableFocus}
+                {...a11yProps(3)}
+              />
               {this.state.is_staff ? (
                 <Tab
                   label="Users"
-                  disableRipple="true"
+                  disableRipple={true}
                   className={classes.disableFocus}
                   {...a11yProps(4)}
                 />
@@ -156,11 +156,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }

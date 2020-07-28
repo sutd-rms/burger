@@ -28,7 +28,6 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-
 export default function CompanyCreationModal(props) {
   const token = localStorage.getItem('token');
   const classes = useStyles();
@@ -38,7 +37,6 @@ export default function CompanyCreationModal(props) {
   const [emptyField, setEmptyField] = useState(false);
   const [error, setError] = useState('');
   const [creationError, setCreationError] = useState(false);
-
 
   const handleChange = event => {
     setName(event.target.value);
@@ -56,26 +54,30 @@ export default function CompanyCreationModal(props) {
     if (name) {
       let newCompany = {
         name: name
-      }
+      };
       axios
-        .post('https://secret-sauce.azurewebsites.net/auth/company/', newCompany, {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
+        .post(
+          'https://secret-sauce.azurewebsites.net/auth/company/',
+          newCompany,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
           }
-        })
+        )
         .then(res => {
-          if(res.status === 201){
+          if (res.status === 201) {
             props.setSuccess(true);
             window.location.reload();
           }
         })
         .catch(err => {
-          let errorString = "";
-          for(var item in err.response.data) {
-            errorString = errorString + err.response.data[item] + "\n "
-         }
+          let errorString = '';
+          for (var item in err.response.data) {
+            errorString = errorString + err.response.data[item] + '\n ';
+          }
           setError(errorString);
           console.log(errorString);
           setCreationError(true);
@@ -87,7 +89,7 @@ export default function CompanyCreationModal(props) {
 
   const body = (
     <div className={classes.paper}>
-      <h2 id="simple-modal-title">Invite a New User</h2>
+      <h2 id="simple-modal-title">Create Company</h2>
       <p id="simple-modal-description">
         Provide a company name to create new company.
       </p>
@@ -130,7 +132,7 @@ export default function CompanyCreationModal(props) {
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="error">
-        Company of Email could not be empty!
+          Company of Email could not be empty!
         </Alert>
       </Snackbar>
       <Snackbar
@@ -139,7 +141,7 @@ export default function CompanyCreationModal(props) {
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="error">
-        {error}
+          {error}
         </Alert>
       </Snackbar>
     </div>

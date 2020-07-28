@@ -71,7 +71,7 @@ class Login extends React.Component {
               <Figure>
                 <Figure.Image alt="171x180" src="/rms_logo.jpg" />
               </Figure>
-              <p class="text-danger">{this.state.errorMessage}</p>
+              <p className="text-danger">{this.state.errorMessage}</p>
               <Form className="my-3" onSubmit={this.handleSubmit}>
                 <Form.Group controlId="exampleForm.ControlInput1">
                   <Form.Label>EMAIL</Form.Label>
@@ -114,19 +114,23 @@ class Login extends React.Component {
                     </InputGroup.Append>
                   </InputGroup>
                 </Form.Group>
-                <Form.Group>
+                {/* <Form.Group>
                   <Form.Check
                     name="isRemember"
                     label="Remember me"
                     onChange={this.handleInputChange}
                   />
-                </Form.Group>
-                <Button variant="dark" type="submit">
+                </Form.Group> */}
+                <Button
+                  variant="dark"
+                  type="submit"
+                  style={{ marginTop: '10px' }}
+                >
                   SIGN IN
                 </Button>
               </Form>
-              <p class="mt-3">
-                <a href="/password-reset" class="text-dark">
+              <p className="mt-3">
+                <a href="/password-reset" className="text-dark">
                   Forgot Password?
                 </a>
               </p>

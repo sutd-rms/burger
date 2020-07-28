@@ -211,7 +211,7 @@ export default function UsersTable(props) {
   return (
     <div>
       <MaterialTable
-        title=""
+        title="User Table"
         columns={state.columns}
         data={state.data}
         icons={tableIcons}

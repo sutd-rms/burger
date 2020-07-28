@@ -289,12 +289,19 @@ class AddConstraintModal extends React.Component {
         }
       })
       .catch(err => {
-        this.setState({
-          createConstraintError: false,
-          createConstraintErrorMessage: sentenceCase(
-            err.response.data.non_field_errors[0].toString()
-          )
-        });
+        if (err.response.data == 'Conflict exists') {
+          this.setState({
+            createConstraintError: false,
+            createConstraintErrorMessage: err.response.data
+          });
+        } else {
+          this.setState({
+            createConstraintError: false,
+            createConstraintErrorMessage: sentenceCase(
+              err.response.data.non_field_errors[0].toString()
+            )
+          });
+        }
       });
   }
 
