@@ -7,7 +7,6 @@ import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
@@ -15,7 +14,8 @@ import Dropzone from 'react-dropzone';
 import CloudUploadIcon from '@material-ui/icons/CloudUpload';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
 import AttachmentIcon from '@material-ui/icons/Attachment';
-import { Box } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import axios from 'axios';
 
 const styles = theme => ({
   modal: {
@@ -58,30 +58,22 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return [
-    'Trained Model Selection',
-    'Dataset Selection',
-    'Cost Upload',
-    'Constraint Selection'
-  ];
+  return ['Trained Model Selection', 'Cost Upload', 'Constraint Selection'];
 }
+
+const token = localStorage.getItem('token');
 
 class OptimisationModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       activeStep: 0,
-      modelList: ['Test Model', 'Test Model 2', 'Test Model2', 'ABC Test'],
-      model: 'Test Model',
-      datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
-      dataset: 'random_csv_file.csv',
-      constraintsetList: [
-        'Sample Constraint 1',
-        'Testing Constraints',
-        'McDonalds Aussie',
-        'Sample Constraint 2'
-      ],
-      constraintset: 'Sample Constraint 1',
+      modelList: [],
+      modelListMapping: {},
+      model: '',
+      constraintsetList: [],
+      constraintsetListMapping: {},
+      constraintset: '',
       name: null,
       file: []
     };
@@ -112,6 +104,12 @@ class OptimisationModal extends React.Component {
   }
 
   handleNext(event) {
+    if (this.state.activeStep == 0 && this.state.model == '') {
+      return;
+    }
+    if (this.state.activeStep == 2 && this.state.constraintset == '') {
+      return;
+    }
     this.setState({
       activeStep: this.state.activeStep + 1
     });
@@ -134,6 +132,54 @@ class OptimisationModal extends React.Component {
     this.props.handleClose();
     this.props.showAlert();
     this.handleReset();
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        var trainedModels = [];
+        var trainedModelsMappings = {};
+
+        res.data.forEach(trainedModel => {
+          trainedModels.push(trainedModel.id);
+          trainedModelsMappings[trainedModel.id] = trainedModel.name;
+        });
+        this.setState({
+          modelList: trainedModels,
+          modelListMapping: trainedModelsMappings
+        });
+      });
+
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        var constraintSets = [];
+        var constraintSetsMappings = {};
+
+        res.data.forEach(set => {
+          constraintSets.push(set.id);
+          constraintSetsMappings[set.id] = set.name;
+        });
+        this.setState({
+          constraintsetList: constraintSets,
+          constraintsetListMapping: constraintSetsMappings
+        });
+      });
   }
 
   getStepContent(stepIndex) {
@@ -163,39 +209,15 @@ class OptimisationModal extends React.Component {
               value={this.state.model}
               onChange={this.handleInputChange}
             >
-              {this.state.modelList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.modelList.map(model => (
+                <MenuItem value={model} id={model} key={model}>
+                  {this.state.modelListMapping[model]}
                 </MenuItem>
               ))}
             </Select>
           </div>
         );
       case 1:
-        return (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Select a Dataset:
-            </Typography>
-            <Select
-              labelId="dataset"
-              id="dataset"
-              key="dataset"
-              name="dataset"
-              fullWidth
-              value={this.state.dataset}
-              onChange={this.handleInputChange}
-            >
-              {this.state.datasetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-        );
-
-      case 2:
         return (
           <div>
             <Typography variant="h6" gutterBottom>
@@ -252,7 +274,7 @@ class OptimisationModal extends React.Component {
           </div>
         );
 
-      case 3:
+      case 2:
         return (
           <div>
             <Typography variant="h6" gutterBottom>
@@ -267,9 +289,13 @@ class OptimisationModal extends React.Component {
               value={this.state.constraintset}
               onChange={this.handleInputChange}
             >
-              {this.state.constraintsetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.constraintsetList.map(constraintset => (
+                <MenuItem
+                  value={constraintset}
+                  id={constraintset}
+                  key={constraintset}
+                >
+                  {this.state.constraintsetListMapping[constraintset]}
                 </MenuItem>
               ))}
             </Select>

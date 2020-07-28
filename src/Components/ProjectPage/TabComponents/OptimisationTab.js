@@ -176,6 +176,7 @@ class OptimisationTab extends React.Component {
           open={this.state.openOptimisation}
           handleClose={this.handleCloseOptimisationModal}
           showAlert={this.showOptimisationAlert}
+          projectId={this.props.projectId}
         />
         <ConstraintModal
           open={this.state.openConstraint}
