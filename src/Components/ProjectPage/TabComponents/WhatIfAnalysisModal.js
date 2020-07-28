@@ -23,7 +23,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import { sentenceCase } from 'change-case';
+import FileDownload from 'js-file-download';
 import axios from 'axios';
 
 const token = localStorage.getItem('token');
@@ -112,7 +112,9 @@ const initialState = {
   items: [],
   createItemError: false,
   allitems: [],
-  itemMappings: {}
+  itemMappings: {},
+  isLoaded: false,
+  finalPrices: {}
 };
 
 class WhatIfAnalysisModal extends React.Component {
@@ -188,16 +190,15 @@ class WhatIfAnalysisModal extends React.Component {
       }
     }
 
-    let selectedItems = [];
-    this.state.selectedItems.forEach(item => {
-      selectedItems.push({ id: item.item, price: item.price });
-    });
+    let form = this.state.finalPrices;
 
-    let form = {};
+    this.state.selectedItems.forEach(item => {
+      form['prices'][item.item] = parseFloat(item.price);
+    });
 
     axios
       .post(
-        'https://secret-sauce.azurewebsites.net/portal/constraints/',
+        `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${this.props.trainedModelId}/whatif/`,
         form,
         {
           headers: {
@@ -208,17 +209,16 @@ class WhatIfAnalysisModal extends React.Component {
         }
       )
       .then(res => {
-        if (res.status === 201 && res.status) {
-          this.handleReset();
-          this.handleNext(event);
+        if (res.status === 200 && res.status) {
+          this.handleClose();
+          FileDownload(res.data, `what_if_${this.props.trainedModelName}.csv`);
         }
       })
       .catch(err => {
+        this.props.handleError();
+        this.handleClose();
         this.setState({
-          createItemError: false,
-          createItemErrorMessage: sentenceCase(
-            err.response.data.non_field_errors[0].toString()
-          )
+          createItemError: false
         });
       });
   }
@@ -237,20 +237,22 @@ class WhatIfAnalysisModal extends React.Component {
       selectedItems: [],
       items: [],
       createItemError: false,
-      createItemErrorMessage: ''
+      createItemErrorMessage: '',
+      finalPrices: {}
     });
   }
 
   handleClose(event) {
     this.handleReset();
     this.setState({
-      activeStep: 0
+      activeStep: 0,
+      isLoaded: false
     });
     this.props.handleClose();
   }
 
   componentDidUpdate() {
-    if (this.props.open == true) {
+    if (this.props.open == true && this.state.isLoaded == false) {
       axios
         .get(
           `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.datasetId}`,
@@ -278,6 +280,25 @@ class WhatIfAnalysisModal extends React.Component {
             itemMappings: itemDict
           });
         });
+
+      axios
+        .get(
+          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.datasetId}/average_prices`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            }
+          }
+        )
+        .then(res => {
+          var priceDict = {};
+          priceDict['prices'] = res.data;
+          this.setState({ finalPrices: priceDict });
+        });
+
+      this.setState({ isLoaded: true });
     }
   }
 

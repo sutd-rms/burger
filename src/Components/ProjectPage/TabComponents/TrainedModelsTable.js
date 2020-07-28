@@ -60,6 +60,7 @@ class TrainedModelsTable extends React.Component {
     this.state = {
       selectedRowId: '',
       whatifRow: '',
+      whatifRowName: '',
       open: false,
       datasetId: '',
       columns: [
@@ -242,6 +243,7 @@ class TrainedModelsTable extends React.Component {
                 this.setState({
                   open: true,
                   whatifRow: rowData.id,
+                  whatifRowName: rowData.name,
                   datasetId: rowData.datasetId
                 });
               }
@@ -249,9 +251,11 @@ class TrainedModelsTable extends React.Component {
           ]}
         />
         <WhatIfAnalysisModal
-          row={this.state.whatifRow}
+          trainedModelId={this.state.whatifRow}
+          trainedModelName={this.state.whatifRowName}
           open={this.state.open}
           handleClose={this.handleClose}
+          handleError={this.props.handleError}
           datasetId={this.state.datasetId}
         />
       </div>
