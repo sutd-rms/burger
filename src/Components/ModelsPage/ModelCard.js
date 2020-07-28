@@ -1,12 +1,8 @@
 import React from 'react';
-import { useRouteMatch } from 'react-router-dom';
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
-import CardMedia from '@material-ui/core/CardMedia';
 import ModelCardContent from './ModelCardContent';
-
-// import ProjectCardContent from "./ProjectCardContent";
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -29,7 +25,6 @@ const useStyles = makeStyles(theme => ({
 }));
 
 export default function ModelCard(props) {
-  let match = useRouteMatch();
   const classes = useStyles();
 
   const [display, setDisplay] = React.useState(false);

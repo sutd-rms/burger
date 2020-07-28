@@ -117,7 +117,7 @@ class ConstraintSetDetailsTable extends React.Component {
         var processedData = this.state.unprocessedData;
         processedData.forEach(constraint => {
           constraint.category = categories[constraint.category];
-          if (constraint.penalty == '-1') {
+          if (constraint.penalty === '-1') {
             constraint.type = 'Hard';
             constraint.penalty = 'NA';
           } else {

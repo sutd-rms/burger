@@ -108,7 +108,7 @@ export default function ProjectCreationForm(props) {
         .catch(err => {
           let errMsg = '';
           for (var item in err.response.data) {
-            if (item != 'status') {
+            if (item !== 'status') {
               errMsg = errMsg + err.response.data[item][0];
             }
           }

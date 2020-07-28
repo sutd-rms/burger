@@ -79,7 +79,7 @@ class PasswordResetConfirm extends React.Component {
   handleSubmit = event => {
     event.preventDefault();
 
-    if (this.state.password != this.state.passwordConfirm) {
+    if (this.state.password !== this.state.passwordConfirm) {
       this.setState({
         error: true,
         errorMessage: ['Passwords given do not match!'],

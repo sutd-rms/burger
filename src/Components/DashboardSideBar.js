@@ -1,15 +1,9 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Route,
-  Link,
-  withRouter
-} from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import NavItem from './NavItem';
 import LogoutContainer from './LogoutContainer';
 import styled from 'styled-components';
 import { Figure, Image, Col, Row } from 'react-bootstrap';
-import HomeIcon from '@material-ui/icons/Home';
 import FolderIcon from '@material-ui/icons/Folder';
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import PersonIcon from '@material-ui/icons/Person';

@@ -54,13 +54,6 @@ const DialogContent = withStyles(theme => ({
   }
 }))(MuiDialogContent);
 
-const DialogActions = withStyles(theme => ({
-  root: {
-    margin: 0,
-    padding: theme.spacing(1)
-  }
-}))(MuiDialogActions);
-
 export default function ModelCreationForm(props) {
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
@@ -105,7 +98,7 @@ export default function ModelCreationForm(props) {
         .catch(err => {
           let errMsg = '';
           for (var item in err.response.data) {
-            if (item != 'status') {
+            if (item !== 'status') {
               errMsg = errMsg + err.response.data[item][0];
             }
           }

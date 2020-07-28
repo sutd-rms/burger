@@ -101,8 +101,6 @@ class TrainedModelsTable extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     return (
       <div>
         <MaterialTable
@@ -134,7 +132,7 @@ class TrainedModelsTable extends React.Component {
               tooltip: 'Download Elasticities',
               onClick: (event, rowData) => {
                 const rowIndex = rowData.tableData.id;
-                const downloadLink = this.state.datasetsList[rowIndex].upload;
+                // const downloadLink = this.state.datasetsList[rowIndex].upload;
                 // window.open(downloadLink);
               }
             },
@@ -143,7 +141,7 @@ class TrainedModelsTable extends React.Component {
               tooltip: 'Download Feature Importance Sheet',
               onClick: (event, rowData) => {
                 const rowIndex = rowData.tableData.id;
-                const datasetId = this.state.datasetsList[rowIndex].id;
+                // const datasetId = this.state.datasetsList[rowIndex].id;
                 // window.open(`dataset/${datasetId}`);
               }
             }
