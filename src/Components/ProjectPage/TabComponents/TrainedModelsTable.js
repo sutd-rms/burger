@@ -227,7 +227,7 @@ class TrainedModelsTable extends React.Component {
         <WhatIfAnalysisModal
           row={this.state.whatifRow}
           open={this.state.open}
-          handleClose={this.handleCloseModal}
+          handleClose={this.handleClose}
           datasetId={this.state.datasetId}
         />
       </div>

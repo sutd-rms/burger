@@ -8,19 +8,13 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import Tooltip from '@material-ui/core/Tooltip';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import FormControl from '@material-ui/core/FormControl';
 import InputBase from '@material-ui/core/InputBase';
-import InputLabel from '@material-ui/core/InputLabel';
-import NativeSelect from '@material-ui/core/NativeSelect';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -91,22 +85,6 @@ function getSteps() {
   return ['Variable Selection', 'Price Input'];
 }
 
-const FormInput = withStyles(theme => ({
-  root: {
-    'label + &': {
-      marginTop: theme.spacing(3)
-    }
-  },
-
-  input: {
-    position: 'relative',
-    border: '1px solid #ced4da',
-    width: '100%',
-    padding: '10px 12px',
-    transition: theme.transitions.create(['border-color', 'box-shadow'])
-  }
-}))(InputBase);
-
 const ItemsFormInput = withStyles(theme => ({
   root: {
     'label + &': {
@@ -142,7 +120,6 @@ class WhatIfAnalysisModal extends React.Component {
     super(props);
     this.state = initialState;
 
-    this.handleInputChange = this.handleInputChange.bind(this);
     this.handleItemsInputChange = this.handleItemsInputChange.bind(this);
     this.handleItemsChange = this.handleItemsChange.bind(this);
     this.createItemsArray = this.createItemsArray.bind(this);
@@ -153,22 +130,6 @@ class WhatIfAnalysisModal extends React.Component {
     this.getStepContent = this.getStepContent.bind(this);
     this.handleClose = this.handleClose.bind(this);
     this.submitForm = this.submitForm.bind(this);
-  }
-
-  handleInputChange(event) {
-    const target = event.target;
-    const value = target.value;
-    const name = target.name;
-
-    this.setState({
-      [name]: value
-    });
-
-    if (this.state.penalty == 'hard') {
-      this.setState({
-        penaltyScore: ''
-      });
-    }
   }
 
   handleItemsInputChange = idx => event => {
