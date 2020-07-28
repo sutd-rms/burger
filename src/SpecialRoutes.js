@@ -25,3 +25,26 @@ export const DashboardRoute = ({ component: Component, ...rest }) => (
     }}
   />
 );
+
+export const LoginRoute = ({ component: Component, ...rest }) => (
+  <Route
+    {...rest}
+    render={props => {
+      const token = localStorage.getItem('token');
+      const expiry = localStorage.getItem('expiry');
+      const currentTime = new Date().getTime();
+      if (currentTime < expiry && token) {
+        return (
+          <Redirect
+            to={{
+              pathname: '/Dashboard',
+              state: { from: props.location }
+            }}
+          />
+        );
+      } else {
+        return <Component {...props} />;
+      }
+    }}
+  />
+);
