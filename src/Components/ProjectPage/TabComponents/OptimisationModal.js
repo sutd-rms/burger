@@ -10,11 +10,11 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
-import Dropzone from 'react-dropzone';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import AttachmentIcon from '@material-ui/icons/Attachment';
 import Box from '@material-ui/core/Box';
+import FormControl from '@material-ui/core/FormControl';
+import InputBase from '@material-ui/core/InputBase';
+import InputLabel from '@material-ui/core/InputLabel';
+import NativeSelect from '@material-ui/core/NativeSelect';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -58,8 +58,28 @@ const styles = theme => ({
 });
 
 function getSteps() {
-  return ['Trained Model Selection', 'Cost Upload', 'Constraint Selection'];
+  return [
+    'Trained Model Selection',
+    'Constraint Selection',
+    'Parameter Selection'
+  ];
 }
+
+const FormInput = withStyles(theme => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3)
+    }
+  },
+
+  input: {
+    position: 'relative',
+    border: '1px solid #ced4da',
+    width: '100%',
+    padding: '10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow'])
+  }
+}))(InputBase);
 
 const token = localStorage.getItem('token');
 
@@ -74,13 +94,10 @@ class OptimisationModal extends React.Component {
       constraintsetList: [],
       constraintsetListMapping: {},
       constraintset: '',
-      name: null,
-      file: []
-    };
-    this.onDrop = files => {
-      this.setState({
-        file: files
-      });
+      population: '',
+      maxEpoch: '',
+      objectiveList: ['Max Profit', 'Max Revenue'],
+      objective: 'Max Profit'
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -107,7 +124,7 @@ class OptimisationModal extends React.Component {
     if (this.state.activeStep == 0 && this.state.model == '') {
       return;
     }
-    if (this.state.activeStep == 2 && this.state.constraintset == '') {
+    if (this.state.activeStep == 1 && this.state.constraintset == '') {
       return;
     }
     this.setState({
@@ -125,6 +142,17 @@ class OptimisationModal extends React.Component {
     this.setState({
       activeStep: 0
     });
+  }
+
+  handleClose(event) {
+    this.setState({
+      activeStep: 0,
+      model: '',
+      constraintset: '',
+      population: '',
+      maxEpoch: ''
+    });
+    this.props.handleClose();
   }
 
   handleSubmit(event) {
@@ -183,16 +211,6 @@ class OptimisationModal extends React.Component {
   }
 
   getStepContent(stepIndex) {
-    const files = this.state.file.map(file => (
-      <span key={file.name}>
-        <AttachmentIcon />
-        <Box component="span" ml={1} mr={2}>
-          {file.name} - {file.size} bytes
-        </Box>
-        <CheckCircleOutlineIcon style={{ fill: 'green' }} />
-      </span>
-    ));
-
     switch (stepIndex) {
       case 0:
         return (
@@ -217,64 +235,8 @@ class OptimisationModal extends React.Component {
             </Select>
           </div>
         );
-      case 1:
-        return (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Upload cost dataset:
-            </Typography>
-            <div
-              style={{
-                textAlign: 'center',
-                justifyContent: 'center',
-                marginTop: '20px'
-              }}
-            >
-              <Dropzone
-                onDrop={this.onDrop}
-                disabled={this.state.disableUpload}
-                multiple={false}
-                accept=".csv"
-              >
-                {({ getRootProps, getInputProps }) => (
-                  <section
-                    style={{
-                      width: 500,
-                      padding: 100,
-                      border: 3,
-                      borderRadius: 10,
-                      borderColor: '#EEEEEE',
-                      borderStyle: 'dashed',
-                      color: 'grey',
-                      margin: 'auto',
-                      marginBottom: 50,
-                      backgroundColor: '#FAFAFA'
-                    }}
-                  >
-                    <div {...getRootProps({ className: 'dropzone' })}>
-                      <input {...getInputProps()} />
-                      <CloudUploadIcon
-                        style={{ fontSize: '3em', marginBottom: 10 }}
-                        style={{
-                          color:
-                            this.state.file.length === 0 ? 'grey' : '#3176D2'
-                        }}
-                      />
-                      <p>
-                        {this.state.file.length === 0
-                          ? "Drag 'n' Drop your CSV file here, or click to select file"
-                          : 'Click to Change File'}
-                      </p>
-                      {files}
-                    </div>
-                  </section>
-                )}
-              </Dropzone>
-            </div>
-          </div>
-        );
 
-      case 2:
+      case 1:
         return (
           <div>
             <Typography variant="h6" gutterBottom>
@@ -302,6 +264,64 @@ class OptimisationModal extends React.Component {
           </div>
         );
 
+      case 2:
+        return (
+          <div>
+            <Typography variant="h6" gutterBottom>
+              Select Parameters:
+            </Typography>
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                <Box mt={5}>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      Population
+                    </InputLabel>
+                    <FormInput
+                      id="population"
+                      name="population"
+                      type="number"
+                      value={this.state.population}
+                      onChange={this.handleInputChange}
+                    />
+                  </FormControl>
+                </Box>
+                <Box mt={5}>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      Max Epoch
+                    </InputLabel>
+                    <FormInput
+                      id="maxEpoch"
+                      name="maxEpoch"
+                      type="number"
+                      value={this.state.maxEpoch}
+                      onChange={this.handleInputChange}
+                    />
+                  </FormControl>
+                </Box>
+              </Box>
+              <Box mt={5}>
+                <FormControl required>
+                  <InputLabel shrink htmlFor="title-input">
+                    Inequality
+                  </InputLabel>
+                  <NativeSelect
+                    name="objective"
+                    value={this.state.objective}
+                    input={<FormInput />}
+                    onChange={this.handleInputChange}
+                  >
+                    {this.state.objectiveList.map(singleObjective => (
+                      <option value={singleObjective}>{singleObjective}</option>
+                    ))}
+                  </NativeSelect>
+                </FormControl>
+              </Box>
+            </Box>
+          </div>
+        );
+
       default:
         return 'Unknown stepIndex';
     }
@@ -318,7 +338,7 @@ class OptimisationModal extends React.Component {
           aria-describedby="transition-modal-description"
           className={classes.modal}
           open={this.props.open}
-          onClose={this.props.handleClose}
+          onClose={this.handleClose}
           closeAfterTransition
           BackdropComponent={Backdrop}
           BackdropProps={{

@@ -147,7 +147,6 @@ class ProjectOverviewTab extends React.Component {
   }
 
   handleEdit(event) {
-    console.log(this.props.projectId);
     this.setState({
       editable: true
     });
