@@ -23,6 +23,7 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import FileDownload from 'js-file-download';
 import axios from 'axios';
 
@@ -78,6 +79,10 @@ const styles = theme => ({
   tableHeader: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white
+  },
+  backdrop: {
+    zIndex: 999,
+    color: '#fff'
   }
 });
 
@@ -114,7 +119,8 @@ const initialState = {
   allitems: [],
   itemMappings: {},
   isLoaded: false,
-  finalPrices: {}
+  finalPrices: {},
+  loadingOverlayOpen: false
 };
 
 class WhatIfAnalysisModal extends React.Component {
@@ -196,6 +202,12 @@ class WhatIfAnalysisModal extends React.Component {
       form['prices'][item.item] = parseFloat(item.price);
     });
 
+    this.setState({
+      loadingOverlayOpen: true
+    });
+
+    this.handleClose();
+
     axios
       .post(
         `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${this.props.trainedModelId}/whatif/`,
@@ -210,15 +222,18 @@ class WhatIfAnalysisModal extends React.Component {
       )
       .then(res => {
         if (res.status === 200 && res.status) {
-          this.handleClose();
           FileDownload(res.data, `what_if_${this.props.trainedModelName}.csv`);
+          this.setState({
+            loadingOverlayOpen: false
+          });
         }
       })
       .catch(err => {
         this.props.handleError();
         this.handleClose();
         this.setState({
-          createItemError: false
+          createItemError: false,
+          loadingOverlayOpen: false
         });
       });
   }
@@ -537,6 +552,12 @@ class WhatIfAnalysisModal extends React.Component {
             </div>
           </Fade>
         </Modal>
+        <Backdrop
+          className={classes.backdrop}
+          open={this.state.loadingOverlayOpen}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </React.Fragment>
     );
   }
