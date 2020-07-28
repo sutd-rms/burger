@@ -334,7 +334,7 @@ class OptimisationModal extends React.Component {
               <Box mt={5}>
                 <FormControl required>
                   <InputLabel shrink htmlFor="title-input">
-                    Inequality
+                    Objective
                   </InputLabel>
                   <NativeSelect
                     name="objective"

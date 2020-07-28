@@ -19,6 +19,7 @@ import Remove from '@material-ui/icons/Remove';
 import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -115,6 +116,16 @@ export default function OptimisationTable() {
             color: '#FFF'
           }
         }}
+        actions={[
+          {
+            icon: () => <RefreshIcon />,
+            tooltip: 'Refresh Status',
+            onClick: (event, rowData) => {
+              const rowIndex = rowData.tableData.id;
+              // window.open(downloadLink);
+            }
+          }
+        ]}
       />
     </div>
   );
