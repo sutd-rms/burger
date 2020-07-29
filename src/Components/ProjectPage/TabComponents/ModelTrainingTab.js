@@ -23,6 +23,7 @@ class ModelTrainingTab extends React.Component {
     this.state = {
       open: false,
       success: false,
+      error: false,
       is_staff: store.getState().currentUser.is_staff
     };
 
@@ -30,6 +31,7 @@ class ModelTrainingTab extends React.Component {
     this.handleCloseModal = this.handleCloseModal.bind(this);
     this.showAlert = this.showAlert.bind(this);
     this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
+    this.handleError = this.handleError.bind(this);
   }
 
   handleOpenModal(event) {
@@ -52,7 +54,14 @@ class ModelTrainingTab extends React.Component {
 
   handleCloseSnackbar(event) {
     this.setState({
-      success: false
+      success: false,
+      error: false
+    });
+  }
+
+  handleError(event) {
+    this.setState({
+      error: true
     });
   }
 
@@ -78,7 +87,10 @@ class ModelTrainingTab extends React.Component {
             Train New Model
           </Button>
         </Box>
-        <TrainedModelsTable projectId={this.props.projectId} />
+        <TrainedModelsTable
+          projectId={this.props.projectId}
+          handleError={this.handleError}
+        />
         <Snackbar
           open={this.state.success}
           autoHideDuration={6000}
@@ -86,6 +98,15 @@ class ModelTrainingTab extends React.Component {
         >
           <Alert onClose={this.handleCloseSnackbar} severity="success">
             Model training has started! Please check again later!
+          </Alert>
+        </Snackbar>
+        <Snackbar
+          open={this.state.error}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="error">
+            An error has occured! Please try again.
           </Alert>
         </Snackbar>
         <TrainModelModal
