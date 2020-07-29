@@ -47,8 +47,6 @@ class ModelTrainingTab extends React.Component {
   }
 
   showAlert(event) {
-    //Make POST request here
-
     this.setState({
       success: true
     });
@@ -68,8 +66,6 @@ class ModelTrainingTab extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     return (
       <Box>
         <Box mb={5} px={1} display="flex" justifyContent="space-between">

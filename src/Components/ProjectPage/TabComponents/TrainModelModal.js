@@ -93,15 +93,15 @@ class TrainModelModal extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 0 && this.state.model == '') {
+    if (this.state.activeStep === 0 && this.state.model === '') {
       return;
     }
 
-    if (this.state.activeStep == 1 && this.state.dataset == '') {
+    if (this.state.activeStep === 1 && this.state.dataset === '') {
       return;
     }
 
-    if (this.state.activeStep == 2 && this.state.name == '') {
+    if (this.state.activeStep === 2 && this.state.name === '') {
       return;
     }
 

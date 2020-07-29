@@ -495,7 +495,7 @@ class DatasetsTab extends React.Component {
           onClose={this.handleCloseSnackbar}
         >
           <Alert onClose={this.handleCloseSnackbar} severity="error">
-            {this.state.errorMessage != ''
+            {this.state.errorMessage !== ''
               ? this.state.errorMessage + '. '
               : 'An error has occured! '}
             Please try again.

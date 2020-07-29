@@ -1,35 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import ProjectCard from './ProjectCard';
 import ConstraintSetPage from './ConstraintSetPage';
 import DashboardTopNav from './../DashboardTopNav';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
-} from 'react-router-dom';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import FloatingAddButton from '../FloatingAddButton';
 import ProjectCreationForm from './ProjectCreationForm';
 import ProjectDetails from './ProjectDetails';
 import axios from 'axios';
 import DatasetVisualisation from './../DatasetVisualisation';
-
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 5
-  },
-  paper: {
-    height: 140,
-    width: 100
-  },
-  control: {
-    padding: theme.spacing(5)
-  }
-}));
 
 export default function AllProjectPage() {
   const [projectIdList, setProjectIdList] = useState([]);

@@ -1,42 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
-} from 'react-router-dom';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import ModelCard from './ModelCard';
 import FloatingAddButton from '../FloatingAddButton';
 import ModelCreationForm from './ModelCreationForm';
 import DashboardTopNav from './../DashboardTopNav';
 import axios from 'axios';
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    flexGrow: 5
-  },
-  paper: {
-    height: 140,
-    width: 100
-  },
-  control: {
-    padding: theme.spacing(5)
-  }
-}));
-
-function Model() {
-  let { modelId } = useParams();
-  return <h3>Requested model ID: {modelId}</h3>;
-}
+// function Model() {
+//   let { modelId } = useParams();
+//   return <h3>Requested model ID: {modelId}</h3>;
+// }
 
 export default function AllModelsPage() {
   const [modelsList, setModelsList] = useState([]);
   const [displayCreationForm, setDisplayCreationForm] = useState(false);
-  const classes = useStyles();
   let match = useRouteMatch();
 
   const handleOpen = () => {
@@ -59,7 +37,6 @@ export default function AllModelsPage() {
       })
       .then(data => {
         setModelsList(data.data);
-        // console.log(data.data);
       });
   }, []);
 

@@ -1,12 +1,6 @@
 import React from 'react';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useRouteMatch,
-  useParams
-} from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Dashboard from './Components/Dashboard.js';
 import Login from './Components/Login';
 import PasswordReset from './Components/PasswordReset';

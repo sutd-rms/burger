@@ -1,6 +1,6 @@
-import React from "react";
-import { BrowserRouter as Router, Route, Link } from "react-router-dom";
-import styled from "styled-components";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
 
 const StyledNavItem = styled.div`
   height: 70px;
@@ -8,7 +8,7 @@ const StyledNavItem = styled.div`
   text-align: center;
   margin-bottom: 0; /* Puts space between NavItems */
   padding-left: 40px;
-  background-color: ${props => (props.active ? "#343A40" : "#222")};
+  background-color: ${props => (props.active ? '#343A40' : '#222')};
 
   :hover {
     background-color: #343a40;

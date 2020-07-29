@@ -68,14 +68,6 @@ function getSteps() {
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
-};
 
 class DatasetVisualisation extends React.Component {
   constructor(props) {
@@ -128,8 +120,8 @@ class DatasetVisualisation extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 0) {
-      if (this.state.selected == '') {
+    if (this.state.activeStep === 0) {
+      if (this.state.selected === '') {
         return;
       }
     }
@@ -143,7 +135,7 @@ class DatasetVisualisation extends React.Component {
       return;
     }
 
-    if (this.state.selected == 'boxplot') {
+    if (this.state.selected === 'boxplot') {
       var data = { items: this.state.items.join() };
 
       axios
@@ -168,7 +160,7 @@ class DatasetVisualisation extends React.Component {
           this.setState({ hasFetched: true });
         });
     }
-    if (this.state.selected == 'linegraph') {
+    if (this.state.selected === 'linegraph') {
       var data = { items: this.state.items.join() };
 
       axios
@@ -222,7 +214,7 @@ class DatasetVisualisation extends React.Component {
   }
 
   renderGraphs() {
-    if (this.state.selected == 'boxplot') {
+    if (this.state.selected === 'boxplot') {
       return <BoxplotChart data={this.state.boxplotData} />;
     } else {
       return <LinegraphChart data={this.state.linegraphData} />;
@@ -272,7 +264,7 @@ class DatasetVisualisation extends React.Component {
               <CardActionArea
                 onClick={this.setBoxplot}
                 style={
-                  this.state.selected == 'boxplot'
+                  this.state.selected === 'boxplot'
                     ? {
                         padding: '50px 50px',
                         border: '1px solid black'
@@ -303,7 +295,7 @@ class DatasetVisualisation extends React.Component {
               <CardActionArea
                 onClick={this.setLineGraph}
                 style={
-                  this.state.selected == 'linegraph'
+                  this.state.selected === 'linegraph'
                     ? {
                         padding: '50px 50px',
                         border: '1px solid black'
