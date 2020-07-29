@@ -17,6 +17,7 @@ import SaveAlt from '@material-ui/icons/SaveAlt';
 import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -121,7 +122,28 @@ export default function OptimisationTable() {
               const rowIndex = rowData.tableData.id;
               // window.open(downloadLink);
             }
-          }
+          },
+          rowData => ({
+            icon: () => <InsertDriveFileIcon />,
+            tooltip: 'Download Report',
+            // disabled: !rowData.eeDone,
+            onClick: (event, rowData) => {
+              // axios
+              //   .get(
+              //     `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/elasticity/`,
+              //     {
+              //       headers: {
+              //         'Content-Type': 'application/json',
+              //         Accept: 'application/json',
+              //         Authorization: `Token ${token}`
+              //       }
+              //     }
+              //   )
+              //   .then(res => {
+              //     FileDownload(res.data, `elasticity_${rowData.name}.csv`);
+              //   });
+            }
+          })
         ]}
       />
     </div>
