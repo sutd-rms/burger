@@ -28,8 +28,6 @@ class SettingsPage extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     return (
       <div>
         <DashboardTopNav title="general settings" />

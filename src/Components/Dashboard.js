@@ -1,14 +1,6 @@
 import React from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  useRouteMatch,
-  useParams
-} from 'react-router-dom';
+import { Switch, Route, useRouteMatch } from 'react-router-dom';
 import DashboardSideBar from './DashboardSideBar';
-import FloatingAddButton from './FloatingAddButton';
 import styled from 'styled-components';
 import AllProjectPage from './ProjectPage/AllProjectPage';
 import AllModelsPage from './ModelsPage/AllModelsPage';
@@ -45,16 +37,6 @@ function Dashboard() {
           <Route path={match.path} component={AllProjectPage}></Route>
         </Switch>
       </DashboardContainer>
-    </div>
-  );
-}
-
-function Dashboards() {
-  let match = useRouteMatch();
-
-  return (
-    <div>
-      <p>Dashboards page</p>
     </div>
   );
 }

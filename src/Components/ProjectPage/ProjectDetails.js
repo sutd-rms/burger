@@ -1,18 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
-import DataUploadForm from './DataUploadForm';
 import DatasetsTab from './TabComponents/DatasetsTab';
 import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
 import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 import OptimisationTab from './TabComponents/OptimisationTab';
 import UserControlTable from './TabComponents/UserControlTab';
-import axios from 'axios';
 import { store } from '../../redux/store';
 
 const styles = theme => ({
@@ -87,32 +84,32 @@ class ProjectDetails extends React.Component {
             >
               <Tab
                 label="Overview"
-                disableRipple="true"
+                disableRipple={true}
                 className={classes.disableFocus}
                 {...a11yProps(0)}
               />
               <Tab
                 label="Datasets"
-                disableRipple="true"
+                disableRipple={true}
                 className={classes.disableFocus}
                 {...a11yProps(1)}
               />
-                <Tab
-                  label="Train Models"
-                  disableRipple="true"
-                  className={classes.disableFocus}
-                  {...a11yProps(2)}
-                />
-                <Tab
-                  label="Price Optimisation"
-                  disableRipple="true"
-                  className={classes.disableFocus}
-                  {...a11yProps(3)}
-                />
+              <Tab
+                label="Train Models"
+                disableRipple={true}
+                className={classes.disableFocus}
+                {...a11yProps(2)}
+              />
+              <Tab
+                label="Price Optimisation"
+                disableRipple={true}
+                className={classes.disableFocus}
+                {...a11yProps(3)}
+              />
               {this.state.is_staff ? (
                 <Tab
                   label="Users"
-                  disableRipple="true"
+                  disableRipple={true}
                   className={classes.disableFocus}
                   {...a11yProps(4)}
                 />
@@ -156,11 +153,7 @@ function TabPanel(props) {
       aria-labelledby={`simple-tab-${index}`}
       {...other}
     >
-      {value === index && (
-        <Box>
-          <Typography>{children}</Typography>
-        </Box>
-      )}
+      {value === index && <Box>{children}</Box>}
     </div>
   );
 }

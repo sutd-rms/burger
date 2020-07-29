@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import history from './../history';
@@ -50,7 +50,7 @@ export default class LogoutContainer extends React.Component {
   render() {
     return (
       <StyledContainer>
-        <Link onClick={this.handleClick}>
+        <Link to="/" onClick={this.handleClick}>
           <div>
             <ExitToAppIcon />
             Sign Out

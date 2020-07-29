@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import DashboardTopNav from './../DashboardTopNav';
 import UsersTable from './UsersTable';
@@ -11,7 +11,6 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import CompanyTable from './CompanyTable';
 import CompanyCreationModal from './CompanyCreationModal';
-import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
   CompanyButton: {
@@ -25,7 +24,6 @@ function Alert(props) {
 
 export default function AllUsersPage(props) {
   const classes = useStyles();
-  const token = localStorage.getItem('token');
   const [allUsers, setAllUsers] = useState([]);
   const [open, setOpen] = useState(false);
   const [openCompany, setOpenCompany] = useState(false);
@@ -54,10 +52,6 @@ export default function AllUsersPage(props) {
   let handleCloseCompany = () => {
     setOpenCompany(false);
   };
-
-  // let handleOpenCompanyModal = () => {
-  //   console.log('company');
-  // };
 
   return (
     <div>

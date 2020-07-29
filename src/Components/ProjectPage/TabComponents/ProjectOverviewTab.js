@@ -164,7 +164,7 @@ class ProjectOverviewTab extends React.Component {
   handleSubmit(event) {
     //Make POST request here
     var formData = new FormData();
-    if (this.state.coverNew != this.state.cover) {
+    if (this.state.coverNew !== this.state.cover) {
       formData.append('cover', this.state.coverNewFile);
     }
     formData.append('title', this.state.titleNew);

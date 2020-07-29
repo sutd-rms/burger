@@ -189,14 +189,14 @@ class ProfileForm extends React.Component {
 
   handleSubmit(event) {
     var formData = new FormData();
-    if (this.state.profileNew != this.state.profile) {
+    if (this.state.profileNew !== this.state.profile) {
       formData.append('cover', this.state.profileNewFile);
     }
     formData.append('first_name', this.state.firstNameNew);
     formData.append('last_name', this.state.lastNameNew);
     formData.append('phone', this.state.phoneNew);
 
-    const id = this.props.projectId;
+    // const id = this.props.projectId;
     // FETCH & SET STATE
     let token = localStorage.getItem('token');
     axios

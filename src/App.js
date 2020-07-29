@@ -1,24 +1,16 @@
 import React from 'react';
 import './App.css';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  useRouteMatch,
-  useParams
-} from 'react-router-dom';
+import { Switch, Route } from 'react-router-dom';
 import Dashboard from './Components/Dashboard.js';
 import Login from './Components/Login';
 import PasswordReset from './Components/PasswordReset';
 import PasswordResetConfirm from './Components/PasswordResetConfirm';
-import { DashboardRoute } from './SpecialRoutes';
+import { DashboardRoute, LoginRoute } from './SpecialRoutes';
 
 function App() {
   return (
     <Switch>
-      <Route path="/login">
-        <Login />
-      </Route>
+      <LoginRoute path="/login" component={Login} />
       <Route path="/logout">
         <div>logout</div>
       </Route>
@@ -33,9 +25,7 @@ function App() {
         <PasswordReset />
       </Route>
       <DashboardRoute path="/Dashboard" component={Dashboard} />
-      <Route path="/">
-        <Login />
-      </Route>
+      <LoginRoute path="/" component={Login} />
     </Switch>
   );
 }
