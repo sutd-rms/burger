@@ -1,18 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { withStyles } from '@material-ui/core/styles';
-import Typography from '@material-ui/core/Typography';
 import AppBar from '@material-ui/core/AppBar';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import Box from '@material-ui/core/Box';
-import DataUploadForm from './DataUploadForm';
 import DatasetsTab from './TabComponents/DatasetsTab';
 import ProjectOverviewTab from './TabComponents/ProjectOverviewTab';
 import ModelTrainingTab from './TabComponents/ModelTrainingTab';
 import OptimisationTab from './TabComponents/OptimisationTab';
 import UserControlTable from './TabComponents/UserControlTab';
-import axios from 'axios';
 import { store } from '../../redux/store';
 
 const styles = theme => ({

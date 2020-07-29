@@ -8,11 +8,8 @@ import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
-import MenuItem from '@material-ui/core/MenuItem';
-import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
-import Grid from '@material-ui/core/Grid';
 import IconButton from '@material-ui/core/IconButton';
 import InfoIcon from '@material-ui/icons/Info';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -182,7 +179,7 @@ class AddConstraintModal extends React.Component {
       [name]: value
     });
 
-    if (this.state.penalty == 'hard') {
+    if (this.state.penalty === 'hard') {
       this.setState({
         penaltyScore: ''
       });
@@ -222,10 +219,10 @@ class AddConstraintModal extends React.Component {
   }
 
   handleNext(event) {
-    if (this.state.activeStep == 0 && this.state.items.length > 0) {
+    if (this.state.activeStep === 0 && this.state.items.length > 0) {
       this.createConstraintsItemsArray(this.state.items);
     }
-    if (this.state.activeStep == 0 && this.state.items.length <= 0) {
+    if (this.state.activeStep === 0 && this.state.items.length <= 0) {
       return;
     }
     this.setState({
@@ -234,9 +231,9 @@ class AddConstraintModal extends React.Component {
   }
 
   submitConstraint(event) {
-    if (this.state.activeStep == 1) {
+    if (this.state.activeStep === 1) {
       for (var constraint of this.state.constraintItems) {
-        if (constraint.coefficient == '') {
+        if (constraint.coefficient === '') {
           this.setState({
             createConstraintError: true
           });
@@ -244,9 +241,9 @@ class AddConstraintModal extends React.Component {
         }
       }
       if (
-        this.state.rhs == '' ||
-        this.state.constraintName == '' ||
-        (this.state.penalty == 'soft' && this.state.penaltyScore == '')
+        this.state.rhs === '' ||
+        this.state.constraintName === '' ||
+        (this.state.penalty === 'soft' && this.state.penaltyScore === '')
       ) {
         this.setState({
           createConstraintError: true
@@ -266,7 +263,7 @@ class AddConstraintModal extends React.Component {
       name: this.state.constraintName,
       in_equality: this.state.inequality,
       rhs_constant: this.state.rhs,
-      penalty: this.state.penalty == 'hard' ? -1 : this.state.penaltyScore,
+      penalty: this.state.penalty === 'hard' ? -1 : this.state.penaltyScore,
       category: this.state.category
     };
 
@@ -289,7 +286,7 @@ class AddConstraintModal extends React.Component {
         }
       })
       .catch(err => {
-        if (err.response.data == 'Conflict exists') {
+        if (err.response.data === 'Conflict exists') {
           this.setState({
             createConstraintError: false,
             createConstraintErrorMessage: err.response.data
@@ -306,7 +303,7 @@ class AddConstraintModal extends React.Component {
   }
 
   handleBack(event) {
-    if (this.state.activeStep == 1) {
+    if (this.state.activeStep === 1) {
       this.setState(InitialConstraintState);
     }
     this.setState({
@@ -543,7 +540,7 @@ class AddConstraintModal extends React.Component {
                     id="title-input"
                     name="penaltyScore"
                     type="number"
-                    disabled={this.state.penalty == 'soft' ? false : true}
+                    disabled={this.state.penalty === 'soft' ? false : true}
                     value={this.state.penaltyScore}
                     onChange={this.handleInputChange}
                   />
@@ -605,12 +602,12 @@ class AddConstraintModal extends React.Component {
             <Typography variant="h6" gutterBottom={true}>
               Create Constraints
             </Typography>
-            {this.state.createConstraintError == false ? null : (
+            {this.state.createConstraintError === false ? null : (
               <Typography variant="subtitle" color="error">
                 Please fill up all required fields
               </Typography>
             )}
-            {this.state.createConstraintErrorMessage == '' ? null : (
+            {this.state.createConstraintErrorMessage === '' ? null : (
               <Typography variant="subtitle" color="error">
                 {this.state.createConstraintErrorMessage}
               </Typography>

@@ -32,7 +32,7 @@ export const userLoginFetch = credentials => {
         });
       })
       .then(res => {
-        if (res.data.length == 1) {
+        if (res.data.length === 1) {
           dispatch(loginUser(res.data[0]));
         } else {
           const token = localStorage.getItem('token');

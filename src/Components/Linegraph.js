@@ -2,7 +2,6 @@ import React from 'react';
 import { withStyles } from '@material-ui/core/styles';
 import Box from '@material-ui/core/Box';
 import Chart from 'chart.js';
-import * as d3 from 'd3';
 import { Typography } from '@material-ui/core';
 
 const styles = theme => ({

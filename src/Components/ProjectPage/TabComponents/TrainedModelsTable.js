@@ -19,6 +19,10 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import GraphicEqIcon from '@material-ui/icons/GraphicEq';
+import AppsIcon from '@material-ui/icons/Apps';
+import AdjustIcon from '@material-ui/icons/Adjust';
+import WhatIfAnalysisModal from './WhatIfAnalysisModal.js';
+import FileDownload from 'js-file-download';
 import axios from 'axios';
 
 const tableIcons = {
@@ -49,16 +53,22 @@ const styles = theme => ({
   root: {}
 });
 
+const token = localStorage.getItem('token');
 class TrainedModelsTable extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       selectedRowId: '',
+      whatifRow: '',
+      whatifRowName: '',
+      open: false,
+      datasetId: '',
       columns: [
         { title: 'Name', field: 'name' },
         { title: 'Dataset', field: 'datasetName' },
         { title: 'Model', field: 'model' },
-        { title: 'Status', field: 'available' },
+        { title: 'Training Status', field: 'trainingStatus' },
+        { title: 'Cross Validation Status', field: 'cvStatus' },
         {
           title: 'Date Trained',
           field: 'created',
@@ -68,6 +78,14 @@ class TrainedModelsTable extends React.Component {
       ],
       data: []
     };
+
+    this.handleClose = this.handleClose.bind(this);
+  }
+
+  handleClose(event) {
+    this.setState({
+      open: false
+    });
   }
 
   componentDidMount() {
@@ -87,10 +105,22 @@ class TrainedModelsTable extends React.Component {
 
         res.data.forEach(trainedModel => {
           tableData.push({
+            id: trainedModel.id,
+            cvProgress: trainedModel.cv_progress,
             name: trainedModel.name,
             datasetName: trainedModel.data_block.name,
+            datasetId: trainedModel.data_block.id,
             model: trainedModel.prediction_model.name,
-            available: trainedModel.available ? 'Ready' : 'Pending',
+            fiDone: trainedModel.fi_done,
+            eeDone: trainedModel.ee_done,
+            trainingStatus:
+              trainedModel.pct_complete == 100
+                ? 'Completed'
+                : trainedModel.pct_complete + '%',
+            cvStatus:
+              trainedModel.cv_progress == 100
+                ? 'Completed'
+                : trainedModel.cv_progress + '%',
             created: trainedModel.created
           });
         });
@@ -101,8 +131,6 @@ class TrainedModelsTable extends React.Component {
   }
 
   render() {
-    const { classes } = this.props;
-
     return (
       <div>
         <MaterialTable
@@ -129,25 +157,104 @@ class TrainedModelsTable extends React.Component {
             }
           }}
           actions={[
-            {
+            rowData => ({
               icon: () => <ShowChartIcon />,
-              tooltip: 'Download Elasticities',
+              tooltip: rowData.eeDone
+                ? 'Download Elasticities'
+                : 'Not Available',
+              disabled: !rowData.eeDone,
               onClick: (event, rowData) => {
-                const rowIndex = rowData.tableData.id;
-                const downloadLink = this.state.datasetsList[rowIndex].upload;
-                // window.open(downloadLink);
+                axios
+                  .get(
+                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/elasticity/`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    FileDownload(res.data, `elasticity_${rowData.name}.csv`);
+                  });
               }
-            },
-            {
+            }),
+            rowData => ({
               icon: () => <GraphicEqIcon />,
-              tooltip: 'Download Feature Importance Sheet',
+              tooltip: rowData.fiDone
+                ? 'Download Feature Importance Sheet'
+                : 'Not Available',
+              disabled: !rowData.fiDone,
               onClick: (event, rowData) => {
-                const rowIndex = rowData.tableData.id;
-                const datasetId = this.state.datasetsList[rowIndex].id;
-                // window.open(`dataset/${datasetId}`);
+                axios
+                  .get(
+                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/feature_importance/`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    FileDownload(
+                      res.data,
+                      `feature_importances_${rowData.name}.csv`
+                    );
+                  });
               }
-            }
+            }),
+            rowData => ({
+              icon: () => <AppsIcon />,
+              tooltip:
+                rowData.cvStatus == 'Completed'
+                  ? 'Download Cross Validation Scores'
+                  : 'Not Available',
+              disabled: rowData.cvStatus != 'Completed',
+              onClick: (event, rowData) => {
+                axios
+                  .get(
+                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/cv_score/`,
+                    {
+                      headers: {
+                        'Content-Type': 'application/json',
+                        Accept: 'application/json',
+                        Authorization: `Token ${token}`
+                      }
+                    }
+                  )
+                  .then(res => {
+                    FileDownload(res.data, `cv_score_${rowData.name}.csv`);
+                  });
+              }
+            }),
+            rowData => ({
+              icon: () => <AdjustIcon />,
+              tooltip:
+                rowData.trainingStatus == 'Completed'
+                  ? 'What-if Analysis'
+                  : 'Not Available',
+              disabled: rowData.trainingStatus != 'Completed',
+              onClick: (event, rowData) => {
+                this.setState({
+                  open: true,
+                  whatifRow: rowData.id,
+                  whatifRowName: rowData.name,
+                  datasetId: rowData.datasetId
+                });
+              }
+            })
           ]}
+        />
+        <WhatIfAnalysisModal
+          trainedModelId={this.state.whatifRow}
+          trainedModelName={this.state.whatifRowName}
+          open={this.state.open}
+          handleClose={this.handleClose}
+          handleError={this.props.handleError}
+          datasetId={this.state.datasetId}
         />
       </div>
     );
