@@ -75,77 +75,85 @@ class OptimisationTable extends React.Component {
     };
   }
 
-  // componentDidMount() {
-  //   axios
-  //     .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Accept: 'application/json',
-  //         Authorization: `Token ${token}`
-  //       },
-  //       params: { project: this.props.projectId }
-  //     })
-  //     .then(res => {
-  //       var trainedModels = [];
-  //       var trainedModelsMappings = {};
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        var trainedModels = [];
+        var trainedModelsMappings = {};
 
-  //       res.data.forEach(trainedModel => {
-  //         trainedModels.push(trainedModel.id);
-  //         trainedModelsMappings[trainedModel.id] = trainedModel.name;
-  //       });
-  //       this.setState({
-  //         modelListMapping: trainedModelsMappings
-  //       });
+        res.data.forEach(trainedModel => {
+          trainedModels.push(trainedModel.id);
+          trainedModelsMappings[trainedModel.id] = trainedModel.name;
+        });
+        this.setState({
+          modelListMapping: trainedModelsMappings
+        });
 
-  //       return axios.get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Accept: 'application/json',
-  //           Authorization: `Token ${token}`
-  //         },
-  //         params: { project: this.props.projectId }
-  //       })
-  //     })
-  //     .then(res => {
-  //       var constraintSets = [];
-  //       var constraintSetsMappings = {};
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/constraintsets/`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            },
+            params: { project: this.props.projectId }
+          }
+        );
+      })
+      .then(res => {
+        var constraintSets = [];
+        var constraintSetsMappings = {};
 
-  //       res.data.forEach(set => {
-  //         constraintSets.push(set.id);
-  //         constraintSetsMappings[set.id] = set.name;
-  //       });
-  //       console.log("here")
-  //       this.setState({
-  //         constraintsetListMapping: constraintSetsMappings
-  //       });
+        res.data.forEach(set => {
+          constraintSets.push(set.id);
+          constraintSetsMappings[set.id] = set.name;
+        });
+        console.log('here');
+        this.setState({
+          constraintsetListMapping: constraintSetsMappings
+        });
 
-  //       return axios.get(`https://secret-sauce.azurewebsites.net/portal/optimizers`, {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //           Accept: 'application/json',
-  //           Authorization: `Token ${token}`
-  //         },
-  //         params: { project: this.props.projectId }
-  //       })
-  //     })
-  //     .then(res => {
-  //       var tableData = [];
+        return axios.get(
+          `https://secret-sauce.azurewebsites.net/portal/optimizers`,
+          {
+            headers: {
+              'Content-Type': 'application/json',
+              Accept: 'application/json',
+              Authorization: `Token ${token}`
+            },
+            params: { project: this.props.projectId }
+          }
+        );
+      })
+      .then(res => {
+        var tableData = [];
 
-  //       res.data.forEach(optimisation => {
-  //         tableData.push({
-  //           id: optimisation.id,
-  //           model: this.state.modelListMapping[optimisation.trained_model],
-  //           constraintSetName: this.state.constraintsetListMapping[optimisation.constraint_block],
-  //           maxEpoch: optimisation.max_epoch,
-  //           population: optimisation.population,
-  //           created: optimisation.created
-  //         });
-  //       });
-  //       this.setState({
-  //         data: tableData
-  //       });
-  //     });
-  // }
+        res.data.forEach(optimisation => {
+          tableData.push({
+            id: optimisation.id,
+            model: this.state.modelListMapping[optimisation.trained_model],
+            constraintSetName: this.state.constraintsetListMapping[
+              optimisation.constraint_block
+            ],
+            maxEpoch: optimisation.max_epoch,
+            population: optimisation.population,
+            created: optimisation.created
+          });
+        });
+        this.setState({
+          data: tableData
+        });
+      });
+  }
 
   render() {
     return (

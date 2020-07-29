@@ -94,8 +94,8 @@ class OptimisationModal extends React.Component {
       constraintsetList: [],
       constraintsetListMapping: {},
       constraintset: '',
-      population: '',
-      maxEpoch: '',
+      population: 300,
+      maxEpoch: 100,
       objectiveList: ['Max Revenue'],
       objective: 'Max Revenue',
       costFileUploaded: null
@@ -142,7 +142,9 @@ class OptimisationModal extends React.Component {
 
   handleReset(event) {
     this.setState({
-      activeStep: 0
+      activeStep: 0,
+      population: 300,
+      maxEpoch: 100
     });
   }
 
@@ -151,8 +153,8 @@ class OptimisationModal extends React.Component {
       activeStep: 0,
       model: '',
       constraintset: '',
-      population: '',
-      maxEpoch: ''
+      population: 300,
+      maxEpoch: 100
     });
     this.props.handleClose();
   }
@@ -167,9 +169,32 @@ class OptimisationModal extends React.Component {
       return;
     }
 
-    this.props.handleClose();
-    this.props.showAlert();
-    this.handleReset();
+    let form = {
+      trained_model: this.state.model,
+      constraint_block: this.state.constraintset,
+      population: this.state.population,
+      max_epoch: this.state.maxEpoch,
+      cost: this.state.objective === 'Max Revenue' ? false : true
+    };
+
+    axios
+      .post('https://secret-sauce.azurewebsites.net/portal/optimizers/', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        if (res.status === 201 && res.status) {
+          this.props.handleClose();
+          this.props.showAlert();
+          this.handleReset();
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   }
 
   componentDidMount() {
