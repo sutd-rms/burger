@@ -144,7 +144,7 @@ class OptimisationTab extends React.Component {
             </Button>
           </Box>
         </Box>
-        <OptimisationTable />
+        <OptimisationTable projectId={this.props.projectId} />
         <Box mt={5}>
           <ConstraintsTable projectId={this.props.projectId} />
         </Box>
