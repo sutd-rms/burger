@@ -71,8 +71,9 @@ class OptimisationTable extends React.Component {
         { title: 'Constraint Set', field: 'constraintSetName' },
         { title: 'Max Epoch', field: 'maxEpoch' },
         { title: 'Population', field: 'population' },
+        { title: 'Status', field: 'status' },
         {
-          title: 'Date Trained',
+          title: 'Date Run',
           field: 'created',
           type: 'datetime',
           filtering: false
@@ -152,7 +153,9 @@ class OptimisationTable extends React.Component {
             ],
             maxEpoch: optimisation.max_epoch,
             population: optimisation.population,
-            created: optimisation.created
+            created: optimisation.created,
+            results: optimisation.results,
+            status: optimisation.results != null ? 'Completed' : 'Pending'
           });
         });
         this.setState({
@@ -191,9 +194,10 @@ class OptimisationTable extends React.Component {
             }
           }}
           actions={[
-            {
+            rowData => ({
               icon: () => <RefreshIcon />,
               tooltip: 'Refresh Status',
+              disabled: rowData.results,
               onClick: (event, rowData) => {
                 axios
                   .get(
@@ -207,29 +211,18 @@ class OptimisationTable extends React.Component {
                     }
                   )
                   .then(res => {
-                    console.log(res);
+                    rowData.results = res.data.results;
+                    var newData = this.state.data;
+                    this.setState({ data: newData });
                   });
               }
-            },
+            }),
             rowData => ({
               icon: () => <InsertDriveFileIcon />,
               tooltip: 'Download Report',
-              // disabled: !rowData.eeDone,
+              disabled: !rowData.results,
               onClick: (event, rowData) => {
-                // axios
-                //   .get(
-                //     `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/elasticity/`,
-                //     {
-                //       headers: {
-                //         'Content-Type': 'application/json',
-                //         Accept: 'application/json',
-                //         Authorization: `Token ${token}`
-                //       }
-                //     }
-                //   )
-                //   .then(res => {
-                //     FileDownload(res.data, `elasticity_${rowData.name}.csv`);
-                //   });
+                window.open(rowData.results);
               }
             })
           ]}
