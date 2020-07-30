@@ -19,8 +19,6 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const tableIcons = {
@@ -62,10 +60,6 @@ class OptimisationTable extends React.Component {
     super(props);
     this.state = {
       selectedRowId: '',
-      modelListMapping: {},
-      constraintsetListMapping: {},
-      unprocessedData: [],
-      open: true,
       columns: [
         { title: 'Model', field: 'model' },
         { title: 'Constraint Set', field: 'constraintSetName' },
@@ -85,7 +79,7 @@ class OptimisationTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
+      .get(`https://secret-sauce.azurewebsites.net/portal/optimizers`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -94,63 +88,15 @@ class OptimisationTable extends React.Component {
         params: { project: this.props.projectId }
       })
       .then(res => {
-        var trainedModels = [];
-        var trainedModelsMappings = {};
-
-        res.data.forEach(trainedModel => {
-          trainedModels.push(trainedModel.id);
-          trainedModelsMappings[trainedModel.id] = trainedModel.name;
-        });
-        this.setState({
-          modelListMapping: trainedModelsMappings
-        });
-
-        return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/constraintsets/`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            },
-            params: { project: this.props.projectId }
-          }
-        );
-      })
-      .then(res => {
-        var constraintSets = [];
-        var constraintSetsMappings = {};
-
-        res.data.forEach(set => {
-          constraintSets.push(set.id);
-          constraintSetsMappings[set.id] = set.name;
-        });
-        this.setState({
-          constraintsetListMapping: constraintSetsMappings
-        });
-
-        return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/optimizers`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            },
-            params: { project: this.props.projectId }
-          }
-        );
-      })
-      .then(res => {
         var tableData = [];
 
         res.data.forEach(optimisation => {
           tableData.push({
             id: optimisation.id,
-            model: this.state.modelListMapping[optimisation.trained_model],
-            constraintSetName: this.state.constraintsetListMapping[
-              optimisation.constraint_block
-            ],
+            model: optimisation.trained_model.name,
+            modelId: optimisation.trained_model.id,
+            constraintSetName: optimisation.constraint_block.name,
+            constraintSetId: optimisation.constraint_block.id,
             maxEpoch: optimisation.max_epoch,
             population: optimisation.population,
             created: optimisation.created,
@@ -159,8 +105,7 @@ class OptimisationTable extends React.Component {
           });
         });
         this.setState({
-          data: tableData,
-          open: false
+          data: tableData
         });
       });
   }
@@ -227,9 +172,6 @@ class OptimisationTable extends React.Component {
             })
           ]}
         />
-        <Backdrop className={classes.backdrop} open={this.state.open}>
-          <CircularProgress color="inherit" />
-        </Backdrop>
       </div>
     );
   }
