@@ -10,11 +10,12 @@ import Button from '@material-ui/core/Button';
 import MenuItem from '@material-ui/core/MenuItem';
 import Select from '@material-ui/core/Select';
 import Typography from '@material-ui/core/Typography';
-import Dropzone from 'react-dropzone';
-import CloudUploadIcon from '@material-ui/icons/CloudUpload';
-import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
-import AttachmentIcon from '@material-ui/icons/Attachment';
-import { Box } from '@material-ui/core';
+import Box from '@material-ui/core/Box';
+import FormControl from '@material-ui/core/FormControl';
+import InputBase from '@material-ui/core/InputBase';
+import InputLabel from '@material-ui/core/InputLabel';
+import NativeSelect from '@material-ui/core/NativeSelect';
+import axios from 'axios';
 
 const styles = theme => ({
   modal: {
@@ -59,35 +60,45 @@ const styles = theme => ({
 function getSteps() {
   return [
     'Trained Model Selection',
-    'Dataset Selection',
-    'Cost Upload',
-    'Constraint Selection'
+    'Constraint Selection',
+    'Parameter Selection'
   ];
 }
+
+const FormInput = withStyles(theme => ({
+  root: {
+    'label + &': {
+      marginTop: theme.spacing(3)
+    }
+  },
+
+  input: {
+    position: 'relative',
+    border: '1px solid #ced4da',
+    width: '100%',
+    padding: '10px 12px',
+    transition: theme.transitions.create(['border-color', 'box-shadow'])
+  }
+}))(InputBase);
+
+const token = localStorage.getItem('token');
 
 class OptimisationModal extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       activeStep: 0,
-      modelList: ['Test Model', 'Test Model 2', 'Test Model2', 'ABC Test'],
-      model: 'Test Model',
-      datasetList: ['random_csv_file.csv', 'iloverms.csv', 'test.csv'],
-      dataset: 'random_csv_file.csv',
-      constraintsetList: [
-        'Sample Constraint 1',
-        'Testing Constraints',
-        'McDonalds Aussie',
-        'Sample Constraint 2'
-      ],
-      constraintset: 'Sample Constraint 1',
-      name: null,
-      file: []
-    };
-    this.onDrop = files => {
-      this.setState({
-        file: files
-      });
+      modelList: [],
+      modelListMapping: {},
+      model: '',
+      constraintsetList: [],
+      constraintsetListMapping: {},
+      constraintset: '',
+      population: 300,
+      maxEpoch: 100,
+      objectiveList: ['Max Revenue'],
+      objective: 'Max Revenue',
+      costFileUploaded: null
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -96,6 +107,7 @@ class OptimisationModal extends React.Component {
     this.handleReset = this.handleReset.bind(this);
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleClose = this.handleClose.bind(this);
   }
 
   handleInputChange(event) {
@@ -111,6 +123,12 @@ class OptimisationModal extends React.Component {
   }
 
   handleNext(event) {
+    if (this.state.activeStep == 0 && this.state.model == '') {
+      return;
+    }
+    if (this.state.activeStep == 1 && this.state.constraintset == '') {
+      return;
+    }
     this.setState({
       activeStep: this.state.activeStep + 1
     });
@@ -124,28 +142,130 @@ class OptimisationModal extends React.Component {
 
   handleReset(event) {
     this.setState({
-      activeStep: 0
+      activeStep: 0,
+      population: 300,
+      maxEpoch: 100
     });
+  }
+
+  handleClose(event) {
+    this.setState({
+      activeStep: 0,
+      model: '',
+      constraintset: '',
+      population: 300,
+      maxEpoch: 100
+    });
+    this.props.handleClose();
   }
 
   handleSubmit(event) {
     //Make POST request here
-    this.props.handleClose();
-    this.props.showAlert();
-    this.handleReset();
+    if (
+      this.state.objective == '' ||
+      this.state.population == '' ||
+      this.state.maxEpoch == ''
+    ) {
+      return;
+    }
+
+    let form = {
+      trained_model: this.state.model,
+      constraint_block: this.state.constraintset,
+      population: this.state.population,
+      max_epoch: this.state.maxEpoch,
+      cost: this.state.objective === 'Max Revenue' ? false : true
+    };
+
+    axios
+      .post('https://secret-sauce.azurewebsites.net/portal/optimizers/', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        }
+      })
+      .then(res => {
+        if (res.status === 201 && res.status) {
+          this.props.handleClose();
+          this.props.showAlert();
+          this.handleReset();
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
+  componentDidMount() {
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        var trainedModels = [];
+        var trainedModelsMappings = {};
+
+        res.data.forEach(trainedModel => {
+          trainedModels.push(trainedModel.id);
+          trainedModelsMappings[trainedModel.id] = trainedModel.name;
+        });
+        this.setState({
+          modelList: trainedModels,
+          modelListMapping: trainedModelsMappings
+        });
+      });
+
+    axios
+      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
+        },
+        params: { project: this.props.projectId }
+      })
+      .then(res => {
+        var constraintSets = [];
+        var constraintSetsMappings = {};
+
+        res.data.forEach(set => {
+          constraintSets.push(set.id);
+          constraintSetsMappings[set.id] = set.name;
+        });
+        this.setState({
+          constraintsetList: constraintSets,
+          constraintsetListMapping: constraintSetsMappings
+        });
+      });
+
+    axios
+      .get(
+        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          }
+        }
+      )
+      .then(res => {
+        this.setState({
+          costFileUploaded: res.data.cost_sheet ? true : false,
+          objectiveList: res.data.cost_sheet
+            ? ['Max Revenue', 'Max Profit']
+            : ['Max Revenue']
+        });
+      });
   }
 
   getStepContent(stepIndex) {
-    const files = this.state.file.map(file => (
-      <span key={file.name}>
-        <AttachmentIcon />
-        <Box component="span" ml={1} mr={2}>
-          {file.name} - {file.size} bytes
-        </Box>
-        <CheckCircleOutlineIcon style={{ fill: 'green' }} />
-      </span>
-    ));
-
     switch (stepIndex) {
       case 0:
         return (
@@ -162,96 +282,16 @@ class OptimisationModal extends React.Component {
               value={this.state.model}
               onChange={this.handleInputChange}
             >
-              {this.state.modelList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.modelList.map(model => (
+                <MenuItem value={model} id={model} key={model}>
+                  {this.state.modelListMapping[model]}
                 </MenuItem>
               ))}
             </Select>
           </div>
         );
+
       case 1:
-        return (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Select a Dataset:
-            </Typography>
-            <Select
-              labelId="dataset"
-              id="dataset"
-              key="dataset"
-              name="dataset"
-              fullWidth
-              value={this.state.dataset}
-              onChange={this.handleInputChange}
-            >
-              {this.state.datasetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
-                </MenuItem>
-              ))}
-            </Select>
-          </div>
-        );
-
-      case 2:
-        return (
-          <div>
-            <Typography variant="h6" gutterBottom>
-              Upload cost dataset:
-            </Typography>
-            <div
-              style={{
-                textAlign: 'center',
-                justifyContent: 'center',
-                marginTop: '20px'
-              }}
-            >
-              <Dropzone
-                onDrop={this.onDrop}
-                disabled={this.state.disableUpload}
-                multiple={false}
-                accept=".csv"
-              >
-                {({ getRootProps, getInputProps }) => (
-                  <section
-                    style={{
-                      width: 500,
-                      padding: 100,
-                      border: 3,
-                      borderRadius: 10,
-                      borderColor: '#EEEEEE',
-                      borderStyle: 'dashed',
-                      color: 'grey',
-                      margin: 'auto',
-                      marginBottom: 50,
-                      backgroundColor: '#FAFAFA'
-                    }}
-                  >
-                    <div {...getRootProps({ className: 'dropzone' })}>
-                      <input {...getInputProps()} />
-                      <CloudUploadIcon
-                        style={{ fontSize: '3em', marginBottom: 10 }}
-                        style={{
-                          color:
-                            this.state.file.length === 0 ? 'grey' : '#3176D2'
-                        }}
-                      />
-                      <p>
-                        {this.state.file.length === 0
-                          ? "Drag 'n' Drop your CSV file here, or click to select file"
-                          : 'Click to Change File'}
-                      </p>
-                      {files}
-                    </div>
-                  </section>
-                )}
-              </Dropzone>
-            </div>
-          </div>
-        );
-
-      case 3:
         return (
           <div>
             <Typography variant="h6" gutterBottom>
@@ -266,12 +306,74 @@ class OptimisationModal extends React.Component {
               value={this.state.constraintset}
               onChange={this.handleInputChange}
             >
-              {this.state.constraintsetList.map(value => (
-                <MenuItem value={value} id={value} key={value}>
-                  {value}
+              {this.state.constraintsetList.map(constraintset => (
+                <MenuItem
+                  value={constraintset}
+                  id={constraintset}
+                  key={constraintset}
+                >
+                  {this.state.constraintsetListMapping[constraintset]}
                 </MenuItem>
               ))}
             </Select>
+          </div>
+        );
+
+      case 2:
+        return (
+          <div>
+            <Typography variant="h6" gutterBottom>
+              Select Parameters:
+            </Typography>
+            <Box display="flex" justifyContent="space-between">
+              <Box>
+                <Box mt={5}>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      Population
+                    </InputLabel>
+                    <FormInput
+                      id="population"
+                      name="population"
+                      type="number"
+                      value={this.state.population}
+                      onChange={this.handleInputChange}
+                    />
+                  </FormControl>
+                </Box>
+                <Box mt={5}>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      Max Epoch
+                    </InputLabel>
+                    <FormInput
+                      id="maxEpoch"
+                      name="maxEpoch"
+                      type="number"
+                      value={this.state.maxEpoch}
+                      onChange={this.handleInputChange}
+                    />
+                  </FormControl>
+                </Box>
+              </Box>
+              <Box mt={5}>
+                <FormControl required>
+                  <InputLabel shrink htmlFor="title-input">
+                    Objective
+                  </InputLabel>
+                  <NativeSelect
+                    name="objective"
+                    value={this.state.objective}
+                    input={<FormInput />}
+                    onChange={this.handleInputChange}
+                  >
+                    {this.state.objectiveList.map(singleObjective => (
+                      <option value={singleObjective}>{singleObjective}</option>
+                    ))}
+                  </NativeSelect>
+                </FormControl>
+              </Box>
+            </Box>
           </div>
         );
 
@@ -291,7 +393,7 @@ class OptimisationModal extends React.Component {
           aria-describedby="transition-modal-description"
           className={classes.modal}
           open={this.props.open}
-          onClose={this.props.handleClose}
+          onClose={this.handleClose}
           closeAfterTransition
           BackdropComponent={Backdrop}
           BackdropProps={{
@@ -312,21 +414,26 @@ class OptimisationModal extends React.Component {
                   ))}
                 </Stepper>
                 <div>
-                  {this.state.activeStep === steps.length ? (
-                    <div className={classes.submitSection}>
-                      <Button
-                        onClick={this.handleReset}
-                        className={classes.backButton}
-                      >
-                        Reset
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={classes.submitButton}
-                        onClick={this.handleSubmit}
-                      >
-                        Optimise
-                      </Button>
+                  {this.state.activeStep === steps.length - 1 ? (
+                    <div>
+                      <Typography className={classes.instructions}>
+                        {this.getStepContent(this.state.activeStep)}
+                      </Typography>
+                      <div className={classes.submitSection}>
+                        <Button
+                          onClick={this.handleReset}
+                          className={classes.backButton}
+                        >
+                          Reset
+                        </Button>
+                        <Button
+                          variant="contained"
+                          className={classes.submitButton}
+                          onClick={this.handleSubmit}
+                        >
+                          Optimise
+                        </Button>
+                      </div>
                     </div>
                   ) : (
                     <div>
