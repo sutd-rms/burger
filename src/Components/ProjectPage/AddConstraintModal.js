@@ -136,7 +136,8 @@ const initialState = {
   inequality: 'LT',
   rhs: '',
   penalty: 'hard',
-  penaltyScore: '',
+  penaltyScoreList: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  penaltyScore: 1,
   constraintName: '',
   constraintItems: [],
   items: [],
@@ -178,12 +179,6 @@ class AddConstraintModal extends React.Component {
     this.setState({
       [name]: value
     });
-
-    if (this.state.penalty === 'hard') {
-      this.setState({
-        penaltyScore: ''
-      });
-    }
   }
 
   handleConstraintsInputChange = idx => event => {
@@ -323,7 +318,7 @@ class AddConstraintModal extends React.Component {
       inequality: 'LT',
       rhs: '',
       penalty: 'hard',
-      penaltyScore: '',
+      penaltyScore: 1,
       constraintName: '',
       constraintItems: [],
       items: [],
@@ -532,18 +527,21 @@ class AddConstraintModal extends React.Component {
                 </FormControl>
               </Box>
               <Box ml={5}>
-                <FormControl>
+                <FormControl required>
                   <InputLabel shrink htmlFor="title-input">
                     Score
                   </InputLabel>
-                  <FormInput
-                    id="title-input"
+                  <NativeSelect
                     name="penaltyScore"
-                    type="number"
-                    disabled={this.state.penalty === 'soft' ? false : true}
                     value={this.state.penaltyScore}
+                    disabled={this.state.penalty === 'soft' ? false : true}
+                    input={<FormInput />}
                     onChange={this.handleInputChange}
-                  />
+                  >
+                    {this.state.penaltyScoreList.map(score => (
+                      <option value={score}>{score}</option>
+                    ))}
+                  </NativeSelect>
                 </FormControl>
               </Box>
             </Box>
