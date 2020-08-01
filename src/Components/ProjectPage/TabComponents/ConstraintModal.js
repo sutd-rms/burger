@@ -254,7 +254,13 @@ class ConstraintModal extends React.Component {
       name: '',
       activeStep: 0,
       dataset: '',
-      inequalities: ['=', '<', '<=', '>', '>='],
+      inequalities: {
+        '<': 'LT',
+        '>': 'GT',
+        '<=': 'LEQ',
+        '>=': 'GEQ',
+        '=': 'EQ'
+      },
       inequality: '=',
       rhs: '',
       penalty: 'hard',
