@@ -15,6 +15,8 @@ import FormControl from '@material-ui/core/FormControl';
 import InputBase from '@material-ui/core/InputBase';
 import InputLabel from '@material-ui/core/InputLabel';
 import NativeSelect from '@material-ui/core/NativeSelect';
+import Snackbar from '@material-ui/core/Snackbar';
+import MuiAlert from '@material-ui/lab/Alert';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -57,6 +59,10 @@ const styles = theme => ({
   }
 });
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function getSteps() {
   return [
     'Trained Model Selection',
@@ -98,7 +104,9 @@ class OptimisationModal extends React.Component {
       maxEpoch: 100,
       objectiveList: ['Max Revenue'],
       objective: 'Max Revenue',
-      costFileUploaded: null
+      costFileUploaded: null,
+      error: false,
+      errorMessage: 'An error has occured! Please try again.'
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -108,14 +116,13 @@ class OptimisationModal extends React.Component {
     this.getStepContent = this.getStepContent.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleClose = this.handleClose.bind(this);
+    this.handleCloseSnackbar = this.handleCloseSnackbar.bind(this);
   }
 
   handleInputChange(event) {
     const target = event.target;
     const value = target.value;
     const name = target.name;
-    console.log(name);
-    console.log(value);
 
     this.setState({
       [name]: value
@@ -159,6 +166,12 @@ class OptimisationModal extends React.Component {
     this.props.handleClose();
   }
 
+  handleCloseSnackbar(event) {
+    this.setState({
+      error: false
+    });
+  }
+
   handleSubmit(event) {
     //Make POST request here
     if (
@@ -193,7 +206,22 @@ class OptimisationModal extends React.Component {
         }
       })
       .catch(err => {
-        console.log(err);
+        if (err.response.data) {
+          if (err.response.data.missing_items) {
+            let message =
+              'Missing items from cost sheet: ' +
+              err.response.data.missing_items.toString();
+            this.setState({
+              error: true,
+              errorMessage: message
+            });
+          }
+        } else {
+          this.setState({
+            error: true,
+            errorMessage: 'An error has occured! Please try again.'
+          });
+        }
       });
   }
 
@@ -463,6 +491,15 @@ class OptimisationModal extends React.Component {
             </div>
           </Fade>
         </Modal>
+        <Snackbar
+          open={this.state.error}
+          autoHideDuration={6000}
+          onClose={this.handleCloseSnackbar}
+        >
+          <Alert onClose={this.handleCloseSnackbar} severity="error">
+            {this.state.errorMessage}
+          </Alert>
+        </Snackbar>
       </React.Fragment>
     );
   }
