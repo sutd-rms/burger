@@ -43,8 +43,7 @@ const styles = theme => ({
     width: '80vw'
   },
   root: {
-    width: '100%',
-    marginTop: theme.spacing(5)
+    width: '100%'
   },
   backButton: {
     marginRight: theme.spacing(1)
@@ -73,7 +72,7 @@ const styles = theme => ({
     border: '1px solid #ced4da'
   },
   table: {
-    maxHeight: 440,
+    maxHeight: 380,
     width: 400
   },
   tableHeader: {
@@ -344,7 +343,7 @@ class WhatIfAnalysisModal extends React.Component {
 
     return (
       <Box display="flex">
-        <Box mt={5} className={classes.selectedItems}>
+        <Box mt={2} className={classes.selectedItems}>
           <TableContainer component={Paper} className={classes.table}>
             <Table stickyHeader aria-label="simple table">
               <TableHead>
