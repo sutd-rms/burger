@@ -66,6 +66,7 @@ class OptimisationTable extends React.Component {
         { title: 'Max Epoch', field: 'maxEpoch' },
         { title: 'Population', field: 'population' },
         { title: 'Status', field: 'status' },
+        { title: 'Objective', field: 'objective' },
         {
           title: 'Date Run',
           field: 'created',
@@ -101,6 +102,7 @@ class OptimisationTable extends React.Component {
             population: optimisation.population,
             created: optimisation.created,
             results: optimisation.results,
+            objective: optimisation.cost ? 'Max Profit' : 'Max Revenue',
             status: optimisation.results != null ? 'Completed' : 'Pending'
           });
         });
