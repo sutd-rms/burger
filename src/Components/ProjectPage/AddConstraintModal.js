@@ -45,8 +45,7 @@ const styles = theme => ({
     width: '80vw'
   },
   root: {
-    width: '100%',
-    marginTop: theme.spacing(5)
+    width: '100%'
   },
   backButton: {
     marginRight: theme.spacing(1)
@@ -75,12 +74,15 @@ const styles = theme => ({
     border: '1px solid #ced4da'
   },
   table: {
-    maxHeight: 440,
+    maxHeight: 380,
     width: 400
   },
   tableHeader: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white
+  },
+  preview: {
+    width: '100%'
   }
 });
 
@@ -124,7 +126,7 @@ const InitialConstraintState = {
   inequality: 'LT',
   rhs: '',
   penalty: 'hard',
-  penaltyScore: '',
+  penaltyScore: 1,
   constraintName: '',
   constraintItems: [],
   createConstraintError: false
@@ -136,7 +138,8 @@ const initialState = {
   inequality: 'LT',
   rhs: '',
   penalty: 'hard',
-  penaltyScore: '',
+  penaltyScoreList: [1, 2, 3, 4, 5, 6, 7, 8, 9],
+  penaltyScore: 1,
   constraintName: '',
   constraintItems: [],
   items: [],
@@ -168,6 +171,27 @@ class AddConstraintModal extends React.Component {
     this.handleClose = this.handleClose.bind(this);
     this.addAnotherConstraint = this.addAnotherConstraint.bind(this);
     this.submitConstraint = this.submitConstraint.bind(this);
+    this.previewConstraint = this.previewConstraint.bind(this);
+  }
+
+  previewConstraint() {
+    function getKeyByValue(object, value) {
+      return Object.keys(object).find(key => object[key] === value);
+    }
+
+    let equation = '';
+    this.state.constraintItems.forEach(item => {
+      if (item.coefficient != '') {
+        if (equation != '') {
+          equation += '+';
+        }
+        equation += item.coefficient;
+        equation += '*[' + this.state.itemMappings[item.item] + ']';
+      }
+    });
+    equation += getKeyByValue(this.state.inequalities, this.state.inequality);
+    equation += this.state.rhs;
+    return equation;
   }
 
   handleInputChange(event) {
@@ -178,12 +202,6 @@ class AddConstraintModal extends React.Component {
     this.setState({
       [name]: value
     });
-
-    if (this.state.penalty === 'hard') {
-      this.setState({
-        penaltyScore: ''
-      });
-    }
   }
 
   handleConstraintsInputChange = idx => event => {
@@ -323,7 +341,7 @@ class AddConstraintModal extends React.Component {
       inequality: 'LT',
       rhs: '',
       penalty: 'hard',
-      penaltyScore: '',
+      penaltyScore: 1,
       constraintName: '',
       constraintItems: [],
       items: [],
@@ -425,129 +443,150 @@ class AddConstraintModal extends React.Component {
     ]);
 
     return (
-      <Box display="flex">
-        <Box mr={15} mt={5} className={classes.constraintItems}>
-          <TableContainer component={Paper} className={classes.table}>
-            <Table stickyHeader aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell className={classes.tableHeader}>Item</TableCell>
-                  <TableCell className={classes.tableHeader}>
-                    Coefficient*
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {listItems.map(row => (
-                  <TableRow key={row[0]}>
-                    <TableCell component="th" scope="row">
-                      {row[0]}
+      <Box>
+        <Box display="flex">
+          <Box mr={12} mt={2} className={classes.constraintItems}>
+            <TableContainer component={Paper} className={classes.table}>
+              <Table stickyHeader aria-label="simple table">
+                <TableHead>
+                  <TableRow>
+                    <TableCell className={classes.tableHeader}>Item</TableCell>
+                    <TableCell className={classes.tableHeader}>
+                      Coefficient*
                     </TableCell>
-                    <TableCell>{row[1]}</TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-        <Box ml={15}>
-          <Box textAlign="left">
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  Name of Constraint
-                </InputLabel>
-                <FormInput
-                  id="title-input"
-                  name="constraintName"
-                  value={this.state.constraintName}
-                  onChange={this.handleInputChange}
-                />
-              </FormControl>
-            </Box>
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  Category
-                </InputLabel>
-                <NativeSelect
-                  name="category"
-                  value={this.state.category}
-                  input={<FormInput />}
-                  onChange={this.handleInputChange}
-                >
-                  {this.state.categories.map(category => (
-                    <option value={category.id}>{category.name}</option>
+                </TableHead>
+                <TableBody>
+                  {listItems.map(row => (
+                    <TableRow key={row[0]}>
+                      <TableCell component="th" scope="row">
+                        {row[0]}
+                      </TableCell>
+                      <TableCell>{row[1]}</TableCell>
+                    </TableRow>
                   ))}
-                </NativeSelect>
-              </FormControl>
-            </Box>
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  Inequality
-                </InputLabel>
-                <NativeSelect
-                  name="inequality"
-                  value={this.state.inequality}
-                  input={<FormInput />}
-                  onChange={this.handleInputChange}
-                >
-                  {Object.keys(this.state.inequalities).map(key => (
-                    <option value={this.state.inequalities[key]}>{key}</option>
-                  ))}
-                </NativeSelect>
-              </FormControl>
-            </Box>
-            <Box mt={5}>
-              <FormControl required>
-                <InputLabel shrink htmlFor="title-input">
-                  RHS
-                </InputLabel>
-                <FormInput
-                  id="title-input"
-                  name="rhs"
-                  type="number"
-                  value={this.state.rhs}
-                  onChange={this.handleInputChange}
-                />
-              </FormControl>
-            </Box>
-            <Box mt={5} display="flex">
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+          <Box ml={12}>
+            <Box textAlign="left">
               <Box>
                 <FormControl required>
                   <InputLabel shrink htmlFor="title-input">
-                    Penalty
-                  </InputLabel>
-                  <NativeSelect
-                    name="penalty"
-                    defaultValue="hard"
-                    value={this.state.penalty}
-                    input={<FormInput />}
-                    onChange={this.handleInputChange}
-                  >
-                    <option value="hard">Hard</option>
-                    <option value="soft">Soft</option>
-                  </NativeSelect>
-                </FormControl>
-              </Box>
-              <Box ml={5}>
-                <FormControl>
-                  <InputLabel shrink htmlFor="title-input">
-                    Score
+                    Name of Constraint
                   </InputLabel>
                   <FormInput
                     id="title-input"
-                    name="penaltyScore"
-                    type="number"
-                    disabled={this.state.penalty === 'soft' ? false : true}
-                    value={this.state.penaltyScore}
+                    name="constraintName"
+                    value={this.state.constraintName}
                     onChange={this.handleInputChange}
                   />
                 </FormControl>
               </Box>
+              <Box mt={2}>
+                <FormControl required>
+                  <InputLabel shrink htmlFor="title-input">
+                    Category
+                  </InputLabel>
+                  <NativeSelect
+                    name="category"
+                    value={this.state.category}
+                    input={<FormInput />}
+                    onChange={this.handleInputChange}
+                  >
+                    {this.state.categories.map(category => (
+                      <option value={category.id}>{category.name}</option>
+                    ))}
+                  </NativeSelect>
+                </FormControl>
+              </Box>
+              <Box mt={2} display="flex">
+                <Box>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      Inequality
+                    </InputLabel>
+                    <NativeSelect
+                      name="inequality"
+                      value={this.state.inequality}
+                      input={<FormInput />}
+                      onChange={this.handleInputChange}
+                    >
+                      {Object.keys(this.state.inequalities).map(key => (
+                        <option value={this.state.inequalities[key]}>
+                          {key}
+                        </option>
+                      ))}
+                    </NativeSelect>
+                  </FormControl>
+                </Box>
+                <Box ml={5}>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      RHS
+                    </InputLabel>
+                    <FormInput
+                      id="title-input"
+                      name="rhs"
+                      type="number"
+                      value={this.state.rhs}
+                      onChange={this.handleInputChange}
+                    />
+                  </FormControl>
+                </Box>
+              </Box>
+              <Box mt={2} display="flex">
+                <Box>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      Penalty
+                    </InputLabel>
+                    <NativeSelect
+                      name="penalty"
+                      defaultValue="hard"
+                      value={this.state.penalty}
+                      input={<FormInput />}
+                      onChange={this.handleInputChange}
+                    >
+                      <option value="hard">Hard</option>
+                      <option value="soft">Soft</option>
+                    </NativeSelect>
+                  </FormControl>
+                </Box>
+                <Box ml={5}>
+                  <FormControl required>
+                    <InputLabel shrink htmlFor="title-input">
+                      Score
+                    </InputLabel>
+                    <NativeSelect
+                      name="penaltyScore"
+                      value={this.state.penaltyScore}
+                      disabled={this.state.penalty === 'soft' ? false : true}
+                      input={<FormInput />}
+                      onChange={this.handleInputChange}
+                    >
+                      {this.state.penaltyScoreList.map(score => (
+                        <option value={score}>{score}</option>
+                      ))}
+                    </NativeSelect>
+                  </FormControl>
+                </Box>
+              </Box>
             </Box>
           </Box>
+        </Box>
+        <Box mt={3}>
+          <FormControl className={classes.preview}>
+            <InputLabel shrink htmlFor="title-input">
+              Constraint Preview
+            </InputLabel>
+            <FormInput
+              id="title-input"
+              name="constraintName"
+              value={this.previewConstraint()}
+            />
+          </FormControl>
         </Box>
       </Box>
     );
@@ -599,9 +638,6 @@ class AddConstraintModal extends React.Component {
       case 1:
         return (
           <Box mx={15}>
-            <Typography variant="h6" gutterBottom={true}>
-              Create Constraints
-            </Typography>
             {this.state.createConstraintError === false ? null : (
               <Typography variant="subtitle" color="error">
                 Please fill up all required fields
