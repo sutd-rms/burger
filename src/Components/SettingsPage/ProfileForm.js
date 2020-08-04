@@ -189,7 +189,7 @@ class ProfileForm extends React.Component {
 
   handleSubmit(event) {
     var formData = new FormData();
-    if (this.state.profileNew !== this.state.profile) {
+    if (this.state.profileNew != this.state.profile) {
       formData.append('cover', this.state.profileNewFile);
     }
     formData.append('first_name', this.state.firstNameNew);

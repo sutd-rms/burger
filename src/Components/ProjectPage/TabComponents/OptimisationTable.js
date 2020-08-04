@@ -19,6 +19,8 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import InsertDriveFileIcon from '@material-ui/icons/InsertDriveFile';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const tableIcons = {
@@ -74,7 +76,8 @@ class OptimisationTable extends React.Component {
           filtering: false
         }
       ],
-      data: []
+      data: [],
+      dataloading: true
     };
   }
 
@@ -106,9 +109,12 @@ class OptimisationTable extends React.Component {
             status: optimisation.results != null ? 'Completed' : 'Pending'
           });
         });
-        this.setState({
-          data: tableData
-        });
+        this.setState(
+          {
+            data: tableData
+          },
+          () => this.setState({ dataloading: false })
+        );
       });
   }
 
@@ -174,6 +180,9 @@ class OptimisationTable extends React.Component {
             })
           ]}
         />
+        <Backdrop className={classes.backdrop} open={this.state.dataloading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     );
   }
