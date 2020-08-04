@@ -13,6 +13,9 @@ import Select from '@material-ui/core/Select';
 import Box from '@material-ui/core/Box';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 import { store } from '../../redux/store';
 
@@ -28,6 +31,13 @@ const styles = theme => ({
     color: theme.palette.grey[500]
   }
 });
+
+const useStyles = makeStyles(theme => ({
+  backdrop: {
+    zIndex: 2000,
+    color: '#fff'
+  }
+}));
 
 const DialogTitle = withStyles(styles)(props => {
   const { children, classes, onClose, ...other } = props;
@@ -58,6 +68,8 @@ function Alert(props) {
 }
 
 export default function ProjectCreationForm(props) {
+  const classes = useStyles();
+
   let userCompany = store.getState().currentUser.company;
   let userIsStaff = store.getState().currentUser.is_staff;
   const [name, setName] = useState('');
@@ -69,9 +81,11 @@ export default function ProjectCreationForm(props) {
   const [empty, setEmpty] = useState(false);
   const [displayCompany, setDisplayCompany] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const onFormSubmission = e => {
     e.preventDefault();
+    setLoading(true);
     // ADD API CALL HERE
     if (name === '' || organization === '') {
       setEmpty(true);
@@ -100,6 +114,7 @@ export default function ProjectCreationForm(props) {
           if ((res.status = 200)) {
             setSuccess(true);
             props.handleClose();
+            setLoading(false);
             window.location.reload();
           } else {
             setFail(true);
@@ -113,6 +128,7 @@ export default function ProjectCreationForm(props) {
             }
           }
           setErrorMsg(errMsg);
+          setLoading(false);
           setFail(true);
         });
     }
@@ -261,6 +277,9 @@ export default function ProjectCreationForm(props) {
           Please fill up the fields required!
         </Alert>
       </Snackbar>
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }

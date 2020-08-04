@@ -15,6 +15,8 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import ChangePasswordModal from './ChangePasswordModal';
 import { store } from '../../redux/store';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -78,6 +80,10 @@ const styles = theme => ({
   photoIcon: {
     width: '50px',
     height: '50px'
+  },
+  backdrop: {
+    zIndex: 2000,
+    color: '#fff'
   }
 });
 
@@ -131,7 +137,8 @@ class ProfileForm extends React.Component {
       editable: false,
       profileSuccess: false,
       passwordSuccess: false,
-      error: false
+      error: false,
+      loading: false
     };
 
     this.onDrop = files => {
@@ -188,6 +195,7 @@ class ProfileForm extends React.Component {
   }
 
   handleSubmit(event) {
+    this.setState({ loading: true });
     var formData = new FormData();
     if (this.state.profileNew != this.state.profile) {
       formData.append('cover', this.state.profileNewFile);
@@ -222,7 +230,8 @@ class ProfileForm extends React.Component {
             profileSuccess: true,
             open: false,
             errorMsg: '',
-            fail: false
+            fail: false,
+            loading: false
           });
           if (store.getState().currentUser.is_staff) {
             return axios.get(
@@ -592,6 +601,9 @@ class ProfileForm extends React.Component {
             </Box>
           </Alert>
         </Snackbar>
+        <Backdrop className={classes.backdrop} open={this.state.loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Box>
     );
   }

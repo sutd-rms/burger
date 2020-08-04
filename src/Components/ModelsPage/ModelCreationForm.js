@@ -10,6 +10,9 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -24,6 +27,13 @@ const styles = theme => ({
     color: theme.palette.grey[500]
   }
 });
+
+const useStyles = makeStyles(theme => ({
+  backdrop: {
+    zIndex: 2000,
+    color: '#fff'
+  }
+}));
 
 function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
@@ -54,6 +64,8 @@ const DialogContent = withStyles(theme => ({
 }))(MuiDialogContent);
 
 export default function ModelCreationForm(props) {
+  const classes = useStyles();
+
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   // const [company, setCompany] = useState(null);
@@ -61,12 +73,14 @@ export default function ModelCreationForm(props) {
   const [fail, setFail] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [empty, setEmpty] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const onFormSubmission = e => {
     e.preventDefault();
     if (name === '' || description === '') {
       setEmpty(true);
     } else {
+      setLoading(true);
       // ADD API CALL HERE
       let newModel = {
         name: name,
@@ -88,9 +102,11 @@ export default function ModelCreationForm(props) {
         .then(res => {
           if ((res.status = 200)) {
             setSuccess(true);
+            setLoading(false);
             props.handleClose();
             window.location.reload();
           } else {
+            setLoading(false);
             setFail(true);
           }
         })
@@ -196,6 +212,9 @@ export default function ModelCreationForm(props) {
           Please fill up the fields required!
         </Alert>
       </Snackbar>
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }
