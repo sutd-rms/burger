@@ -19,6 +19,8 @@ import Linegraph from './../static/images/growth.svg';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import BoxplotChart from './Boxplot';
 import LinegraphChart from './Linegraph';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const token = localStorage.getItem('token');
@@ -59,6 +61,10 @@ const styles = theme => ({
   },
   title: {
     fontWeight: 'bold'
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
   }
 });
 
@@ -251,7 +257,7 @@ class DatasetVisualisation extends React.Component {
       });
   }
 
-  getStepContent(stepIndex) {
+  getStepContent(stepIndex, classes) {
     switch (stepIndex) {
       case 0:
         return (
@@ -363,7 +369,15 @@ class DatasetVisualisation extends React.Component {
       case 2:
         return (
           <Box display="flex" justifyContent="center">
-            <Box>{this.state.hasFetched ? this.renderGraphs : null}</Box>
+            <Box>
+              {this.state.hasFetched ? (
+                this.renderGraphs
+              ) : (
+                <Backdrop className={classes.backdrop} open={true}>
+                  <CircularProgress color="inherit" />
+                </Backdrop>
+              )}
+            </Box>
           </Box>
         );
       default:
@@ -391,7 +405,7 @@ class DatasetVisualisation extends React.Component {
               {this.state.activeStep === steps.length - 1 ? (
                 <div>
                   <Typography className={classes.instructions}>
-                    {this.getStepContent(this.state.activeStep)}
+                    {this.getStepContent(this.state.activeStep, classes)}
                   </Typography>
                   <div className={classes.submitSection}>
                     <Button

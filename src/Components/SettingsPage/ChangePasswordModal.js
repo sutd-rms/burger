@@ -9,7 +9,7 @@ import FormControl from '@material-ui/core/FormControl';
 import InputBase from '@material-ui/core/InputBase';
 import InputLabel from '@material-ui/core/InputLabel';
 import Box from '@material-ui/core/Box';
-import MuiAlert from '@material-ui/lab/Alert';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -31,6 +31,10 @@ const styles = theme => ({
   submitButton: {
     backgroundColor: 'green',
     color: 'white'
+  },
+  backdrop: {
+    zIndex: 2000,
+    color: '#fff'
   }
 });
 
@@ -69,7 +73,8 @@ class ChangePasswordModal extends React.Component {
       newPassword: '',
       reNewPassword: '',
       errorMessage: [],
-      error: false
+      error: false,
+      loading: false
     };
 
     this.handleInputChange = this.handleInputChange.bind(this);
@@ -104,6 +109,7 @@ class ChangePasswordModal extends React.Component {
 
   handleSubmit(event) {
     //Make POST request here
+    this.setState({ loading: true });
     let token = localStorage.getItem('token');
     const form = {
       new_password: this.state.newPassword,
@@ -125,6 +131,7 @@ class ChangePasswordModal extends React.Component {
       )
       .then(res => {
         if (res.status === 204) {
+          this.setState({ loading: false });
           this.props.showAlert();
           this.closeModal();
         }
@@ -140,7 +147,8 @@ class ChangePasswordModal extends React.Component {
         this.setState({
           currentPassword: '',
           newPassword: '',
-          reNewPassword: ''
+          reNewPassword: '',
+          loading: false
         });
         this.props.resetFail(errorList);
       });
@@ -238,6 +246,9 @@ class ChangePasswordModal extends React.Component {
             </Fade>
           </Modal>
         </React.Fragment>
+        <Backdrop className={classes.backdrop} open={this.state.loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     );
   }

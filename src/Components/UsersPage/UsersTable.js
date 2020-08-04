@@ -20,6 +20,9 @@ import Search from '@material-ui/icons/Search';
 import ViewColumn from '@material-ui/icons/ViewColumn';
 import TextField from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
 const tableIcons = {
@@ -85,10 +88,20 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+const useStyles = makeStyles(theme => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
+  }
+}));
+
 export default function UsersTable(props) {
+  const classes = useStyles();
+
   const token = localStorage.getItem('token');
   const [selectedRow, setSelectedRow] = useState(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
+  const [dataloading, setDataloading] = useState(true);
 
   const handleCloseSnackbar = e => {
     setError(false);
@@ -205,6 +218,7 @@ export default function UsersTable(props) {
           const data = convertedUsersList;
           return { ...prevState, data };
         });
+        setDataloading(false);
       });
   }, [companyList, props.data, token]);
 
@@ -295,6 +309,9 @@ export default function UsersTable(props) {
           An error occured! Please try again!
         </Alert>
       </Snackbar>
+      <Backdrop className={classes.backdrop} open={dataloading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }
