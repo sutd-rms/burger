@@ -23,6 +23,8 @@ import AppsIcon from '@material-ui/icons/Apps';
 import AdjustIcon from '@material-ui/icons/Adjust';
 import WhatIfAnalysisModal from './WhatIfAnalysisModal.js';
 import FileDownload from 'js-file-download';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const tableIcons = {
@@ -50,7 +52,11 @@ const tableIcons = {
 };
 
 const styles = theme => ({
-  root: {}
+  root: {},
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
+  }
 });
 
 const token = localStorage.getItem('token');
@@ -76,7 +82,8 @@ class TrainedModelsTable extends React.Component {
           filtering: false
         }
       ],
-      data: []
+      data: [],
+      dataloading: true
     };
 
     this.handleClose = this.handleClose.bind(this);
@@ -124,13 +131,18 @@ class TrainedModelsTable extends React.Component {
             created: trainedModel.created
           });
         });
-        this.setState({
-          data: tableData
-        });
+        this.setState(
+          {
+            data: tableData
+          },
+          () => this.setState({ dataloading: false })
+        );
       });
   }
 
   render() {
+    const { classes } = this.props;
+
     return (
       <div>
         <MaterialTable
@@ -256,6 +268,9 @@ class TrainedModelsTable extends React.Component {
           handleError={this.props.handleError}
           datasetId={this.state.datasetId}
         />
+        <Backdrop className={classes.backdrop} open={this.state.dataloading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     );
   }

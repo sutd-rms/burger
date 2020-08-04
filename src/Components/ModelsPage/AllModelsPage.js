@@ -5,16 +5,24 @@ import ModelCard from './ModelCard';
 import FloatingAddButton from '../FloatingAddButton';
 import ModelCreationForm from './ModelCreationForm';
 import DashboardTopNav from './../DashboardTopNav';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
-// function Model() {
-//   let { modelId } = useParams();
-//   return <h3>Requested model ID: {modelId}</h3>;
-// }
+const useStyles = makeStyles(theme => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
+  }
+}));
 
 export default function AllModelsPage() {
+  const classes = useStyles();
+
   const [modelsList, setModelsList] = useState([]);
   const [displayCreationForm, setDisplayCreationForm] = useState(false);
+  const [dataloading, setDataloading] = useState(true);
   let match = useRouteMatch();
 
   const handleOpen = () => {
@@ -37,6 +45,7 @@ export default function AllModelsPage() {
       })
       .then(data => {
         setModelsList(data.data);
+        setDataloading(false);
       });
   }, []);
 
@@ -66,6 +75,9 @@ export default function AllModelsPage() {
           </Grid>
         </Route>
       </Switch>
+      <Backdrop className={classes.backdrop} open={dataloading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }

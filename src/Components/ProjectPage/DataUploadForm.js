@@ -8,6 +8,8 @@ import { withStyles } from '@material-ui/core/styles';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import Dialog from '@material-ui/core/Dialog';
 import TextField from '@material-ui/core/TextField';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -37,9 +39,12 @@ const styles = theme => ({
     marginBottom: 50,
     backgroundColor: '#FAFAFA'
   },
-
   uploaded: {
     color: '#3176D2'
+  },
+  backdrop: {
+    zIndex: 2000,
+    color: '#fff'
   }
 });
 
@@ -53,7 +58,8 @@ class DataUploadForm extends React.Component {
     };
     this.state = {
       files: [],
-      datasetName: ''
+      datasetName: '',
+      loading: false
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -61,6 +67,7 @@ class DataUploadForm extends React.Component {
 
   handleSubmit = event => {
     event.preventDefault();
+    this.setState({ loading: true });
 
     var formData = new FormData();
     formData.append('upload', this.state.files[0]);
@@ -92,11 +99,13 @@ class DataUploadForm extends React.Component {
           this.props.successUpload(res.data);
           this.setState({
             files: [],
-            datasetName: ''
+            datasetName: '',
+            loading: false
           });
           this.props.handleCloseDataUploadForm();
         })
         .catch(error => {
+          this.setState({ loading: false });
           this.props.handleUploadFail(error.response);
         });
     }
@@ -180,6 +189,9 @@ class DataUploadForm extends React.Component {
             </Button>
           </Box>
         </div>
+        <Backdrop className={classes.backdrop} open={this.state.loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Dialog>
     );
   }

@@ -33,6 +33,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const tableIcons = {
   Add: forwardRef((props, ref) => <AddBox {...props} ref={ref} />),
@@ -84,6 +86,10 @@ const styles = theme => ({
       borderColor: '#bd2130',
       color: 'white'
     }
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
   }
 });
 
@@ -123,7 +129,8 @@ class DatasetsTab extends React.Component {
       noFileError: false,
       wrongTypeError: false,
       error: false,
-      errorMessage: ''
+      errorMessage: '',
+      dataloading: true
     };
   }
 
@@ -152,10 +159,13 @@ class DatasetsTab extends React.Component {
         );
       })
       .then(res => {
-        this.setState({
-          costFileStatusLoaded: true,
-          costFileUploaded: res.data.cost_sheet
-        });
+        this.setState(
+          {
+            costFileStatusLoaded: true,
+            costFileUploaded: res.data.cost_sheet
+          },
+          () => this.setState({ dataloading: false })
+        );
       });
   }
 
@@ -501,6 +511,9 @@ class DatasetsTab extends React.Component {
             Please try again.
           </Alert>
         </Snackbar>
+        <Backdrop className={classes.backdrop} open={this.state.dataloading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </div>
     );
   }

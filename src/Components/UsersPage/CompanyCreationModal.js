@@ -5,6 +5,8 @@ import TextField from '@material-ui/core/TextField';
 import { Box, Button } from '@material-ui/core';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -20,6 +22,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  backdrop: {
+    zIndex: 2000,
+    color: '#fff'
   }
 }));
 
@@ -36,6 +42,7 @@ export default function CompanyCreationModal(props) {
   const [emptyField, setEmptyField] = useState(false);
   const [error, setError] = useState('');
   const [creationError, setCreationError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = event => {
     setName(event.target.value);
@@ -51,6 +58,7 @@ export default function CompanyCreationModal(props) {
 
   const onClick = () => {
     if (name) {
+      setLoading(true);
       let newCompany = {
         name: name
       };
@@ -69,6 +77,7 @@ export default function CompanyCreationModal(props) {
         .then(res => {
           if (res.status === 201) {
             props.setSuccess(true);
+            setLoading(false);
             window.location.reload();
           }
         })
@@ -77,6 +86,7 @@ export default function CompanyCreationModal(props) {
           for (var item in err.response.data) {
             errorString = errorString + err.response.data[item] + '\n ';
           }
+          setLoading(false);
           setError(errorString);
           console.log(errorString);
           setCreationError(true);
@@ -143,6 +153,9 @@ export default function CompanyCreationModal(props) {
           {error}
         </Alert>
       </Snackbar>
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }

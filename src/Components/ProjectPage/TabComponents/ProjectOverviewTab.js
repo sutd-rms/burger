@@ -13,6 +13,8 @@ import Dropzone from 'react-dropzone';
 import PhotoCameraIcon from '@material-ui/icons/PhotoCamera';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const styles = theme => ({
@@ -76,6 +78,10 @@ const styles = theme => ({
   photoIcon: {
     width: '50px',
     height: '50px'
+  },
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
   }
 });
 
@@ -114,7 +120,8 @@ class ProjectOverviewTab extends React.Component {
       coverNewFile: '',
       editable: false,
       success: false,
-      project: {}
+      project: {},
+      loading: false
     };
 
     this.onDrop = files => {
@@ -162,6 +169,7 @@ class ProjectOverviewTab extends React.Component {
   }
 
   handleSubmit(event) {
+    this.setState({ loading: true });
     //Make POST request here
     var formData = new FormData();
     if (this.state.coverNew !== this.state.cover) {
@@ -191,7 +199,8 @@ class ProjectOverviewTab extends React.Component {
           description: this.state.descriptionNew,
           cover: this.state.coverNew,
           editable: false,
-          success: true
+          success: true,
+          loading: false
         })
       );
   }
@@ -362,6 +371,9 @@ class ProjectOverviewTab extends React.Component {
             Project Edited!
           </Alert>
         </Snackbar>
+        <Backdrop className={classes.backdrop} open={this.state.loading}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </Box>
     );
   }

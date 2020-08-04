@@ -22,6 +22,9 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import AutoCompleteField from './AutoCompleteField';
 import { TextField } from '@material-ui/core';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { makeStyles } from '@material-ui/core/styles';
 import axios from 'axios';
 
 const tableIcons = {
@@ -52,7 +55,16 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
+const useStyles = makeStyles(theme => ({
+  backdrop: {
+    zIndex: theme.zIndex.drawer + 1,
+    color: '#fff'
+  }
+}));
+
 function UserControlTab(props) {
+  const classes = useStyles();
+
   const [usersList, setUsersList] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedRow, setSelectedRow] = useState('');
@@ -65,6 +77,7 @@ function UserControlTab(props) {
   const [uid, setUid] = useState('');
   const [deleteSuccess, setDeleteSuccess] = useState(false);
   const [userExisted, setUserExisted] = useState(false);
+  const [dataloading, setDataloading] = useState(true);
 
   const columns = [
     {
@@ -147,8 +160,17 @@ function UserControlTab(props) {
           });
         }
         setUsersList(userList);
+        setDataloading(false);
       });
   }, [companyList, uidList]);
+
+  // useEffect(()=>{
+  //   if(usersList != []){
+  //     setDataloading(false);
+  //   }else{
+  //     setDataloading(true);
+  //   }
+  // }, [usersList])
 
   const onEmailSelect = opt => {
     if (opt != null) {
@@ -330,6 +352,9 @@ function UserControlTab(props) {
           User deleted from the project!
         </Alert>
       </Snackbar>
+      <Backdrop className={classes.backdrop} open={dataloading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }

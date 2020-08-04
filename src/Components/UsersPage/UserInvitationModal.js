@@ -6,6 +6,8 @@ import { Box, Button } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import axios from 'axios';
 
 const useStyles = makeStyles(theme => ({
@@ -21,6 +23,10 @@ const useStyles = makeStyles(theme => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  backdrop: {
+    zIndex: 2000,
+    color: '#fff'
   }
 }));
 
@@ -72,6 +78,7 @@ export default function UserInvitationModal(props) {
   const [emptyField, setEmptyField] = useState(false);
   const [error, setError] = useState('');
   const [invitationError, setInvitationError] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     axios
@@ -83,7 +90,7 @@ export default function UserInvitationModal(props) {
         }
       })
       .then(data => setCompanyList(data.data));
-  }, []);
+  }, [token]);
 
   const handleChange = event => {
     setNewEmail(event.target.value);
@@ -99,6 +106,7 @@ export default function UserInvitationModal(props) {
 
   const onClick = () => {
     if (newCompany && newEmail) {
+      setLoading(true);
       let userInfo = { email: newEmail, company: newCompany };
       axios
         .post(
@@ -115,15 +123,18 @@ export default function UserInvitationModal(props) {
         .then(res => {
           if (res.status === 201 && res.status) {
             props.setSuccess(true);
+            setLoading(false);
+            props.handleClose();
           }
         })
         .catch(err => {
-          let errorString = "";
-          for(var item in err.response.data) {
-            errorString = errorString + err.response.data[item] + "\n "
-         }
+          let errorString = '';
+          for (var item in err.response.data) {
+            errorString = errorString + err.response.data[item] + '\n ';
+          }
           setError(errorString);
           console.log(errorString);
+          setLoading(false);
           setInvitationError(true);
         });
     } else {
@@ -183,7 +194,7 @@ export default function UserInvitationModal(props) {
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="error">
-        Company of Email could not be empty!
+          Company of Email could not be empty!
         </Alert>
       </Snackbar>
       <Snackbar
@@ -192,9 +203,12 @@ export default function UserInvitationModal(props) {
         onClose={handleCloseSnackbar}
       >
         <Alert onClose={handleCloseSnackbar} severity="error">
-        {error}
+          {error}
         </Alert>
       </Snackbar>
+      <Backdrop className={classes.backdrop} open={loading}>
+        <CircularProgress color="inherit" />
+      </Backdrop>
     </div>
   );
 }
