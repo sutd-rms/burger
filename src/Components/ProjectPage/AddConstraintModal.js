@@ -286,17 +286,13 @@ class AddConstraintModal extends React.Component {
     };
 
     axios
-      .post(
-        'https://secret-sauce.azurewebsites.net/portal/constraints/',
-        form,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .post('http://localhost:8000/portal/constraints/', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         if (res.status === 201 && res.status) {
           this.handleReset();
@@ -370,7 +366,7 @@ class AddConstraintModal extends React.Component {
   componentDidMount() {
     axios
       .get(
-        `https://secret-sauce.azurewebsites.net/portal/constraintsets/${this.props.constraintSetID}/parameters/`,
+        `http://localhost:8000/portal/constraintsets/${this.props.constraintSetID}/parameters/`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -395,16 +391,13 @@ class AddConstraintModal extends React.Component {
           itemMappings: itemDict
         });
 
-        return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        return axios.get(`http://localhost:8000/portal/constraintcategories/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        );
+        });
       })
       .then(res => {
         this.setState({

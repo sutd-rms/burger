@@ -4,9 +4,9 @@ import history from './../history';
 // const urlLogin = `http://localhost:8000/auth/token/login/`;
 // const urlUser = `http://localhost:8000/auth/users/me/`;
 
-const urlLogin = `https://secret-sauce.azurewebsites.net/auth/token/login`;
-const urlUser = `https://secret-sauce.azurewebsites.net/auth/users/`;
-const urlCurrentUser = `https://secret-sauce.azurewebsites.net/auth/users/me/`;
+const urlLogin = `http://localhost:8000/auth/token/login`;
+const urlUser = `http://localhost:8000/auth/users/`;
+const urlCurrentUser = `http://localhost:8000/auth/users/me/`;
 
 const loginUser = userObj => ({
   type: 'LOGIN_USER',

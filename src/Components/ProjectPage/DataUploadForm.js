@@ -84,17 +84,13 @@ class DataUploadForm extends React.Component {
     } else {
       let token = localStorage.getItem('token');
       axios
-        .post(
-          'https://secret-sauce.azurewebsites.net/portal/datablocks/',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        .post('http://localhost:8000/portal/datablocks/', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        )
+        })
         .then(res => {
           this.props.successUpload(res.data);
           this.setState({

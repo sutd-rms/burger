@@ -65,7 +65,7 @@ class ConstraintsTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+      .get(`http://localhost:8000/portal/constraintsets/`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -126,7 +126,7 @@ class ConstraintsTable extends React.Component {
                 setTimeout(() => {
                   axios
                     .delete(
-                      `https://secret-sauce.azurewebsites.net/portal/constraintsets/${oldData.id}`,
+                      `http://localhost:8000/portal/constraintsets/${oldData.id}`,
                       {
                         headers: {
                           'Content-Type': 'application/json',

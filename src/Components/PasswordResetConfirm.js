@@ -91,7 +91,7 @@ class PasswordResetConfirm extends React.Component {
 
     // const urlPasswordReset = `http://localhost:8000/auth/users/reset_password_confirm/`;
 
-    const urlPasswordReset = `https://secret-sauce.azurewebsites.net/auth/users/reset_password_confirm/`;
+    const urlPasswordReset = `http://localhost:8000/auth/users/reset_password_confirm/`;
 
     const form = {
       uid: this.props.match.params.id,

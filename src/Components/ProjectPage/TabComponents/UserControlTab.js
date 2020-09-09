@@ -106,7 +106,7 @@ function UserControlTab(props) {
   useEffect(() => {
     let token = localStorage.getItem('token');
     axios
-      .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+      .get('http://localhost:8000/auth/company/', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -120,7 +120,7 @@ function UserControlTab(props) {
     const id = props.projectId;
     // FETCH & SET STATE
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/projects/${id}`, {
+      .get(`http://localhost:8000/portal/projects/${id}`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -137,7 +137,7 @@ function UserControlTab(props) {
     let token = localStorage.getItem('token');
 
     axios
-      .get('https://secret-sauce.azurewebsites.net/auth/users', {
+      .get('http://localhost:8000/auth/users', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -255,7 +255,7 @@ function UserControlTab(props) {
                   let token = localStorage.getItem('token');
                   axios
                     .patch(
-                      `https://secret-sauce.azurewebsites.net/portal/projects/${id}`,
+                      `http://localhost:8000/portal/projects/${id}`,
                       newProject,
                       {
                         headers: {
@@ -293,7 +293,7 @@ function UserControlTab(props) {
                 const newProject = { owners: deletedIdList };
                 axios
                   .patch(
-                    `https://secret-sauce.azurewebsites.net/portal/projects/${id}`,
+                    `http://localhost:8000/portal/projects/${id}`,
                     newProject,
                     {
                       headers: {

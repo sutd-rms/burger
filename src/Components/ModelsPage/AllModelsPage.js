@@ -36,7 +36,7 @@ export default function AllModelsPage() {
   useEffect(() => {
     let token = localStorage.getItem('token');
     axios
-      .get('https://secret-sauce.azurewebsites.net/portal/predictionmodels/', {
+      .get('http://localhost:8000/portal/predictionmodels/', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',

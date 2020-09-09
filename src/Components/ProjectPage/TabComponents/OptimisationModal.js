@@ -191,7 +191,7 @@ class OptimisationModal extends React.Component {
     };
 
     axios
-      .post('https://secret-sauce.azurewebsites.net/portal/optimizers/', form, {
+      .post('http://localhost:8000/portal/optimizers/', form, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -227,7 +227,7 @@ class OptimisationModal extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
+      .get(`http://localhost:8000/portal/trainedmodels`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -250,7 +250,7 @@ class OptimisationModal extends React.Component {
       });
 
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/constraintsets/`, {
+      .get(`http://localhost:8000/portal/constraintsets/`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -273,16 +273,13 @@ class OptimisationModal extends React.Component {
       });
 
     axios
-      .get(
-        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .get(`http://localhost:8000/portal/projects/${this.props.projectId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         this.setState({
           costFileUploaded: res.data.cost_sheet ? true : false,

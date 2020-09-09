@@ -86,7 +86,7 @@ class ConstraintSetDetailsTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/constraints/`, {
+      .get(`http://localhost:8000/portal/constraints/`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -98,16 +98,13 @@ class ConstraintSetDetailsTable extends React.Component {
         this.setState({
           unprocessedData: res.data
         });
-        return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        return axios.get(`http://localhost:8000/portal/constraintcategories/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        );
+        });
       })
       .then(res => {
         var categories = {};
@@ -165,7 +162,7 @@ class ConstraintSetDetailsTable extends React.Component {
                 setTimeout(() => {
                   axios
                     .delete(
-                      `https://secret-sauce.azurewebsites.net/portal/constraints/${oldData.id}`,
+                      `http://localhost:8000/portal/constraints/${oldData.id}`,
                       {
                         headers: {
                           'Content-Type': 'application/json',

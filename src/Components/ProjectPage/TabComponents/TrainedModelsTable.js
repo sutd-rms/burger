@@ -99,7 +99,7 @@ class TrainedModelsTable extends React.Component {
     let token = localStorage.getItem('token');
 
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/trainedmodels`, {
+      .get(`http://localhost:8000/portal/trainedmodels`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -178,7 +178,7 @@ class TrainedModelsTable extends React.Component {
               onClick: (event, rowData) => {
                 axios
                   .get(
-                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/elasticity/`,
+                    `http://localhost:8000/portal/trainedmodels/${rowData.id}/elasticity/`,
                     {
                       headers: {
                         'Content-Type': 'application/json',
@@ -201,7 +201,7 @@ class TrainedModelsTable extends React.Component {
               onClick: (event, rowData) => {
                 axios
                   .get(
-                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/feature_importance/`,
+                    `http://localhost:8000/portal/trainedmodels/${rowData.id}/feature_importance/`,
                     {
                       headers: {
                         'Content-Type': 'application/json',
@@ -228,7 +228,7 @@ class TrainedModelsTable extends React.Component {
               onClick: (event, rowData) => {
                 axios
                   .get(
-                    `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${rowData.id}/cv_score/`,
+                    `http://localhost:8000/portal/trainedmodels/${rowData.id}/cv_score/`,
                     {
                       headers: {
                         'Content-Type': 'application/json',

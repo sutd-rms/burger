@@ -69,7 +69,7 @@ class CostSetUploadForm extends React.Component {
       let token = localStorage.getItem('token');
       axios
         .post(
-          `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}/items/`,
+          `http://localhost:8000/portal/projects/${this.props.projectId}/items/`,
           formData,
           {
             headers: {

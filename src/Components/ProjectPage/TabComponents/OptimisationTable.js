@@ -83,7 +83,7 @@ class OptimisationTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/optimizers`, {
+      .get(`http://localhost:8000/portal/optimizers`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -154,7 +154,7 @@ class OptimisationTable extends React.Component {
               onClick: (event, rowData) => {
                 axios
                   .get(
-                    `https://secret-sauce.azurewebsites.net/portal/optimizers/${rowData.id}`,
+                    `http://localhost:8000/portal/optimizers/${rowData.id}`,
                     {
                       headers: {
                         'Content-Type': 'application/json',

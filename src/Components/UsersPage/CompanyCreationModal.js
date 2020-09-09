@@ -63,17 +63,13 @@ export default function CompanyCreationModal(props) {
         name: name
       };
       axios
-        .post(
-          'https://secret-sauce.azurewebsites.net/auth/company/',
-          newCompany,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        .post('http://localhost:8000/auth/company/', newCompany, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        )
+        })
         .then(res => {
           if (res.status === 201) {
             props.setSuccess(true);

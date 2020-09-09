@@ -54,7 +54,7 @@ export default function CompanyTable(props) {
 
   useEffect(() => {
     axios
-      .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+      .get('http://localhost:8000/auth/company/', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',

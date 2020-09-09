@@ -208,17 +208,13 @@ class ProfileForm extends React.Component {
     // FETCH & SET STATE
     let token = localStorage.getItem('token');
     axios
-      .patch(
-        `https://secret-sauce.azurewebsites.net/auth/editprofile/`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .patch(`http://localhost:8000/auth/editprofile/`, formData, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         if (res.status === 200) {
           this.setState({
@@ -234,27 +230,21 @@ class ProfileForm extends React.Component {
             loading: false
           });
           if (store.getState().currentUser.is_staff) {
-            return axios.get(
-              `https://secret-sauce.azurewebsites.net/auth/users/me/`,
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                  Accept: 'application/json',
-                  Authorization: `Token ${token}`
-                }
+            return axios.get(`http://localhost:8000/auth/users/me/`, {
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                Authorization: `Token ${token}`
               }
-            );
+            });
           } else {
-            return axios.get(
-              `https://secret-sauce.azurewebsites.net/auth/users/`,
-              {
-                headers: {
-                  'Content-Type': 'application/json',
-                  Accept: 'application/json',
-                  Authorization: `Token ${token}`
-                }
+            return axios.get(`http://localhost:8000/auth/users/`, {
+              headers: {
+                'Content-Type': 'application/json',
+                Accept: 'application/json',
+                Authorization: `Token ${token}`
               }
-            );
+            });
           }
         }
       })
@@ -321,7 +311,7 @@ class ProfileForm extends React.Component {
     let token = localStorage.getItem('token');
     if (store.getState().currentUser.is_staff) {
       axios
-        .get(`https://secret-sauce.azurewebsites.net/auth/users/me/`, {
+        .get(`http://localhost:8000/auth/users/me/`, {
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
@@ -344,7 +334,7 @@ class ProfileForm extends React.Component {
         });
     } else {
       axios
-        .get(`https://secret-sauce.azurewebsites.net/auth/users/`, {
+        .get(`http://localhost:8000/auth/users/`, {
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',

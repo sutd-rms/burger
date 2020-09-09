@@ -130,17 +130,13 @@ class TrainModelModal extends React.Component {
     };
 
     axios
-      .post(
-        'https://secret-sauce.azurewebsites.net/portal/trainedmodels/',
-        form,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .post('http://localhost:8000/portal/trainedmodels/', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         if (res.status === 201 && res.status) {
           this.props.handleClose();
@@ -155,7 +151,7 @@ class TrainModelModal extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/predictionmodels/`, {
+      .get(`http://localhost:8000/portal/predictionmodels/`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -166,17 +162,14 @@ class TrainModelModal extends React.Component {
         this.setState({
           modelList: res.data
         });
-        return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/datablocks/`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            },
-            params: { project: this.props.projectId }
-          }
-        );
+        return axios.get(`http://localhost:8000/portal/datablocks/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
+          },
+          params: { project: this.props.projectId }
+        });
       })
       .then(res => {
         this.setState({

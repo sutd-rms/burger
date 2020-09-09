@@ -182,17 +182,13 @@ class ProjectOverviewTab extends React.Component {
     // FETCH & SET STATE
     let token = localStorage.getItem('token');
     axios
-      .patch(
-        `https://secret-sauce.azurewebsites.net/portal/projects/${id}`,
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .patch(`http://localhost:8000/portal/projects/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res =>
         this.setState({
           title: this.state.titleNew,
@@ -216,7 +212,7 @@ class ProjectOverviewTab extends React.Component {
     // FETCH & SET STATE
     let token = localStorage.getItem('token');
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/projects/${id}`, {
+      .get(`http://localhost:8000/portal/projects/${id}`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',

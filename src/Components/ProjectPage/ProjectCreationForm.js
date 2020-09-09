@@ -99,17 +99,13 @@ export default function ProjectCreationForm(props) {
       };
       let token = localStorage.getItem('token');
       axios
-        .post(
-          `https://secret-sauce.azurewebsites.net/portal/projects/`,
-          newProject,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        .post(`http://localhost:8000/portal/projects/`, newProject, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        )
+        })
         .then(res => {
           if ((res.status = 200)) {
             setSuccess(true);
@@ -139,7 +135,7 @@ export default function ProjectCreationForm(props) {
       setDisplayCompany(true);
       let token = localStorage.getItem('token');
       axios
-        .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+        .get('http://localhost:8000/auth/company/', {
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',

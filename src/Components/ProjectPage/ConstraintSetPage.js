@@ -47,7 +47,7 @@ class ConstraintSetPage extends React.Component {
   componentDidMount() {
     axios
       .get(
-        `https://secret-sauce.azurewebsites.net/portal/constraintsets/${this.props.match.params.constraintsetId}`,
+        `http://localhost:8000/portal/constraintsets/${this.props.match.params.constraintsetId}`,
         {
           headers: {
             'Content-Type': 'application/json',

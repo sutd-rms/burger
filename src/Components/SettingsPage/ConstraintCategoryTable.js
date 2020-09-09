@@ -95,16 +95,13 @@ class ConstraintCategoryTable extends React.Component {
 
   componentDidMount() {
     axios
-      .get(
-        `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .get(`http://localhost:8000/portal/constraintcategories/`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         this.setState({
           data: res.data
@@ -147,7 +144,7 @@ class ConstraintCategoryTable extends React.Component {
                   };
                   axios
                     .patch(
-                      `https://secret-sauce.azurewebsites.net/portal/constraintcategories/${newData.id}`,
+                      `http://localhost:8000/portal/constraintcategories/${newData.id}`,
                       form,
                       {
                         headers: {
@@ -161,7 +158,7 @@ class ConstraintCategoryTable extends React.Component {
                       if (res.status === 200) {
                         return axios
                           .get(
-                            `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                            `http://localhost:8000/portal/constraintcategories/`,
                             {
                               headers: {
                                 'Content-Type': 'application/json',
@@ -192,7 +189,7 @@ class ConstraintCategoryTable extends React.Component {
                   };
                   axios
                     .post(
-                      `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                      `http://localhost:8000/portal/constraintcategories/`,
                       form,
                       {
                         headers: {
@@ -206,7 +203,7 @@ class ConstraintCategoryTable extends React.Component {
                       if (res.status === 201) {
                         return axios
                           .get(
-                            `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                            `http://localhost:8000/portal/constraintcategories/`,
                             {
                               headers: {
                                 'Content-Type': 'application/json',
@@ -234,7 +231,7 @@ class ConstraintCategoryTable extends React.Component {
                 setTimeout(() => {
                   axios
                     .delete(
-                      `https://secret-sauce.azurewebsites.net/portal/constraintcategories/${oldData.id}`,
+                      `http://localhost:8000/portal/constraintcategories/${oldData.id}`,
                       {
                         headers: {
                           'Content-Type': 'application/json',
@@ -247,7 +244,7 @@ class ConstraintCategoryTable extends React.Component {
                       if (res.status === 204) {
                         return axios
                           .get(
-                            `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
+                            `http://localhost:8000/portal/constraintcategories/`,
                             {
                               headers: {
                                 'Content-Type': 'application/json',

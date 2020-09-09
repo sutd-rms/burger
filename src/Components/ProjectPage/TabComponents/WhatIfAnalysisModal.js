@@ -209,7 +209,7 @@ class WhatIfAnalysisModal extends React.Component {
 
     axios
       .post(
-        `https://secret-sauce.azurewebsites.net/portal/trainedmodels/${this.props.trainedModelId}/whatif/`,
+        `http://localhost:8000/portal/trainedmodels/${this.props.trainedModelId}/whatif/`,
         form,
         {
           headers: {
@@ -269,7 +269,7 @@ class WhatIfAnalysisModal extends React.Component {
     if (this.props.open == true && this.state.isLoaded == false) {
       axios
         .get(
-          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.datasetId}`,
+          `http://localhost:8000/portal/datablocks/${this.props.datasetId}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -297,7 +297,7 @@ class WhatIfAnalysisModal extends React.Component {
 
       axios
         .get(
-          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.datasetId}/average_prices`,
+          `http://localhost:8000/portal/datablocks/${this.props.datasetId}/average_prices`,
           {
             headers: {
               'Content-Type': 'application/json',

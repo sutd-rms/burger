@@ -155,7 +155,7 @@ export default function UsersTable(props) {
 
   useEffect(() => {
     axios
-      .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+      .get('http://localhost:8000/auth/company/', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -201,7 +201,7 @@ export default function UsersTable(props) {
     });
     // FETCH & SET STATE
     axios
-      .get('https://secret-sauce.azurewebsites.net/auth/users', {
+      .get('http://localhost:8000/auth/users', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -261,7 +261,7 @@ export default function UsersTable(props) {
                 };
                 axios
                   .patch(
-                    `https://secret-sauce.azurewebsites.net/auth/users/${oldData.id}/`,
+                    `http://localhost:8000/auth/users/${oldData.id}/`,
                     newPatchData,
                     {
                       headers: {

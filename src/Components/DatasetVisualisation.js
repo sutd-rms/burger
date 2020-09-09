@@ -146,7 +146,7 @@ class DatasetVisualisation extends React.Component {
 
       axios
         .get(
-          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/price/`,
+          `http://localhost:8000/portal/datablocks/${this.props.match.params.datasetId}/vizdata/price/`,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
@@ -171,7 +171,7 @@ class DatasetVisualisation extends React.Component {
 
       axios
         .get(
-          `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}/vizdata/qty/`,
+          `http://localhost:8000/portal/datablocks/${this.props.match.params.datasetId}/vizdata/qty/`,
           {
             headers: {
               'Content-Type': 'multipart/form-data',
@@ -230,7 +230,7 @@ class DatasetVisualisation extends React.Component {
   componentDidMount() {
     axios
       .get(
-        `https://secret-sauce.azurewebsites.net/portal/datablocks/${this.props.match.params.datasetId}`,
+        `http://localhost:8000/portal/datablocks/${this.props.match.params.datasetId}`,
         {
           headers: {
             'Content-Type': 'application/json',

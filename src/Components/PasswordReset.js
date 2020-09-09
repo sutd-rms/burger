@@ -68,7 +68,7 @@ class PasswordReset extends React.Component {
 
     // const urlPasswordReset = `http://localhost:8000/auth/users/reset_password/`;
 
-    const urlPasswordReset = `https://secret-sauce.azurewebsites.net/auth/users/reset_password/`;
+    const urlPasswordReset = `http://localhost:8000/auth/users/reset_password/`;
 
     const form = {
       email: this.state.email

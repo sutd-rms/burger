@@ -32,7 +32,7 @@ export default function AllProjectPage() {
     let token = localStorage.getItem('token');
     // console.log(match)
     axios
-      .get('https://secret-sauce.azurewebsites.net/portal/projects/', {
+      .get('http://localhost:8000/portal/projects/', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',

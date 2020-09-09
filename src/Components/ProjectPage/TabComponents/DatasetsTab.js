@@ -137,7 +137,7 @@ class DatasetsTab extends React.Component {
   componentDidMount() {
     let data = { project: this.props.projectId };
     axios
-      .get('https://secret-sauce.azurewebsites.net/portal/datablocks', {
+      .get('http://localhost:8000/portal/datablocks', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -148,7 +148,7 @@ class DatasetsTab extends React.Component {
       .then(res => {
         this.setState({ datasetsList: res.data });
         return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+          `http://localhost:8000/portal/projects/${this.props.projectId}`,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -199,16 +199,13 @@ class DatasetsTab extends React.Component {
 
     this.setState({ datasetsList: datasets });
     axios
-      .get(
-        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .get(`http://localhost:8000/portal/projects/${this.props.projectId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         this.setState({ costFileUploaded: res.data.cost_sheet });
       })
@@ -221,16 +218,13 @@ class DatasetsTab extends React.Component {
     this.setState({ costFileUploadSuccess: true });
 
     axios
-      .get(
-        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .get(`http://localhost:8000/portal/projects/${this.props.projectId}`, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         this.setState({ costFileUploaded: res.data.cost_sheet });
       })
@@ -277,7 +271,7 @@ class DatasetsTab extends React.Component {
   deleteCostFile = () => {
     axios
       .delete(
-        `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}/items/`,
+        `http://localhost:8000/portal/projects/${this.props.projectId}/items/`,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -289,7 +283,7 @@ class DatasetsTab extends React.Component {
       .then(res => {
         this.handleDeleteClose();
         return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/projects/${this.props.projectId}`,
+          `http://localhost:8000/portal/projects/${this.props.projectId}`,
           {
             headers: {
               'Content-Type': 'application/json',

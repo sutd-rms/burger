@@ -88,17 +88,13 @@ export default function ModelCreationForm(props) {
       };
       let token = localStorage.getItem('token');
       axios
-        .post(
-          `https://secret-sauce.azurewebsites.net/portal/predictionmodels/`,
-          newModel,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        .post(`http://localhost:8000/portal/predictionmodels/`, newModel, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        )
+        })
         .then(res => {
           if ((res.status = 200)) {
             setSuccess(true);

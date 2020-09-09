@@ -331,17 +331,13 @@ class ConstraintModal extends React.Component {
     };
 
     axios
-      .post(
-        'https://secret-sauce.azurewebsites.net/portal/constraintsets/',
-        form,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .post('http://localhost:8000/portal/constraintsets/', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         if (res.status === 201) {
           var itemDict = {};
@@ -406,17 +402,13 @@ class ConstraintModal extends React.Component {
     };
 
     axios
-      .post(
-        'https://secret-sauce.azurewebsites.net/portal/constraints/',
-        form,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .post('http://localhost:8000/portal/constraints/', form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         if (res.status === 201 && res.status) {
           this.setState({
@@ -459,7 +451,7 @@ class ConstraintModal extends React.Component {
 
   componentDidMount() {
     axios
-      .get(`https://secret-sauce.azurewebsites.net/portal/datablocks/`, {
+      .get(`http://localhost:8000/portal/datablocks/`, {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -472,16 +464,13 @@ class ConstraintModal extends React.Component {
           datasetList: res.data
         });
 
-        return axios.get(
-          `https://secret-sauce.azurewebsites.net/portal/constraintcategories/`,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        return axios.get(`http://localhost:8000/portal/constraintcategories/`, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        );
+        });
       })
       .then(res => {
         this.setState({

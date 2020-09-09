@@ -82,7 +82,7 @@ export default function UserInvitationModal(props) {
 
   useEffect(() => {
     axios
-      .get('https://secret-sauce.azurewebsites.net/auth/company/', {
+      .get('http://localhost:8000/auth/company/', {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
@@ -109,17 +109,13 @@ export default function UserInvitationModal(props) {
       setLoading(true);
       let userInfo = { email: newEmail, company: newCompany };
       axios
-        .post(
-          'https://secret-sauce.azurewebsites.net/auth/inviteuser/',
-          userInfo,
-          {
-            headers: {
-              'Content-Type': 'application/json',
-              Accept: 'application/json',
-              Authorization: `Token ${token}`
-            }
+        .post('http://localhost:8000/auth/inviteuser/', userInfo, {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            Authorization: `Token ${token}`
           }
-        )
+        })
         .then(res => {
           if (res.status === 201 && res.status) {
             props.setSuccess(true);

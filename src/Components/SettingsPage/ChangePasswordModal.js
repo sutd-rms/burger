@@ -118,17 +118,13 @@ class ChangePasswordModal extends React.Component {
     };
 
     axios
-      .post(
-        `https://secret-sauce.azurewebsites.net/auth/users/set_password/`,
-        form,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            Authorization: `Token ${token}`
-          }
+      .post(`http://localhost:8000/auth/users/set_password/`, form, {
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          Authorization: `Token ${token}`
         }
-      )
+      })
       .then(res => {
         if (res.status === 204) {
           this.setState({ loading: false });
